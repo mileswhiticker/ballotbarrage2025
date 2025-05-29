@@ -6,5 +6,6 @@ export default defineConfig({
     plugins: [plugin()],
     server: {
         port: 53076,
-    }
+    },
+    base: '/ballotbarrage2025/'
 })
