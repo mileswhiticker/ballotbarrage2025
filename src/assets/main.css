@@ -1,16 +1,20 @@
-header{
+header {
     padding: 16px;
+    text-align: center;
 }
 
-  header h1 {
-    margin-top: 0px;
-  }
+header h1 {
+  margin-top: 0px;
+}
 
-  header p {
-    margin-bottom: 0px;
-  }
+header p {
+  margin-bottom: 0px;
+}
 
-body{
-    background-color: black;
-    color: white;
-    margin: 0px;
+body {
+  background-color: black;
+  color: white;
+  margin: 0px;
+  display: flex;
+  justify-content: center;
+}
