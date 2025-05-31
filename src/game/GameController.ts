@@ -1,6 +1,9 @@
 import Mob from './Mob.ts';
-import { resourceController } from './ResourceController.ts';
+import resourceController from './ResourceController.ts';
 import Vector2 from './Vector2.ts';
+
+const PATH_GREYMAN: string = './src/assets/greyman.png';
+const PATH_BORDER10: string = './src/assets/10 Border 01.png';
 
 class GameController {
 	mobs: Mob[] = [];
@@ -14,8 +17,11 @@ class GameController {
 		this.gameCanvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
 		this.game2dRenderContext = this.gameCanvas.getContext('2d');
 
-		resourceController.LoadImage('./src/assets/redman.png');
-		const newMob = new Mob(new Vector2(300, 300), './src/assets/redman.png');
+		resourceController.LoadImage(PATH_GREYMAN);
+		resourceController.LoadImage(PATH_BORDER10);
+		const newMob = new Mob(new Vector2(300, 300), PATH_GREYMAN);
+		newMob.isAlive = true;
+		newMob.randomWander = true;
 		this.mobs.push(newMob);
 
 		this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));
@@ -39,12 +45,9 @@ class GameController {
 			const curMob = this.mobs[i];
 			curMob.update(deltaTime);
 
-			if (this.game2dRenderContext)
+			if (this.game2dRenderContext && curMob.sprite)
 			{
-				const mobImage: HTMLImageElement | null = resourceController.GetImage(curMob.imagepath);
-				if (mobImage) {
-					this.game2dRenderContext.drawImage(mobImage, curMob.pos.x, curMob.pos.y, curMob.dims.x, curMob.dims.y);
-				}
+				curMob.sprite.Render(this.game2dRenderContext);
 			}
 		}
 

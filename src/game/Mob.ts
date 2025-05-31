@@ -1,18 +1,20 @@
 import Vector2 from './Vector2.ts';
+import {Sprite} from './Sprite.ts';
 
 export default class Mob {
 	pos: Vector2;
 	dims: Vector2;
 	targetPos: Vector2 = new Vector2(0, 0);
 	moveSpeed: number = 0.2;
-	imagepath: string;
+	sprite: Sprite;
 	age: number = 0;
-	isAlive: boolean = true;
-	randomWander: boolean = true;
+	isAlive: boolean = false;
+	randomWander: boolean = false;
 
-	constructor(startPos: Vector2, imagepath: string) {
+	constructor(startPos: Vector2, imagePath: string) {
 		this.pos = startPos;
-		this.imagepath = imagepath;
+		this.sprite = new Sprite(imagePath);
+		this.sprite.pos = this.pos;
 		this.dims = new Vector2(64, 64);
 	}
 

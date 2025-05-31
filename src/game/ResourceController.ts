@@ -48,4 +48,6 @@ class ResourceController {
   }
 }
 
-export const resourceController = new ResourceController();
+const resourceController = new ResourceController();
+export default resourceController;
+
