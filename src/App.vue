@@ -1,7 +1,5 @@
 <script setup lang="ts">
-//import HelloWorld from './components/HelloWorld.vue'
-//import TheWelcome from './components/TheWelcome.vue'
-import Game from './components/Game.vue'
+  import GameCanvas from './components/GameCanvas.vue'
 </script>
 
 <template>
@@ -13,7 +11,7 @@ import Game from './components/Game.vue'
   </header>
 
   <main>
-    <Game />
+    <GameCanvas />
     <!--<div style="height:100%;width:100%;"></div>-->
   </main>
 </template>

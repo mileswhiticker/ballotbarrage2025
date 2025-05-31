@@ -19,7 +19,7 @@
       const rect = header_element.getBoundingClientRect();
       const headerHeight = rect.height;
       newHeight -= headerHeight;
-      console.log("adjusting by header height: " + headerHeight,rect);
+      //console.log("adjusting by header height: " + headerHeight,rect);
     }
 
     //maintain 4:3 dimensions by constraining width or height if necessary
