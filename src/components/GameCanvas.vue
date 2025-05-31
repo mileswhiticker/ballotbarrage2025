@@ -54,7 +54,7 @@
 
 <template>
   <div id="gameCanvasWrapper">
-    <canvas ref="canvas"></canvas>
+    <canvas ref="canvas" id="gameCanvas"></canvas>
   </div>
 </template>
 
