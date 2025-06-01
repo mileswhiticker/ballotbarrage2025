@@ -12,7 +12,7 @@ class GameController {
 	game2dRenderContext: CanvasRenderingContext2D | null = null;
 
 	InitializeGame() {
-	console.log("GameController::InitializeGame() starting...");
+		//console.log("GameController::InitializeGame() starting...");
 
 		this.gameCanvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
 		this.game2dRenderContext = this.gameCanvas.getContext('2d');
@@ -26,7 +26,7 @@ class GameController {
 
 		this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));
 
-		console.log("GameController::InitializeGame() finished");
+		//console.log("GameController::InitializeGame() finished");
 	}
 
 	tLastUpdate: number = 0;

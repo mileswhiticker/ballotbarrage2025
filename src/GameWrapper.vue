@@ -1,7 +1,9 @@
 <script setup lang="ts">
 	import GameCanvas from './components/GameCanvas.vue';
 	import GameInterface from './components/GameInterface.vue';
-	import { onMounted, onUnmounted, ref, computed, watchEffect } from 'vue'
+	import { onMounted, onUnmounted, ref, computed, watchEffect } from 'vue';
+	import { PlayerInfo } from './game/Player.ts';
+	import playerController from './game/PlayerController';
 	
 	let gameWindowWidth = ref(0);
 	let gameWindowHeight = ref(0);
@@ -47,6 +49,8 @@
 	
 	const width = computed(() => `${gameWindowWidth.value}px`);
 	const height = computed(() => `${gameWindowHeight.value}px`);
+
+	const currentPlayer = computed(() => playerController.getCurrentPlayer());
 	
 	watchEffect(() => {
 		//console.log(`${width.value},${height.value}`);
@@ -56,7 +60,7 @@
 <template>
 	<div id="gameWrapper" :style="{width, height}">
 		<GameCanvas :canvasWidth :canvasHeight />
-		<GameInterface :gameWindowWidth :gameWindowHeight />
+		<GameInterface :gameWindowWidth :gameWindowHeight :playerInfo={currentPlayer} />
 	</div>
 </template>
 
