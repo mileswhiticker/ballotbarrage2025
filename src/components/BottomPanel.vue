@@ -1,6 +1,8 @@
 <script setup lang="ts">
 	import PlaceableMob from './PlaceableMob.vue';
-	import {PlayerInfo} from '../game/Player.ts';
+	import { PlayerInfo } from '../game/Player.ts';
+	import playerController from '../game/PlayerController.ts';
+	import mouseController from '../game/MouseController.ts';
 	const props = defineProps<{
 		playerInfo: Ref<PlayerInfo>
 	}>();
@@ -9,7 +11,9 @@
 <template>
 	<div id="bottomPanel">
 		<div id="placeableDiv">
-			<PlaceableMob :playerInfo />
+			<div v-for="(value, key) in playerController.playerPlaceableMobs" :key="key">
+				<PlaceableMob :playerInfo :placeableMob="value" />
+			</div>
 			<!--<PlaceableMob :playerInfo />
 			<PlaceableMob :playerInfo />
 			<PlaceableMob :playerInfo />

@@ -1,9 +1,8 @@
 import Mob from './Mob.ts';
-import resourceController from './ResourceController.ts';
-import Vector2 from './Vector2.ts';
-
-const PATH_GREYMAN: string = './src/assets/greyman.png';
-const PATH_BORDER10: string = './src/assets/10 Border 01.png';
+import { MOBTYPE } from './Mob.ts';
+import playerController from './PlayerController.ts';
+import mobController from './MobController.ts';
+//import Vector2 from './Vector2.ts';
 
 class GameController {
 	mobs: Mob[] = [];
@@ -17,11 +16,14 @@ class GameController {
 		this.gameCanvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
 		this.game2dRenderContext = this.gameCanvas.getContext('2d');
 
-		resourceController.LoadImage(PATH_GREYMAN);
-		resourceController.LoadImage(PATH_BORDER10);
-		const newMob = new Mob(new Vector2(300, 300), PATH_GREYMAN);
+		mobController.Initialise();
+		playerController.Initialise();
+
+		const newMob = mobController.createMobInstance(MOBTYPE.WANDER_ENEMY)
 		newMob.isAlive = true;
 		newMob.randomWander = true;
+		newMob.pos.x = 0;
+		newMob.pos.y = 0;
 		this.mobs.push(newMob);
 
 		this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));

@@ -11,15 +11,18 @@ class ResourceController {
     this.gameCanvas = canvas;
   }
   
-  LoadImage(imagepath: string) {
+  LoadImage(imagepath: string, suppress_warning: boolean = false) {
     //if (!this.gameCanvas) {
     //  return;
     //}
 
-    if (this.images.has(imagepath)) {
-      console.warn("ResourcesController::LoadImage(" + imagepath + ") image already loaded");
-      return;
-    }
+      if (this.images.has(imagepath)) {
+          if (!suppress_warning) {
+              console.warn("ResourcesController::LoadImage(" + imagepath + ") image already loaded");
+          }
+        return;
+      }
+      //console.error("ResourcesController::LoadImage(" + imagepath + ")");
 
     //define it
     const image = new Image();

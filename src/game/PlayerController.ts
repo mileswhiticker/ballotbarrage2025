@@ -1,8 +1,14 @@
 
 import { type PlayerInfo, random_name } from '../game/Player.ts';
 import { ColourInfo } from './ColourInfo.ts';
+import Mob from './Mob.ts';
+import { MOBTYPE } from './Mob.ts';
+import mobController from './MobController.ts';
 
 class PlayerController {
+	allPlaceableMobs: Mob[] = [];
+	playerPlaceableMobs: Mob[] = [];
+
 	private currentPlayer: PlayerInfo | null = null;
 	private noPlayer: PlayerInfo = {
 		themePrimary: new ColourInfo("#808080"),
@@ -10,6 +16,18 @@ class PlayerController {
 		playerName: "No player selected",
 		playerImagePath: './src/assets/greyquestion.png'
 	};
+
+	Initialise() {
+		//what mobs should the player be able to place?
+		this.allPlaceableMobs.push(mobController.createMobInstance(MOBTYPE.VOLUNTEER));
+		this.allPlaceableMobs.push(mobController.createMobInstance(MOBTYPE.AFRAME));
+		this.allPlaceableMobs.push(mobController.createMobInstance(MOBTYPE.SAUSAGESIZZLE));
+
+		//for now, let the player place all of them
+		for (const curMob of this.allPlaceableMobs) {
+			this.playerPlaceableMobs.push(curMob);
+		}
+	}
 
 	newCurrentPlayer() {
 		this.currentPlayer = {
