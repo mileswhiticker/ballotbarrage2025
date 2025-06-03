@@ -1,4 +1,4 @@
-import Mob from './Mob.ts';
+//import Mob from './Mob.ts';
 import Vector2 from './Vector2.ts';
 
 export class GridRoute {
@@ -41,12 +41,29 @@ class GridController {
 		}
 	}
 
-	pathToMob(mobSource: Mob, mobDest: Mob): GridRoute {
-		//todo
-		const route = new GridRoute();
+	snapToGrid(rawPos: Vector2): Vector2 {
+		const snappedPos = new Vector2(0, 0);
 
-		return route;
+		snappedPos.x = Math.round(rawPos.x / this.gridCellDim) * this.gridCellDim;
+		snappedPos.y = Math.round(rawPos.y / this.gridCellDim) * this.gridCellDim;
+
+		return snappedPos;
 	}
+
+	getGridCoords(rawPos: Vector2): Vector2 {
+		const gridCoords = new Vector2(0, 0);
+		gridCoords.x = Math.round(rawPos.x / this.gridCellDim);
+		gridCoords.y = Math.round(rawPos.y / this.gridCellDim);
+
+		return gridCoords;
+	}
+
+	//pathToMob(mobSource: Mob, mobDest: Mob): GridRoute {
+	//	//todo
+	//	const route = new GridRoute();
+
+	//	return route;
+	//}
 }
 
 const gridController = new GridController();

@@ -84,9 +84,25 @@ class MouseController {
 	mouseClick(event: MouseEvent) {
 		//console.log('MouseController::mouseClick()', event);
 		if (this.mobBuildGhost) {
+
+			//get the correct canvas position from the mouse event
+			const transformedPosition = this.TransformCanvasPosition(event);
+
+			//which grid cell is it?
+			const gridCoords = gridController.getGridCoords(transformedPosition);
+
+			//check if this grid cell is free to place something
+			const blockingMob = mobController.getPlayerMobInGridCell(gridCoords);
+			if (blockingMob) {
+				console.warn(`Player is trying to place a mobType ${this.mobBuildGhostType.value} in grid ${gridCoords.x},${gridCoords.y}\
+					but there is already a mobType ${blockingMob.mobType} there`);
+				return;
+			}
+
+			//const snappedPosition = gridController.snapToGrid(transformedPosition);
+
 			//console.log(`building new placeable mob...`);
 			const newMob = mobController.createPlayerMob(this.mobBuildGhostType.value);
-			const transformedPosition = this.TransformCanvasPosition(event);
 			newMob.jumpToGridFromRawPos(transformedPosition);
 
 			this.ClearBuildGhost();

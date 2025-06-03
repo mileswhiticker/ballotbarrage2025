@@ -1,6 +1,7 @@
 import Vector2 from './Vector2.ts';
 import { Sprite } from './Sprite.ts';
 import gridController from './GridController.ts';
+import mobController from './MobController.ts';
 
 export enum MOBTYPE {
 	UNKNOWN = -1,
@@ -28,6 +29,8 @@ export default class Mob {
 	mobType: MOBTYPE = MOBTYPE.UNKNOWN;
 	renderOpacity = 1;
 
+	gridCoords: Vector2 = new Vector2(-1, -1);
+
 	constructor(startPos: Vector2, imagePath: string, mobType: MOBTYPE) {
 		this.pos = startPos;
 		this.imagePath = imagePath;
@@ -47,10 +50,26 @@ export default class Mob {
 		}
 	}
 
-	jumpToGridFromRawPos(pos: Vector2) {
-		const snappedPos = new Vector2(Math.round(pos.x / gridController.gridCellDim) * gridController.gridCellDim, Math.round(pos.y / gridController.gridCellDim) * gridController.gridCellDim);
+	jumpToGridFromRawPos(rawPos: Vector2) {
+
+		//take the raw pixel position and snap it to the nearest grid coordinates
+		const snappedPos = gridController.snapToGrid(rawPos);
+		//const snappedPos = new Vector2(Math.round(rawPos.x / gridController.gridCellDim) * gridController.gridCellDim, Math.round(rawPos.y / gridController.gridCellDim) * gridController.gridCellDim);
+
+		//set the position
 		this.pos.x = snappedPos.x;
 		this.pos.y = snappedPos.y;
+
+		//remmeber the old grid coords we were in
+		const oldGridPos = this.gridCoords.clone();
+
+		//apply the new grid coordinates
+		this.gridCoords = gridController.getGridCoords(rawPos);
+		//this.gridCoords.x = snappedPos.x / gridController.gridCellDim;
+		//this.gridCoords.y = snappedPos.y / gridController.gridCellDim;
+
+		//tell the grid to update its grid contents tracking
+		mobController.updatePlayerMobGridPos(this, oldGridPos);
 	}
 
 	doWander(deltaTime: number) {

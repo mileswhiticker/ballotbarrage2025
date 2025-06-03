@@ -19,7 +19,8 @@ const IMGPATH_MOB_SAUSAGESIZZLE: string = './src/assets/sausagesizzle.png';
 class MobController {
 	gameMobs: Mob[] = [];
 	playerMobs: Mob[] = [];
-	game2dRenderContext: CanvasRenderingContext2D|null = null;
+	game2dRenderContext: CanvasRenderingContext2D | null = null;
+	playerGridMobs: (Mob|null)[][] = [];		//	[x grid number][y grid number] = mob in this grid cell
 
 	Initialise(game2dRenderContext: CanvasRenderingContext2D) {
 		this.game2dRenderContext = game2dRenderContext;
@@ -116,6 +117,65 @@ class MobController {
 				}
 			}
 		}
+	}
+
+	updatePlayerMobGridPos(mob: Mob, oldGridPos: Vector2) {
+		//console.log('MobController::updatePlayerMobGridPos()', mob, oldGridPos);
+
+		//todo: safety checks before it gets to this point
+		const blockingMob = this.getPlayerMobInGridCell(mob.gridCoords);
+		if (blockingMob) {
+			console.error(`ERROR MobController::updatePlayerMobGridPos() a mob tried to jump to grid ${mob.gridCoords.x},${mob.gridCoords.y} but it was already occupied!`, mob);
+			return
+		}
+
+		//safety check: the old grid position should already be valid 
+		//it will default to -1, -1 for uninitialised mobs
+		if (oldGridPos.x >= 0 && oldGridPos.y >= 0) {
+
+			//is the X grid dimension big enough?
+			if (mob.gridCoords.x >= this.playerGridMobs.length) {
+				console.error(`ERROR MobController:: updatePlayerMobGridPos() mob.gridCoords.x is out of bounds!`, mob);
+			}
+			//is the Y grid dimension big enough?
+			else if (mob.gridCoords.y >= this.playerGridMobs[mob.gridCoords.x].length) {
+				console.error(`ERROR MobController:: updatePlayerMobGridPos() mob.gridCoords.y is out of bounds!`, mob);
+			}
+			else {
+				this.playerGridMobs[mob.gridCoords.x][mob.gridCoords.y] = null;
+			}
+		}
+
+		//is the X grid dimension big enough?
+		while (this.playerGridMobs.length <= mob.gridCoords.x) { 
+			//enlarge it
+			this.playerGridMobs.push([]);
+		}
+
+		//is the Y grid dimension big enough?
+		while (this.playerGridMobs[mob.gridCoords.x].length <= mob.gridCoords.y) { 
+			//enlarge it
+			this.playerGridMobs[mob.gridCoords.x].push(null);
+		}
+
+		//finally, update the new grid coords
+		this.playerGridMobs[mob.gridCoords.x][mob.gridCoords.y] = mob;
+
+		//console.log('MobController::updatePlayerMobGridPos() success', this.playerGridMobs);
+	}
+
+	getPlayerMobInGridCell(gridCoords: Vector2): Mob|null {
+
+		//is the X grid dimension big enough?
+		if (this.playerGridMobs.length >= gridCoords.x) {
+			//is the Y grid dimension big enough?
+			if (this.playerGridMobs[gridCoords.x].length >= gridCoords.y) {
+				return this.playerGridMobs[gridCoords.x][gridCoords.y];
+			}
+		}
+
+		//could not find anything
+		return null;
 	}
 }
 
