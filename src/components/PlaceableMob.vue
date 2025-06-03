@@ -9,6 +9,10 @@
 	}>();
 
 	function handleClick(event: MouseEvent) {
+		//console.log("PlaceableMob::handleClick()", event);
+
+		//we will take over this event for now
+		event.stopImmediatePropagation();
 		//console.log(event.target);
 		mouseController.SetBuildGhost(props.placeableMob.mobType);
 	}

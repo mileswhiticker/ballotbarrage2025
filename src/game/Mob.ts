@@ -1,5 +1,6 @@
 import Vector2 from './Vector2.ts';
-import {Sprite} from './Sprite.ts';
+import { Sprite } from './Sprite.ts';
+import gridController from './GridController.ts';
 
 export enum MOBTYPE {
 	UNKNOWN = -1,
@@ -44,6 +45,12 @@ export default class Mob {
 				this.doWander(deltaTime);
 			}
 		}
+	}
+
+	jumpToGridFromRawPos(pos: Vector2) {
+		const snappedPos = new Vector2(Math.round(pos.x / gridController.gridCellDim) * gridController.gridCellDim, Math.round(pos.y / gridController.gridCellDim) * gridController.gridCellDim);
+		this.pos.x = snappedPos.x;
+		this.pos.y = snappedPos.y;
 	}
 
 	doWander(deltaTime: number) {

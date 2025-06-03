@@ -4,7 +4,7 @@ import resourceController from './ResourceController.ts';
 import Mob from './Mob.ts';
 import { MOBTYPE } from './Mob.ts';
 import Vector2 from './Vector2.ts';
-import mouseController from './MouseController.ts';
+//import mouseController from './MouseController.ts';
 
 const IMGPATH_GREYMAN: string = './src/assets/greyman.png';
 const IMGPATH_REDMAN: string = './src/assets/redman.png';
@@ -18,6 +18,7 @@ const IMGPATH_MOB_SAUSAGESIZZLE: string = './src/assets/sausagesizzle.png';
 
 class MobController {
 	gameMobs: Mob[] = [];
+	playerMobs: Mob[] = [];
 	game2dRenderContext: CanvasRenderingContext2D|null = null;
 
 	Initialise(game2dRenderContext: CanvasRenderingContext2D) {
@@ -32,12 +33,19 @@ class MobController {
 		resourceController.LoadImage(IMGPATH_MOB_UNKNOWN);
 
 		//for testing
-		const newMob = mobController.createMobInstance(MOBTYPE.WANDER_ENEMY)
+		const newMob = this.createMobInstance(MOBTYPE.WANDER_ENEMY)
 		newMob.isAlive = true;
 		newMob.randomWander = true;
 		newMob.pos.x = 0;
 		newMob.pos.y = 0;
 		this.gameMobs.push(newMob);
+	}
+
+	createPlayerMob(mobType: MOBTYPE) {
+		const newMob = this.createMobInstance(mobType);
+		this.playerMobs.push(newMob);
+
+		return newMob;
 	}
 
 	createMobInstance(mobType: MOBTYPE): Mob {
@@ -82,18 +90,30 @@ class MobController {
 	}
 
 	update(deltaTime: number) {
+		for (let i = 0; i < this.gameMobs.length; i++) {
+			const curMob = this.gameMobs[i];
+			curMob.update(deltaTime);
+		}
+	}
 
+	renderGameMobs() {
 		if (this.game2dRenderContext) {
 			for (let i = 0; i < this.gameMobs.length; i++) {
 				const curMob = this.gameMobs[i];
-				curMob.update(deltaTime);
-
 				if (curMob.sprite) {
 					curMob.sprite.Render(this.game2dRenderContext);
 				}
 			}
-			if (mouseController.mobBuildGhost && mouseController.mobBuildGhost.sprite) {
-				mouseController.mobBuildGhost.sprite.Render(this.game2dRenderContext);
+		}
+	}
+
+	renderPlayerMobs() {
+		if (this.game2dRenderContext) {
+			for (let i = 0; i < this.playerMobs.length; i++) {
+				const curMob = this.playerMobs[i];
+				if (curMob.sprite) {
+					curMob.sprite.Render(this.game2dRenderContext);
+				}
 			}
 		}
 	}
