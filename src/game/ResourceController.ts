@@ -1,54 +1,57 @@
 
 class ResourceController {
-  gameCanvas: HTMLCanvasElement | null = null;
-  images = new Map<string, HTMLImageElement>();
+	gameCanvas: HTMLCanvasElement | null = null;
+	images = new Map<string, HTMLImageElement>();
 
-  constructor() {
-    //
-  }
+	constructor() {
+		//
+	}
 
-  LinkCanvas(canvas: HTMLCanvasElement) {
-    this.gameCanvas = canvas;
-  }
-  
-  LoadImage(imagepath: string, suppress_warning: boolean = false) {
-    //if (!this.gameCanvas) {
-    //  return;
-    //}
+	Initialise() {
+	}
 
-      if (this.images.has(imagepath)) {
-          if (!suppress_warning) {
-              console.warn("ResourcesController::LoadImage(" + imagepath + ") image already loaded");
-          }
-        return;
-      }
-      //console.error("ResourcesController::LoadImage(" + imagepath + ")");
+	LinkCanvas(canvas: HTMLCanvasElement) {
+		this.gameCanvas = canvas;
+	}
+	
+	LoadImage(imagepath: string, suppress_warning: boolean = false) {
+		//if (!this.gameCanvas) {
+			//return;
+		//}
 
-    //define it
-    const image = new Image();
-    image.src = imagepath;
+		if (this.images.has(imagepath)) {
+			if (!suppress_warning) {
+				console.warn("ResourcesController::LoadImage(" + imagepath + ") image already loaded");
+			}
+			return;
+		}
+		//console.error("ResourcesController::LoadImage(" + imagepath + ")");
 
-    //save it
-    this.images.set(imagepath, image);
+		//define it
+		const image = new Image();
+		image.src = imagepath;
 
-    //todo: a loading controller or await calls here
-    //image.onload = () => {
-    //  this.gameCanvas.width = image.width;
-    //  this.gameCanvas.height = image.height;
-    //  const ctx = this.gameCanvas.getContext('2d');
-    //  ctx?.drawImage(image, 0, 0);
-    //};
-  }
+		//save it
+		this.images.set(imagepath, image);
 
-  GetImage(imagepath: string): HTMLImageElement | null {
-    //console.log(`ResourceController::GetImage(${imagepath})`,this);
-    if (this.images.has(imagepath)) {
-      return this.images.get(imagepath) as HTMLImageElement;
-    }
+		//todo: a loading controller or await calls here
+		//image.onload = () => {
+		//  this.gameCanvas.width = image.width;
+		//  this.gameCanvas.height = image.height;
+		//  const ctx = this.gameCanvas.getContext('2d');
+		//  ctx?.drawImage(image, 0, 0);
+		//};
+	}
 
-    console.error("ResourcesController::GetImage(" + imagepath + ") image not loaded");
-    return null;
-  }
+	GetImage(imagepath: string): HTMLImageElement | null {
+		//console.log(`ResourceController::GetImage(${imagepath})`,this);
+		if (this.images.has(imagepath)) {
+			return this.images.get(imagepath) as HTMLImageElement;
+		}
+
+		console.error("ResourcesController::GetImage(" + imagepath + ") image not loaded");
+		return null;
+	}
 }
 
 const resourceController = new ResourceController();
