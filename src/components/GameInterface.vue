@@ -3,11 +3,23 @@
 	import BottomPanel from './BottomPanel.vue';
 	import TopPanel from './TopPanel.vue';
 	import { PlayerInfo } from '../game/Player.ts';
+	import mouseController from '../game/MouseController.ts';
 	const props = defineProps<{
 		gameWindowWidth: Ref<number>,
 		gameWindowHeight: Ref<number>,
 		playerInfo: Ref<PlayerInfo>
 	}>();
+
+	//const x = ref(0);
+	//const y = ref(0);
+
+	function handleMouseMove(event: MouseEvent) {
+		//x.value = event.offsetX;
+		//y.value = event.offsetY;
+		//console.log(`${x.value},${y.value}`);
+		mouseController.mouseMove(event);
+		return;
+	}
 
 	watchEffect(() => {
 		//console.log(`${props.gameWindowWidth},${props.gameWindowHeight}`, props.gameWindowWidth, props.gameWindowHeight);
@@ -16,7 +28,7 @@
 </script>
 
 <template>
-	<div id="gameInterface">
+	<div id="gameInterface" @mousemove="handleMouseMove">
 		<TopPanel :playerInfo />
 		<BottomPanel :playerInfo />
 	</div>

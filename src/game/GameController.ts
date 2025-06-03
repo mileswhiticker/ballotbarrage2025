@@ -1,7 +1,8 @@
 import Mob from './Mob.ts';
-import { MOBTYPE } from './Mob.ts';
+//import { MOBTYPE } from './Mob.ts';
 import playerController from './PlayerController.ts';
 import mobController from './MobController.ts';
+import mouseController from './MouseController.ts';
 //import Vector2 from './Vector2.ts';
 
 class GameController {
@@ -16,15 +17,9 @@ class GameController {
 		this.gameCanvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
 		this.game2dRenderContext = this.gameCanvas.getContext('2d');
 
-		mobController.Initialise();
+		mouseController.Initialise();
+		mobController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
 		playerController.Initialise();
-
-		const newMob = mobController.createMobInstance(MOBTYPE.WANDER_ENEMY)
-		newMob.isAlive = true;
-		newMob.randomWander = true;
-		newMob.pos.x = 0;
-		newMob.pos.y = 0;
-		this.mobs.push(newMob);
 
 		this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));
 
@@ -43,15 +38,7 @@ class GameController {
 			this.game2dRenderContext.fillRect(0, 0, this.gameCanvas.width, this.gameCanvas.height)
 		}
 
-		for (let i = 0; i < this.mobs.length; i++) {
-			const curMob = this.mobs[i];
-			curMob.update(deltaTime);
-
-			if (this.game2dRenderContext && curMob.sprite)
-			{
-				curMob.sprite.Render(this.game2dRenderContext);
-			}
-		}
+		mobController.update(deltaTime);
 
 		this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));
 	}

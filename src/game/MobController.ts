@@ -4,6 +4,7 @@ import resourceController from './ResourceController.ts';
 import Mob from './Mob.ts';
 import { MOBTYPE } from './Mob.ts';
 import Vector2 from './Vector2.ts';
+import mouseController from './MouseController.ts';
 
 const IMGPATH_GREYMAN: string = './src/assets/greyman.png';
 const IMGPATH_REDMAN: string = './src/assets/redman.png';
@@ -16,8 +17,12 @@ const IMGPATH_MOB_AFRAME: string = './src/assets/aframe.png';
 const IMGPATH_MOB_SAUSAGESIZZLE: string = './src/assets/sausagesizzle.png';
 
 class MobController {
+	gameMobs: Mob[] = [];
+	game2dRenderContext: CanvasRenderingContext2D|null = null;
 
-	Initialise() {
+	Initialise(game2dRenderContext: CanvasRenderingContext2D) {
+		this.game2dRenderContext = game2dRenderContext;
+
 		resourceController.LoadImage(IMGPATH_GREYMAN);
 		resourceController.LoadImage(IMGPATH_REDMAN);
 		resourceController.LoadImage(IMGPATH_BLUEMAN);
@@ -25,6 +30,14 @@ class MobController {
 		resourceController.LoadImage(IMGPATH_MOB_SAUSAGESIZZLE);
 		//resourceController.LoadImage(IMGPATH_MOB_VOLUNTEER);
 		resourceController.LoadImage(IMGPATH_MOB_UNKNOWN);
+
+		//for testing
+		const newMob = mobController.createMobInstance(MOBTYPE.WANDER_ENEMY)
+		newMob.isAlive = true;
+		newMob.randomWander = true;
+		newMob.pos.x = 0;
+		newMob.pos.y = 0;
+		this.gameMobs.push(newMob);
 	}
 
 	createMobInstance(mobType: MOBTYPE): Mob {
@@ -66,6 +79,23 @@ class MobController {
 		}
 
 		return newMob;
+	}
+
+	update(deltaTime: number) {
+
+		if (this.game2dRenderContext) {
+			for (let i = 0; i < this.gameMobs.length; i++) {
+				const curMob = this.gameMobs[i];
+				curMob.update(deltaTime);
+
+				if (curMob.sprite) {
+					curMob.sprite.Render(this.game2dRenderContext);
+				}
+			}
+			if (mouseController.mobBuildGhost && mouseController.mobBuildGhost.sprite) {
+				mouseController.mobBuildGhost.sprite.Render(this.game2dRenderContext);
+			}
+		}
 	}
 }
 
