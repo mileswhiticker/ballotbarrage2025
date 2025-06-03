@@ -5,7 +5,7 @@ export class Sprite {
 	baseImage: HTMLImageElement | null = null;
 	imagePath: string;
 
-	dims: Vector2 = new Vector2(64, 64);
+	dims: Vector2 = new Vector2(32, 32);
 	pos: Vector2 = new Vector2(-99999, -99999);
 	sourceOffset: Vector2 | null = null;	//if null, use the whole image
 	sourceDims: Vector2|null = null;		//if null, use the whole image

@@ -16,11 +16,15 @@ const IMGPATH_MOB_UNKNOWN: string = './src/assets/pinkquestion.png';
 const IMGPATH_MOB_AFRAME: string = './src/assets/aframe.png';
 const IMGPATH_MOB_SAUSAGESIZZLE: string = './src/assets/sausagesizzle.png';
 
+const IMGPATH_BOOTHENTRY: string = './src/assets/boothentry.png';
+
 class MobController {
 	gameMobs: Mob[] = [];
 	playerMobs: Mob[] = [];
 	game2dRenderContext: CanvasRenderingContext2D | null = null;
 	playerGridMobs: (Mob|null)[][] = [];		//	[x grid number][y grid number] = mob in this grid cell
+	envMobs: Mob[] = [];
+	boothMobs: Mob[] = [];
 
 	Initialise(game2dRenderContext: CanvasRenderingContext2D) {
 		this.game2dRenderContext = game2dRenderContext;
@@ -32,6 +36,7 @@ class MobController {
 		resourceController.LoadImage(IMGPATH_MOB_SAUSAGESIZZLE);
 		//resourceController.LoadImage(IMGPATH_MOB_VOLUNTEER);
 		resourceController.LoadImage(IMGPATH_MOB_UNKNOWN);
+		resourceController.LoadImage(IMGPATH_BOOTHENTRY);
 
 		//for testing
 		const newMob = this.createMobInstance(MOBTYPE.WANDER_ENEMY)
@@ -40,6 +45,12 @@ class MobController {
 		newMob.pos.x = 0;
 		newMob.pos.y = 0;
 		this.gameMobs.push(newMob);
+
+		//for testing
+		const boothMob = this.createMobInstance(MOBTYPE.BOOTHENTRY);
+		this.envMobs.push(boothMob);
+		this.boothMobs.push(boothMob);
+		boothMob.jumpToGridFromRawPos(new Vector2(792, 480));
 	}
 
 	createPlayerMob(mobType: MOBTYPE) {
@@ -80,6 +91,13 @@ class MobController {
 					newMob.placeableDesc = "A bad dude";
 					break;
 				}
+			case MOBTYPE.BOOTHENTRY:
+				{
+					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_BOOTHENTRY, MOBTYPE.BOOTHENTRY);
+					newMob.name = "An entrance into the voting booth";
+					newMob.placeableDesc = "The voters are trying to get here.";
+					break;
+				}
 			default:
 				{
 					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_MOB_UNKNOWN, MOBTYPE.UNKNOWN);
@@ -112,6 +130,17 @@ class MobController {
 		if (this.game2dRenderContext) {
 			for (let i = 0; i < this.playerMobs.length; i++) {
 				const curMob = this.playerMobs[i];
+				if (curMob.sprite) {
+					curMob.sprite.Render(this.game2dRenderContext);
+				}
+			}
+		}
+	}
+
+	renderEnvMobs() {
+		if (this.game2dRenderContext) {
+			for (let i = 0; i < this.envMobs.length; i++) {
+				const curMob = this.envMobs[i];
 				if (curMob.sprite) {
 					curMob.sprite.Render(this.game2dRenderContext);
 				}

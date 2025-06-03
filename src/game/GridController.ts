@@ -6,7 +6,7 @@ export class GridRoute {
 }
 
 class GridController {
-	gridCellDim: number = 64;
+	gridCellDim: number = 32;
 	private game2dRenderContext: CanvasRenderingContext2D | null = null;
 	doDrawGridlines: boolean = false;
 

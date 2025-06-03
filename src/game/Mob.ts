@@ -11,7 +11,9 @@ export enum MOBTYPE {
 	AFRAME,
 	SAUSAGESIZZLE,
 	//
-	WANDER_ENEMY
+	WANDER_ENEMY,
+	//
+	BOOTHENTRY
 }
 
 export default class Mob {
