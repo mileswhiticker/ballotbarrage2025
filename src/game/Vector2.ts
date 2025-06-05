@@ -70,4 +70,8 @@ export default class Vector2 {
 		this.x /= val;
 		this.y /= val;
 	}
+
+	equals(other: Vector2): boolean {
+		return (this.x == other.x && this.y == other.y);
+	}
 }

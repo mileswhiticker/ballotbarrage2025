@@ -1,4 +1,4 @@
-//import Mob from './Mob.ts';
+import Mob from './Mob.ts';
 import Vector2 from './Vector2.ts';
 
 export class GridRoute {
@@ -58,12 +58,157 @@ class GridController {
 		return gridCoords;
 	}
 
-	//pathToMob(mobSource: Mob, mobDest: Mob): GridRoute {
-	//	//todo
-	//	const route = new GridRoute();
+	pathToMob(mobSource: Mob, mobDest: Mob): GridRoute {
+		return this.pathToGrid(mobSource.gridCoords, mobDest.gridCoords);
+	}
 
-	//	return route;
-	//}
+	pathToGrid(startCoords: Vector2, endCoords: Vector2): GridRoute {
+		const route = new GridRoute();
+		if (startCoords.x === endCoords.x && startCoords.y === endCoords.y) {
+			console.warn(`GridController::pathToGrid() but start and end are the same! ${endCoords.x},${endCoords.y}`);
+			route.squares.push(endCoords.clone());
+			return route;
+		}
+
+		type GridCell = {
+			pos: Vector2;
+			g: number; // cost from start
+			h: number; // heuristic to end
+			parent: GridCell | null;
+		};
+
+		const start: GridCell = {
+			pos: startCoords.clone(),
+			g: 0,
+			h: this.heuristic(startCoords, endCoords),
+			parent: null
+		};
+
+		const openList: GridCell[] = [start];
+		const closedList: Vector2[] = [];
+
+		function getLowestFCell(list: GridCell[]): GridCell {
+			return list.reduce((lowest, cell) =>
+				cell.g + cell.h < lowest.g + lowest.h ? cell : lowest
+			);
+		}
+
+		while (openList.length > 0) {
+			const current = getLowestFCell(openList);
+			const index = openList.indexOf(current);
+			openList.splice(index, 1);
+			closedList.push(current.pos);
+
+			if (current.pos.equals(endCoords)) {
+				let pathNode: GridCell | null = current;
+				while (pathNode) {
+					route.squares.unshift(pathNode.pos.clone());
+					pathNode = pathNode.parent;
+				}
+				return route;
+			}
+
+			const neighbors: Vector2[] = this.getAdjacentWalkableCells(current.pos);
+			for (const neighborPos of neighbors) {
+				if (closedList.some(p => p.equals(neighborPos))) {
+					continue;
+				}
+
+				const gCost = current.g + 1; // assume uniform movement cost
+				const existing = openList.find(c => c.pos.equals(neighborPos));
+
+				if (!existing) {
+					openList.push({
+						pos: neighborPos.clone(),
+						g: gCost,
+						h: this.heuristic(neighborPos, endCoords),
+						parent: current
+					});
+				} else if (gCost < existing.g) {
+					existing.g = gCost;
+					existing.parent = current;
+				}
+			}
+		}
+
+		console.warn("GridController::pathToGrid() - No path found.");
+		return route;
+	}
+	
+	heuristic(a: Vector2, b: Vector2): number {
+		return this.heuristicManhattan(a, b);
+	}
+
+	heuristicManhattan(a: Vector2, b: Vector2): number {
+		// Manhattan distance
+		return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+	}
+
+	getAdjacentWalkableCells(pos: Vector2): Vector2[] {
+		const directions = [
+			{ x: 0, y: -1 }, // up
+			{ x: 0, y: 1 },  // down
+			{ x: -1, y: 0 }, // left
+			{ x: 1, y: 0 }   // right
+		];
+
+		const neighbors: Vector2[] = [];
+
+		for (const dir of directions) {
+			const nx = pos.x + dir.x;
+			const ny = pos.y + dir.y;
+
+			if (this.isInBounds(nx, ny) && this.isWalkable(nx, ny)) {
+				neighbors.push(new Vector2(nx, ny));
+			}
+		}
+
+		return neighbors;
+	}
+
+	isInBounds(xcoord: number, ycoord: number): boolean {
+		if (xcoord < 0) {
+			return false;
+		}
+		if (ycoord < 0) {
+			return false;
+		}
+
+		//todo: positive grid x and y bounds
+		//
+
+		return true;
+	}
+
+	isWalkable(xcoord: number, ycoord: number): boolean {
+		return this.isInBounds(xcoord, ycoord);
+	}
+
+	debugRoute: GridRoute | null = null;
+
+	renderDebug() {
+		if (this.debugRoute && this.debugRoute.squares.length > 1 && this.game2dRenderContext) {
+			for (let i = 1; i < this.debugRoute.squares.length; i++) {
+				const prevSquare = this.debugRoute.squares[i - 1];
+				const curSquare = this.debugRoute.squares[i];
+
+				this.game2dRenderContext.strokeStyle = '#0000FF';
+				this.game2dRenderContext.lineWidth = 1;
+
+				this.game2dRenderContext.beginPath();
+				this.game2dRenderContext.moveTo(prevSquare.x * this.gridCellDim + this.gridCellDim / 2, prevSquare.y * this.gridCellDim + this.gridCellDim / 2);
+				this.game2dRenderContext.lineTo(curSquare.x * this.gridCellDim + this.gridCellDim / 2, curSquare.y * this.gridCellDim + this.gridCellDim / 2);
+				this.game2dRenderContext.stroke();
+
+			}
+		}
+	}
+}
+
+interface GridCell {
+	pos: Vector2;
+	heuristicDist: number;
+	parent: GridCell|null;
 }
 
 const gridController = new GridController();

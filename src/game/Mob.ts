@@ -86,7 +86,11 @@ export default class Mob {
 			this.targetPos.x = Math.random() * 500;
 			this.targetPos.y = Math.random() * 500;
 
-			//console.log(`Arrived! new targetPos:`, this.targetPos);
+			const startCoords = gridController.getGridCoords(this.pos);
+			const targetCoords = gridController.getGridCoords(this.targetPos);
+			gridController.debugRoute = gridController.pathToGrid(startCoords, targetCoords);
+
+			console.log(`new grid route:`, gridController.debugRoute);
 		}
 		else {
 			//move towards target

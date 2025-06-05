@@ -39,6 +39,7 @@ class GameController {
 
 		this.renderEmptyCanvas();
 		gridController.renderGridLines();
+		gridController.renderDebug();
 		mobController.renderEnvMobs();
 		mobController.renderPlayerMobs();
 		mobController.renderGameMobs();
