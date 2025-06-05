@@ -120,7 +120,13 @@ class GridController {
 					continue;
 				}
 
-				const gCost = current.g + 1; // assume uniform movement cost
+				let gCost = current.g + 1; // assume uniform movement cost
+
+				//make diags slightly more expensive to disincentivise them
+				if (current.pos.x != neighborPos.x && current.pos.y != neighborPos.y) {
+					gCost += 0.1;
+				}
+
 				const existing = openList.find(c => c.pos.equals(neighborPos));
 
 				if (!existing) {
@@ -147,7 +153,9 @@ class GridController {
 
 	heuristicManhattan(a: Vector2, b: Vector2): number {
 		// Manhattan distance
-		return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+		const heuristicDist = Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+
+		return heuristicDist;
 	}
 
 	cardinals = [
