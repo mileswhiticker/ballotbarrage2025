@@ -4,6 +4,7 @@ import resourceController from './ResourceController.ts';
 import Mob from './Mob.ts';
 import { MOBTYPE } from './Mob.ts';
 import Vector2 from './Vector2.ts';
+import gridController from './GridController.ts';
 //import mouseController from './MouseController.ts';
 
 const IMGPATH_GREYMAN: string = './src/assets/greyman.png';
@@ -38,7 +39,7 @@ class MobController {
 		resourceController.LoadImage(IMGPATH_MOB_UNKNOWN);
 		resourceController.LoadImage(IMGPATH_BOOTHENTRY);
 
-		//for testing
+		//for testing: create an enemy mob
 		const newMob = this.createMobInstance(MOBTYPE.WANDER_ENEMY)
 		newMob.isAlive = true;
 		newMob.randomWander = true;
@@ -46,11 +47,52 @@ class MobController {
 		newMob.pos.y = 0;
 		this.gameMobs.push(newMob);
 
-		//for testing
+		//for testing: create a booth environmental mob
 		const boothMob = this.createMobInstance(MOBTYPE.BOOTHENTRY);
 		this.envMobs.push(boothMob);
 		this.boothMobs.push(boothMob);
 		boothMob.jumpToGridFromRawPos(new Vector2(792, 480));
+
+		//for testing: create some random player mobs
+		let numMobs = 30;
+		let tries = 3;
+		while (numMobs > 0) {
+			const gridCoords = new Vector2(Math.floor(Math.random() * 27), Math.floor(Math.random() * 19));
+			//console.log("trying to create mob at...", gridCoords);
+			const blockingmob = mobController.getPlayerMobInGridCell(gridCoords);
+			if (blockingmob) {
+
+				//safety check
+				tries--;
+				if (tries <= 0) {
+					//console.warn("too many failed attempts in a row! finishing early");
+					break;
+				}
+
+				//skip this cell
+				//console.log("skipping blocker");
+				continue;
+			}
+			tries = 3;
+			numMobs--;
+
+			//create a random player mob
+			const result = Math.random() * 3;
+			let mobType;
+			if (result < 1) {
+				mobType = MOBTYPE.VOLUNTEER;
+			}
+			else if (result < 2) {
+				mobType = MOBTYPE.AFRAME;
+			}
+			else {
+				mobType = MOBTYPE.SAUSAGESIZZLE;
+			}
+			const playerMob = this.createPlayerMob(mobType);
+			playerMob.jumpToGridFromRawPos(gridController.getRawPosFromGridCoords(gridCoords));
+
+			//console.log("checking if grid update was successful", mobController.getPlayerMobInGridCell(gridCoords));
+		}
 	}
 
 	createPlayerMob(mobType: MOBTYPE) {
@@ -194,11 +236,12 @@ class MobController {
 	}
 
 	getPlayerMobInGridCell(gridCoords: Vector2): Mob|null {
+		//console.error(`getPlayerMobInGridCell()`, gridCoords);
 
 		//is the X grid dimension big enough?
-		if (this.playerGridMobs.length >= gridCoords.x) {
+		if (this.playerGridMobs.length > gridCoords.x) {
 			//is the Y grid dimension big enough?
-			if (this.playerGridMobs[gridCoords.x].length >= gridCoords.y) {
+			if (this.playerGridMobs[gridCoords.x].length > gridCoords.y) {
 				return this.playerGridMobs[gridCoords.x][gridCoords.y];
 			}
 		}

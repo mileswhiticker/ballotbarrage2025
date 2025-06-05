@@ -1,4 +1,5 @@
 import Mob from './Mob.ts';
+import mobController from './MobController.ts';
 import Vector2 from './Vector2.ts';
 
 export class GridRoute {
@@ -7,6 +8,7 @@ export class GridRoute {
 
 class GridController {
 	gridCellDim: number = 32;
+	gridMax: Vector2 = new Vector2(26, 16);
 	private game2dRenderContext: CanvasRenderingContext2D | null = null;
 	doDrawGridlines: boolean = false;
 
@@ -56,6 +58,10 @@ class GridController {
 		gridCoords.y = Math.round(rawPos.y / this.gridCellDim);
 
 		return gridCoords;
+	}
+
+	getRawPosFromGridCoords(gridCoords: Vector2) {
+		return new Vector2(gridCoords.x * this.gridCellDim, gridCoords.y * this.gridCellDim);
 	}
 
 	pathToMob(mobSource: Mob, mobDest: Mob): GridRoute {
@@ -190,7 +196,17 @@ class GridController {
 	}
 
 	isWalkable(xcoord: number, ycoord: number): boolean {
-		return this.isInBounds(xcoord, ycoord);
+		if (!this.isInBounds(xcoord, ycoord)) {
+			return false;
+		}
+
+		const gridCoords = new Vector2(xcoord, ycoord);
+		const blockingMob = mobController.getPlayerMobInGridCell(gridCoords);
+		if (blockingMob) {
+			return false;
+		}
+
+		return true;
 	}
 
 	debugRoute: GridRoute | null = null;
