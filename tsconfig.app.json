@@ -11,7 +11,7 @@
       "@controllers/*": [ "./src/game/controllers/*" ],
       "@components/*": [ "./src/components/*" ],
       "@assets/*": [ "./src/assets/*" ],
-      "@utils/*": [ "./src/game/*" ]
+      "@utils/*": [ "./src/utils/*" ]
     }
   }
 }
