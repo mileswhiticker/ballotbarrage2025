@@ -68,8 +68,11 @@ class GridController {
 		return this.pathToGrid(mobSource.gridCoords, mobDest.gridCoords);
 	}
 
-	pathToGrid(startCoords: Vector2, endCoords: Vector2): GridRoute {
+	pathToGrid(startCoords: Vector2, endCoords: Vector2, doDebug = false): GridRoute {
 		const route = new GridRoute();
+		if (doDebug) {
+			gridController.debugRoute = route;
+		}
 		if (startCoords.x === endCoords.x && startCoords.y === endCoords.y) {
 			console.warn(`GridController::pathToGrid() but start and end are the same! ${endCoords.x},${endCoords.y}`);
 			route.squares.push(endCoords.clone());

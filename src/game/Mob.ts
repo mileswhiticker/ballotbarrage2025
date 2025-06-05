@@ -151,8 +151,7 @@ export default class Mob {
 					this.tLeftThinking = deltaTime * 0.1;
 					return;
 				}
-				this.moveRoute = gridController.pathToGrid(startCoords, targetCoords);
-				gridController.debugRoute = this.moveRoute;
+				this.moveRoute = gridController.pathToGrid(startCoords, targetCoords, true);
 
 				//console.log(`new grid route:`, gridController.debugRoute);
 			}
