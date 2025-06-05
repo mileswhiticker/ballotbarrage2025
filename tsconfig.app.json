@@ -8,7 +8,7 @@
     "paths": {
       "@/*": [ "./src/*" ],
       "@game/*": [ "./src/game/*" ],
-      "@controllers/*": [ "./src/game/*" ],
+      "@controllers/*": [ "./src/game/controllers/*" ],
       "@components/*": [ "./src/components/*" ],
       "@assets/*": [ "./src/assets/*" ],
       "@utils/*": [ "./src/game/*" ]
