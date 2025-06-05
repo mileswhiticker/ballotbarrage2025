@@ -1,6 +1,6 @@
-import Mob from './Mob.ts';
-import mobController from './MobController.ts';
-import Vector2 from './Vector2.ts';
+import Mob from '@game/Mob.ts';
+import mobController from '@controllers/MobController.ts';
+import Vector2 from '@utils/Vector2.ts';
 
 export class GridRoute {
 	squares: Vector2[] = [];

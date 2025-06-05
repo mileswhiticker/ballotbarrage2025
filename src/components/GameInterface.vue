@@ -1,9 +1,9 @@
 <script setup lang="ts">
 	import { ref, watchEffect, computed } from 'vue';
-	import BottomPanel from './BottomPanel.vue';
-	import TopPanel from './TopPanel.vue';
-	import { PlayerInfo } from '../game/Player.ts';
-	import mouseController from '../game/MouseController.ts';
+	import BottomPanel from '@components/BottomPanel.vue';
+	import TopPanel from '@components/TopPanel.vue';
+	import { PlayerInfo } from '@game/Player.ts';
+	import mouseController from '@controllers/MouseController.ts';
 	const props = defineProps<{
 		gameWindowWidth: Ref<number>,
 		gameWindowHeight: Ref<number>,

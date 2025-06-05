@@ -1,8 +1,8 @@
 <script setup lang="ts">
-	import PlaceableMob from './PlaceableMob.vue';
-	import { PlayerInfo } from '../game/Player.ts';
-	import playerController from '../game/PlayerController.ts';
-	import mouseController from '../game/MouseController.ts';
+	import PlaceableMob from '@components/PlaceableMob.vue';
+	import { PlayerInfo } from '@game/Player.ts';
+	import playerController from '@controllers/PlayerController.ts';
+	import mouseController from '@controllers/MouseController.ts';
 	const props = defineProps<{
 		playerInfo: Ref<PlayerInfo>
 	}>();

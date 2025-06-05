@@ -1,5 +1,5 @@
-import Vector2 from './Vector2.ts';
-import resourceController from './ResourceController.ts';
+import Vector2 from '@utils/Vector2.ts';
+import resourceController from '@controllers/ResourceController.ts';
 
 export class Sprite {
 	baseImage: HTMLImageElement | null = null;

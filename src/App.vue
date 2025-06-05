@@ -1,5 +1,5 @@
 <script setup lang="ts">
-	import GameWrapper from './GameWrapper.vue';
+	import GameWrapper from '@/GameWrapper.vue';
 </script>
 
 <template>

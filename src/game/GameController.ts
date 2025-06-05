@@ -1,10 +1,10 @@
-import Mob from './Mob.ts';
-//import { MOBTYPE } from './Mob.ts';
-import playerController from './PlayerController.ts';
-import mobController from './MobController.ts';
-import mouseController from './MouseController.ts';
-import gridController from './GridController.ts';
-//import Vector2 from './Vector2.ts';
+import Mob from '@game/Mob.ts';
+//import { MOBTYPE } from '@game/Mob.ts';
+import playerController from '@controllers/PlayerController.ts';
+import mobController from '@controllers/MobController.ts';
+import mouseController from '@controllers/MouseController.ts';
+import gridController from '@controllers/GridController.ts';
+//import Vector2 from '@utils/Vector2.ts';
 
 class GameController {
 	mobs: Mob[] = [];

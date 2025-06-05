@@ -1,4 +1,4 @@
-import { ColourInfo } from './ColourInfo.ts';
+import { ColourInfo } from '@utils/ColourInfo.ts';
 
 export interface PlayerInfo {
 	themePrimary: ColourInfo;

@@ -1,11 +1,10 @@
 
-import resourceController from './ResourceController.ts';
+import resourceController from '@controllers/ResourceController.ts';
 
-import Mob from './Mob.ts';
-import { MOBTYPE } from './Mob.ts';
-import Vector2 from './Vector2.ts';
-import gridController from './GridController.ts';
-//import mouseController from './MouseController.ts';
+import Mob from '@game/Mob.ts';
+import { MOBTYPE } from '@game/Mob.ts';
+import Vector2 from '@utils/Vector2.ts';
+import gridController from '@controllers/GridController.ts';
 
 const IMGPATH_GREYMAN: string = './src/assets/greyman.png';
 const IMGPATH_REDMAN: string = './src/assets/redman.png';

@@ -1,9 +1,9 @@
-import { MOBTYPE } from './Mob.ts';
-import Mob from './Mob.ts';
+import { MOBTYPE } from '@game/Mob.ts';
+import Mob from '@game/Mob.ts';
 import { ref, type Ref } from 'vue';
-import mobController from './MobController.ts'
-import gridController from './GridController.ts';
-import Vector2 from './Vector2.ts';
+import mobController from '@controllers/MobController.ts'
+import gridController from '@controllers/GridController.ts';
+import Vector2 from '@utils/Vector2.ts';
 
 class MouseController {
 	private mobBuildGhostType: Ref<MOBTYPE> = ref(MOBTYPE.NONE);

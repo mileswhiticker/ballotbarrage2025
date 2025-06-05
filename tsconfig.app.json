@@ -6,7 +6,12 @@
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
 
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [ "./src/*" ],
+      "@game/*": [ "./src/game/*" ],
+      "@controllers/*": [ "./src/game/*" ],
+      "@components/*": [ "./src/components/*" ],
+      "@assets/*": [ "./src/assets/*" ],
+      "@utils/*": [ "./src/game/*" ]
     }
   }
 }

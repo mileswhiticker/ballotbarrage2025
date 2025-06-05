@@ -1,7 +1,7 @@
-import Vector2 from './Vector2.ts';
-import { Sprite } from './Sprite.ts';
-import gridController, { GridRoute } from './GridController.ts';
-import mobController from './MobController.ts';
+import Vector2 from '@utils/Vector2.ts';
+import { Sprite } from '@utils/Sprite.ts';
+import gridController, { GridRoute } from '@controllers/GridController.ts';
+import mobController from '@controllers/MobController.ts';
 
 export enum MOBTYPE {
 	UNKNOWN = -1,

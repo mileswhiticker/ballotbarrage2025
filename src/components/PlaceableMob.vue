@@ -1,8 +1,8 @@
 <script setup lang="ts">
-	import Mob from '../game/Mob.ts';
+	import Mob from '@game/Mob.ts';
 	import { ref, watchEffect, computed } from 'vue';
-	import mouseController from '../game/MouseController.ts';
-	import { PlayerInfo } from '../game/Player.ts';
+	import mouseController from '@controllers/MouseController.ts';
+	import { PlayerInfo } from '@game/Player.ts';
 	const props = defineProps<{
 		playerInfo: Ref<PlayerInfo>,
 		placeableMob: Mob

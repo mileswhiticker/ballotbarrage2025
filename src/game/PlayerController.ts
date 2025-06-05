@@ -1,9 +1,9 @@
 
-import { type PlayerInfo, random_name } from '../game/Player.ts';
-import { ColourInfo } from './ColourInfo.ts';
-import Mob from './Mob.ts';
-import { MOBTYPE } from './Mob.ts';
-import mobController from './MobController.ts';
+import { type PlayerInfo, random_name } from '@game/Player.ts';
+import { ColourInfo } from '@utils/ColourInfo.ts';
+import Mob from '@game/Mob.ts';
+import { MOBTYPE } from '@game/Mob.ts';
+import mobController from '@controllers/MobController.ts';
 
 class PlayerController {
 	allPlaceableMobs: Mob[] = [];

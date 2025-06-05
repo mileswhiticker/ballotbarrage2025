@@ -1,9 +1,9 @@
 <script setup lang="ts">
-	import GameCanvas from './components/GameCanvas.vue';
-	import GameInterface from './components/GameInterface.vue';
+	import GameCanvas from '@components/GameCanvas.vue';
+	import GameInterface from '@components/GameInterface.vue';
 	import { onMounted, onUnmounted, ref, computed, watchEffect } from 'vue';
-	import { PlayerInfo } from './game/Player.ts';
-	import playerController from './game/PlayerController';
+	import { PlayerInfo } from '@game/Player.ts';
+	import playerController from '@game/PlayerController';
 	
 	let gameWindowWidth = ref(0);
 	let gameWindowHeight = ref(0);

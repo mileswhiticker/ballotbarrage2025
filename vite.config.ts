@@ -1,11 +1,23 @@
 import { defineConfig } from 'vite';
-import plugin from '@vitejs/plugin-vue';
+import vue from '@vitejs/plugin-vue';
+import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [plugin()],
-    server: {
-        port: 53076,
-    },
-    base: '/ballotbarrage2025/'
+	plugins: [vue()],
+	server: {
+	port: 53076,
+	},
+	resolve: {
+		alias: {
+			'@': path.resolve(__dirname, 'src'),
+			'@game': path.resolve(__dirname, 'src/game'),
+			'@controllers': path.resolve(__dirname, 'src/game'),
+			'@components': path.resolve(__dirname, 'src/components'),
+			'@assets': path.resolve(__dirname, 'src/assets'),
+			'@utils': path.resolve(__dirname, 'src/game'),
+		},
+	},
+
+	base: '/ballotbarrage2025/'
 })

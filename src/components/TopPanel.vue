@@ -1,5 +1,5 @@
 <script setup lang="ts">
-	import PlayerPanels from './PlayerPanels.vue';
+	import PlayerPanels from '@components/PlayerPanels.vue';
 </script>
 
 <template>
