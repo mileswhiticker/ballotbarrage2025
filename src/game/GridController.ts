@@ -144,13 +144,22 @@ class GridController {
 		return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
 	}
 
+	cardinals = [
+		{ x: 0, y: -1 }, // up
+		{ x: 0, y: 1 },  // down
+		{ x: -1, y: 0 }, // left
+		{ x: 1, y: 0 },   // right
+	];
+
+	subcardinals = [
+		{ x: -1, y: -1 }, // top left
+		{ x: 1, y: -1 },  // top right
+		{ x: -1, y: 1 }, // bottom left
+		{ x: 1, y: 1 }   // bottom right
+	];
+
 	getAdjacentWalkableCells(pos: Vector2): Vector2[] {
-		const directions = [
-			{ x: 0, y: -1 }, // up
-			{ x: 0, y: 1 },  // down
-			{ x: -1, y: 0 }, // left
-			{ x: 1, y: 0 }   // right
-		];
+		const directions = [... this.cardinals, ...this.subcardinals];
 
 		const neighbors: Vector2[] = [];
 
