@@ -31,7 +31,7 @@ class GameController {
 	tLastUpdate: number = 0;
 	Update() {
 		const tThisUpdate = Date.now();
-		const deltaTime = tThisUpdate - this.tLastUpdate;
+		const deltaTime = (tThisUpdate - this.tLastUpdate) / 1000;
 		this.tLastUpdate = tThisUpdate;
 		//console.log("GameController::Update()", deltaTime);
 
