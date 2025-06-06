@@ -4,6 +4,7 @@ import playerController from '@controllers/PlayerController.ts';
 import mobController from '@controllers/MobController.ts';
 import mouseController from '@controllers/MouseController.ts';
 import gridController from '@controllers/GridController.ts';
+import enemyController from '@controllers/EnemyController.ts';
 //import Vector2 from '@utils/Vector2.ts';
 
 class GameController {
@@ -22,6 +23,7 @@ class GameController {
 		mobController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
 		gridController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
 		playerController.Initialise();
+		enemyController.Initialise();
 
 		this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));
 
@@ -35,6 +37,7 @@ class GameController {
 		this.tLastUpdate = tThisUpdate;
 		//console.log("GameController::Update()", deltaTime);
 
+		enemyController.update(deltaTime);
 		mobController.update(deltaTime);
 
 		this.renderEmptyCanvas();

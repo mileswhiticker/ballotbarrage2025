@@ -1,7 +1,7 @@
 
 import resourceController from '@controllers/ResourceController.ts';
 
-import Mob from '@game/Mob.ts';
+import Mob, { AI_GOAL } from '@game/Mob.ts';
 import { MOBTYPE } from '@game/Mob.ts';
 import Vector2 from '@utils/Vector2.ts';
 import gridController from '@controllers/GridController.ts';
@@ -9,23 +9,26 @@ import gridController from '@controllers/GridController.ts';
 const IMGPATH_GREYMAN: string = './src/assets/greyman.png';
 const IMGPATH_REDMAN: string = './src/assets/redman.png';
 const IMGPATH_BLUEMAN: string = './src/assets/blueman.png';
+const IMGPATH_PURPLEMAN: string = './src/assets/purpleman.png';
 //const PATH_BORDER10: string = './src/assets/10 Border 01.png';
 
 const IMGPATH_MOB_UNKNOWN: string = './src/assets/pinkquestion.png';
 //const IMGPATH_MOB_VOLUNTEER: string = './src/assets/greyman.png';
 const IMGPATH_MOB_AFRAME: string = './src/assets/aframe.png';
-const IMGPATH_MOB_SAUSAGESIZZLE: string = './src/assets/sausagesizzle.png';
+//const IMGPATH_MOB_SAUSAGESIZZLE: string = './src/assets/sausagesizzle.png';
 const IMGPATH_MOB_BBQ: string = './src/assets/bbq.png';
 
 const IMGPATH_BOOTHENTRY: string = './src/assets/boothentry.png';
+const IMGPATH_BUS: string = './src/assets/bus.png';
 
 class MobController {
-	gameMobs: Mob[] = [];
+	enemyMobs: Mob[] = [];
 	playerMobs: Mob[] = [];
 	game2dRenderContext: CanvasRenderingContext2D | null = null;
 	playerGridMobs: (Mob|null)[][] = [];		//	[x grid number][y grid number] = mob in this grid cell
 	envMobs: Mob[] = [];
 	boothMobs: Mob[] = [];
+	enemySpawners: Mob[] = [];
 
 	Initialise(game2dRenderContext: CanvasRenderingContext2D) {
 		this.game2dRenderContext = game2dRenderContext;
@@ -33,28 +36,34 @@ class MobController {
 		resourceController.LoadImage(IMGPATH_GREYMAN);
 		resourceController.LoadImage(IMGPATH_REDMAN);
 		resourceController.LoadImage(IMGPATH_BLUEMAN);
+		resourceController.LoadImage(IMGPATH_PURPLEMAN);
 		resourceController.LoadImage(IMGPATH_MOB_AFRAME);
 		resourceController.LoadImage(IMGPATH_MOB_BBQ);
 		//resourceController.LoadImage(IMGPATH_MOB_VOLUNTEER);
 		resourceController.LoadImage(IMGPATH_MOB_UNKNOWN);
 		resourceController.LoadImage(IMGPATH_BOOTHENTRY);
+		resourceController.LoadImage(IMGPATH_BUS);
 
 		//for testing: create an enemy mob
-		const newMob = this.createMobInstance(MOBTYPE.WANDER_ENEMY)
-		newMob.isAlive = true;
-		newMob.randomWander = true;
-		newMob.pos.x = 0;
-		newMob.pos.y = 0;
-		this.gameMobs.push(newMob);
+		//const newMob = this.createMobInstance(MOBTYPE.WANDER_ENEMY)
+		//newMob.isAlive = true;
+		//newMob.randomWander = true;
+		//newMob.pos.x = 0;
+		//newMob.pos.y = 0;
+		//this.gameMobs.push(newMob);
 
 		//for testing: create a booth environmental mob
-		const boothMob = this.createMobInstance(MOBTYPE.BOOTHENTRY);
+		let boothMob = this.createMobInstance(MOBTYPE.BOOTHENTRY);
 		this.envMobs.push(boothMob);
 		this.boothMobs.push(boothMob);
 		boothMob.jumpToGridFromRawPos(new Vector2(792, 480));
+		boothMob = this.createMobInstance(MOBTYPE.BOOTHENTRY);
+		this.envMobs.push(boothMob);
+		this.boothMobs.push(boothMob);
+		boothMob.jumpToGridFromRawPos(new Vector2(792, 90));
 
 		//for testing: create some random player mobs
-		let numMobs = 30;
+		let numMobs = 0;
 		let tries = 3;
 		while (numMobs > 0) {
 			const gridCoords = new Vector2(Math.floor(Math.random() * 27), Math.floor(Math.random() * 19));
@@ -95,6 +104,15 @@ class MobController {
 		}
 	}
 
+	createActiveEnemyMob(mobType: MOBTYPE, spawnloc: Vector2) {
+		const newMob = this.createMobInstance(mobType);
+		this.enemyMobs.push(newMob);
+		newMob.jumpToGridFromRawPos(spawnloc);
+		newMob.isAlive = true;
+		newMob.myGoal = AI_GOAL.SEEK_BOOTH;
+		//console.log(`createActiveEnemyMob(${mobType})`, newMob);
+	}
+
 	createPlayerMob(mobType: MOBTYPE) {
 		const newMob = this.createMobInstance(mobType);
 		this.playerMobs.push(newMob);
@@ -110,6 +128,7 @@ class MobController {
 					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_MOB_AFRAME, MOBTYPE.AFRAME);
 					newMob.name = "A-Frame with posters";
 					newMob.placeableDesc = "A stationary poster saying \'Vote for me!\'";
+					newMob.isSolid = true;
 					break;
 				}
 			case MOBTYPE.SAUSAGESIZZLE:
@@ -117,6 +136,7 @@ class MobController {
 					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_MOB_BBQ, MOBTYPE.SAUSAGESIZZLE);
 					newMob.name = "Sausage sizzle";
 					newMob.placeableDesc = "A stall selling a tasty snack.";
+					newMob.isSolid = true;
 					break;
 				}
 			case MOBTYPE.VOLUNTEER:
@@ -124,11 +144,40 @@ class MobController {
 					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_BLUEMAN, MOBTYPE.VOLUNTEER);
 					newMob.name = "Volunteers";
 					newMob.placeableDesc = "Your front line troopers, handing out flyers to voters.";
+					newMob.isSolid = true;
 					break;
-				} 
+				}
 			case MOBTYPE.WANDER_ENEMY:
 				{
 					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_REDMAN, MOBTYPE.WANDER_ENEMY);
+					newMob.name = "Wandering enemy";
+					newMob.placeableDesc = "A bad dude";
+					break;
+				}
+			case MOBTYPE.VOTER_UNDECIDED:
+				{
+					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_GREYMAN, MOBTYPE.VOTER_UNDECIDED);
+					newMob.name = "Wandering enemy";
+					newMob.placeableDesc = "A bad dude";
+					break;
+				}
+			case MOBTYPE.VOTER_RED:
+				{
+					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_REDMAN, MOBTYPE.VOTER_RED);
+					newMob.name = "Wandering enemy";
+					newMob.placeableDesc = "A bad dude";
+					break;
+				}
+			case MOBTYPE.VOTER_BLUE:
+				{
+					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_BLUEMAN, MOBTYPE.VOTER_BLUE);
+					newMob.name = "Wandering enemy";
+					newMob.placeableDesc = "A bad dude";
+					break;
+				}
+			case MOBTYPE.VOTER_PURPLE:
+				{
+					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_PURPLEMAN, MOBTYPE.VOTER_PURPLE);
 					newMob.name = "Wandering enemy";
 					newMob.placeableDesc = "A bad dude";
 					break;
@@ -140,9 +189,17 @@ class MobController {
 					newMob.placeableDesc = "The voters are trying to get here.";
 					break;
 				}
+			case MOBTYPE.ENEMYSPAWNER:
+				{
+					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_BUS, MOBTYPE.ENEMYSPAWNER);
+					newMob.name = "Voter arrival point";
+					newMob.placeableDesc = "Voters arrive from here";
+					break;
+				}
 			default:
 				{
 					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_MOB_UNKNOWN, MOBTYPE.UNKNOWN);
+					console.warn(`MobController::createMobInstance() unknown mob type ${mobType} requested!`);
 					break;
 				}
 		}
@@ -151,16 +208,21 @@ class MobController {
 	}
 
 	update(deltaTime: number) {
-		for (let i = 0; i < this.gameMobs.length; i++) {
-			const curMob = this.gameMobs[i];
+		for (let i = 0; i < this.enemyMobs.length; i++) {
+			const curMob = this.enemyMobs[i];
+			curMob.update(deltaTime);
+		}
+
+		for (let i = 0; i < this.enemyMobs.length; i++) {
+			const curMob = this.enemyMobs[i];
 			curMob.update(deltaTime);
 		}
 	}
 
 	renderGameMobs() {
 		if (this.game2dRenderContext) {
-			for (let i = 0; i < this.gameMobs.length; i++) {
-				const curMob = this.gameMobs[i];
+			for (let i = 0; i < this.enemyMobs.length; i++) {
+				const curMob = this.enemyMobs[i];
 				if (curMob.sprite) {
 					curMob.sprite.Render(this.game2dRenderContext);
 				}
@@ -195,9 +257,9 @@ class MobController {
 
 		//todo: safety checks before it gets to this point
 		const blockingMob = this.getPlayerMobInGridCell(mob.gridCoords);
-		if (blockingMob) {
+		if (blockingMob && blockingMob.blocksMovement(mob)) {
 			console.error(`ERROR MobController::updatePlayerMobGridPos() a mob tried to jump to grid ${mob.gridCoords.x},${mob.gridCoords.y} but it was already occupied!`, mob);
-			return
+			return;
 		}
 
 		//safety check: the old grid position should already be valid 
@@ -247,6 +309,16 @@ class MobController {
 		}
 
 		//could not find anything
+		return null;
+	}
+
+	getRandomBoothMob(): Mob | null {
+		if (this.boothMobs.length > 0) {
+			const index = Math.round(Math.random() * (this.boothMobs.length - 1));
+			const chosenBooth = this.boothMobs[index];
+			//console.log(`getRandomBoothMob()`, index, chosenBooth, this.boothMobs);
+			return chosenBooth;
+		}
 		return null;
 	}
 }

@@ -69,6 +69,7 @@ class GridController {
 	}
 
 	pathToGrid(startCoords: Vector2, endCoords: Vector2, doDebug = false): GridRoute {
+		//console.log(`pathToGrid() start`);
 		const route = new GridRoute();
 		if (doDebug) {
 			gridController.debugRoute = route;
@@ -114,6 +115,7 @@ class GridController {
 					route.squares.unshift(pathNode.pos.clone());
 					pathNode = pathNode.parent;
 				}
+				//console.log(`pathToGrid() success`,route);
 				return route;
 			}
 
@@ -213,7 +215,7 @@ class GridController {
 
 		const gridCoords = new Vector2(xcoord, ycoord);
 		const blockingMob = mobController.getPlayerMobInGridCell(gridCoords);
-		if (blockingMob) {
+		if (blockingMob && blockingMob.blocksMovement()) {
 			return false;
 		}
 
@@ -239,12 +241,6 @@ class GridController {
 			}
 		}
 	}
-}
-
-interface GridCell {
-	pos: Vector2;
-	heuristicDist: number;
-	parent: GridCell|null;
 }
 
 const gridController = new GridController();
