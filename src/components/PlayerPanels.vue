@@ -8,7 +8,10 @@
 
 <template>
 	<div id="playerPanels">
-		<PlayerPanel :playerInfo="playerController.getCurrentPlayer()" :isCurrentPlayer="false" />
+		<div v-for="curPlayerInfo in playerController.getNonPlayerCharacters().value" :key="curPlayerInfo.id">
+			<PlayerPanel :playerInfo="curPlayerInfo" :isCurrentPlayer="false" />
+		</div>
+		<PlayerPanel :playerInfo="playerController.getCurrentPlayer()" :isCurrentPlayer="true" />
 	</div>
 </template>
 

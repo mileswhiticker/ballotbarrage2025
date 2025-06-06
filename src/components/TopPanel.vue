@@ -10,7 +10,6 @@
 
 <style scoped>
 	#topPanel {
-		background-color: purple;
 		opacity: 0.5;
 		grid-row-start: 1;
 		grid-row-end: 1;
