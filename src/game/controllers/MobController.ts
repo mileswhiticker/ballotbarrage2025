@@ -15,6 +15,7 @@ const IMGPATH_MOB_UNKNOWN: string = './src/assets/pinkquestion.png';
 //const IMGPATH_MOB_VOLUNTEER: string = './src/assets/greyman.png';
 const IMGPATH_MOB_AFRAME: string = './src/assets/aframe.png';
 const IMGPATH_MOB_SAUSAGESIZZLE: string = './src/assets/sausagesizzle.png';
+const IMGPATH_MOB_BBQ: string = './src/assets/bbq.png';
 
 const IMGPATH_BOOTHENTRY: string = './src/assets/boothentry.png';
 
@@ -33,7 +34,7 @@ class MobController {
 		resourceController.LoadImage(IMGPATH_REDMAN);
 		resourceController.LoadImage(IMGPATH_BLUEMAN);
 		resourceController.LoadImage(IMGPATH_MOB_AFRAME);
-		resourceController.LoadImage(IMGPATH_MOB_SAUSAGESIZZLE);
+		resourceController.LoadImage(IMGPATH_MOB_BBQ);
 		//resourceController.LoadImage(IMGPATH_MOB_VOLUNTEER);
 		resourceController.LoadImage(IMGPATH_MOB_UNKNOWN);
 		resourceController.LoadImage(IMGPATH_BOOTHENTRY);
@@ -113,7 +114,7 @@ class MobController {
 				}
 			case MOBTYPE.SAUSAGESIZZLE:
 				{
-					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_MOB_SAUSAGESIZZLE, MOBTYPE.SAUSAGESIZZLE);
+					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_MOB_BBQ, MOBTYPE.SAUSAGESIZZLE);
 					newMob.name = "Sausage sizzle";
 					newMob.placeableDesc = "A stall selling a tasty snack.";
 					break;
