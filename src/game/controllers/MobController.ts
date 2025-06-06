@@ -10,6 +10,7 @@ const IMGPATH_GREYMAN: string = './src/assets/greyman.png';
 const IMGPATH_REDMAN: string = './src/assets/redman.png';
 const IMGPATH_BLUEMAN: string = './src/assets/blueman.png';
 const IMGPATH_PURPLEMAN: string = './src/assets/purpleman.png';
+const IMGPATH_VOLUNTEER: string = './src/assets/volunteer.png';
 //const PATH_BORDER10: string = './src/assets/10 Border 01.png';
 
 const IMGPATH_MOB_UNKNOWN: string = './src/assets/pinkquestion.png';
@@ -37,6 +38,7 @@ class MobController {
 		resourceController.LoadImage(IMGPATH_REDMAN);
 		resourceController.LoadImage(IMGPATH_BLUEMAN);
 		resourceController.LoadImage(IMGPATH_PURPLEMAN);
+		resourceController.LoadImage(IMGPATH_VOLUNTEER);
 		resourceController.LoadImage(IMGPATH_MOB_AFRAME);
 		resourceController.LoadImage(IMGPATH_MOB_BBQ);
 		//resourceController.LoadImage(IMGPATH_MOB_VOLUNTEER);
@@ -56,11 +58,11 @@ class MobController {
 		let boothMob = this.createMobInstance(MOBTYPE.BOOTHENTRY);
 		this.envMobs.push(boothMob);
 		this.boothMobs.push(boothMob);
-		boothMob.jumpToGridFromRawPos(new Vector2(792, 480));
+		boothMob.jumpToGridFromRawPos(new Vector2(792, 450));
 		boothMob = this.createMobInstance(MOBTYPE.BOOTHENTRY);
 		this.envMobs.push(boothMob);
 		this.boothMobs.push(boothMob);
-		boothMob.jumpToGridFromRawPos(new Vector2(792, 90));
+		boothMob.jumpToGridFromRawPos(new Vector2(792, 130));
 
 		//for testing: create some random player mobs
 		let numMobs = 0;
@@ -141,7 +143,7 @@ class MobController {
 				}
 			case MOBTYPE.VOLUNTEER:
 				{
-					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_BLUEMAN, MOBTYPE.VOLUNTEER);
+					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_VOLUNTEER, MOBTYPE.VOLUNTEER);
 					newMob.name = "Volunteers";
 					newMob.placeableDesc = "Your front line troopers, handing out flyers to voters.";
 					newMob.isSolid = true;
@@ -255,12 +257,12 @@ class MobController {
 	updatePlayerMobGridPos(mob: Mob, oldGridPos: Vector2) {
 		//console.log('MobController::updatePlayerMobGridPos()', mob, oldGridPos);
 
-		//todo: safety checks before it gets to this point
-		const blockingMob = this.getPlayerMobInGridCell(mob.gridCoords);
-		if (blockingMob && blockingMob.blocksMovement(mob)) {
-			console.error(`ERROR MobController::updatePlayerMobGridPos() a mob tried to jump to grid ${mob.gridCoords.x},${mob.gridCoords.y} but it was already occupied!`, mob);
-			return;
-		}
+		//bypass game legality checks. they should already have occurred before this
+		//const blockingMob = this.getPlayerMobInGridCell(mob.gridCoords);
+		//if (blockingMob && blockingMob.blocksMovement(mob)) {
+		//	console.error(`ERROR MobController::updatePlayerMobGridPos() a mob tried to jump to grid ${mob.gridCoords.x},${mob.gridCoords.y} but it was already occupied!`, mob);
+		//	return;
+		//}
 
 		//safety check: the old grid position should already be valid 
 		//it will default to -1, -1 for uninitialised mobs
@@ -295,6 +297,10 @@ class MobController {
 		this.playerGridMobs[mob.gridCoords.x][mob.gridCoords.y] = mob;
 
 		//console.log('MobController::updatePlayerMobGridPos() success', this.playerGridMobs);
+
+		//update the turf
+		const turf = gridController.getTurfAtCoords(mob.gridCoords);
+		turf?.MobEnter(mob);
 	}
 
 	getPlayerMobInGridCell(gridCoords: Vector2): Mob|null {

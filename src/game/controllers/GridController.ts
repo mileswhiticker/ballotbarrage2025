@@ -1,6 +1,8 @@
 import Mob from '@game/Mob.ts';
 import mobController from '@controllers/MobController.ts';
 import Vector2 from '@utils/Vector2.ts';
+import { Turf } from '@game/Turf';
+import { Sprite } from '@utils/Sprite.ts';
 
 export class GridRoute {
 	squares: Vector2[] = [];
@@ -11,10 +13,27 @@ class GridController {
 	gridMax: Vector2 = new Vector2(26, 16);
 	private game2dRenderContext: CanvasRenderingContext2D | null = null;
 	doDrawGridlines: boolean = false;
+	allTurfs: Turf[] = [];
+	turfGrid: Turf[][] = [];
 
 	Initialise(game2dRenderContext: CanvasRenderingContext2D) {
 		this.game2dRenderContext = game2dRenderContext;
-		//
+
+		//create all turfs
+		for (let x = 0; x < this.gridMax.x; x++) {
+			this.turfGrid.push([]);
+			for (let y = 0; y < this.gridMax.y; y++) {
+				const turf = new Turf();
+				this.turfGrid[x].push(turf);
+				turf.gridCoords = new Vector2(x, y);
+				//turf.sprite = new Sprite(`assets/turfs/turf_${x}_${y}.png`);
+				//turf.sprite.pos = turf.gridCoords.clone();
+				//turf.sprite.pos.multiply(this.gridCellDim);
+				this.allTurfs.push(turf);
+			}
+		}
+
+		//console.log("turf grid initialised to size:", this.turfGrid);
 	}
 
 	renderGridLines() {
@@ -66,6 +85,26 @@ class GridController {
 
 	pathToMob(mobSource: Mob, mobDest: Mob): GridRoute {
 		return this.pathToGrid(mobSource.gridCoords, mobDest.gridCoords);
+	}
+
+	getTurfAtPosition(pos: Vector2): Turf | null {
+		const gridCoords = this.getGridCoords(pos);
+		return this.getTurfAtCoords(pos);
+	}
+
+	getTurfAtCoords(coords: Vector2): Turf | null {
+		if (this.turfGrid.length > coords.x) {
+			if (this.turfGrid[coords.x].length > coords.y) {
+				return this.turfGrid[coords.x][coords.y];
+			}
+			else {
+				console.error(`GridController::getTurfAtCoords(${coords.x},${coords.y}) but outside ybounds!`);
+			}
+		}
+		else {
+			console.error(`GridController::getTurfAtCoords(${coords.x},${coords.y}) but outside xbounds!`);
+		}
+		return null;
 	}
 
 	pathToGrid(startCoords: Vector2, endCoords: Vector2, doDebug = false): GridRoute {
@@ -238,6 +277,16 @@ class GridController {
 				this.game2dRenderContext.lineTo(curSquare.x * this.gridCellDim + this.gridCellDim / 2, curSquare.y * this.gridCellDim + this.gridCellDim / 2);
 				this.game2dRenderContext.stroke();
 
+			}
+		}
+	}
+
+	renderTurfs() {
+		if (this.game2dRenderContext) {
+			for (let turf of this.allTurfs) {
+				if (turf.sprite) {
+					turf.sprite.Render(this.game2dRenderContext);
+				}
 			}
 		}
 	}

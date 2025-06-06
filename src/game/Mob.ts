@@ -117,8 +117,15 @@ export default class Mob {
 		if (!this.targetPos) {
 			if (this.moveRoute) {
 				const gridTarget = this.moveRoute.squares[0];
-				this.targetPos = gridController.getRawPosFromGridCoords(gridTarget);
-				//console.log("getting new target pos: ", this.targetPos);
+				const nextTurf = gridController.getTurfAtCoords(gridTarget);
+				if (nextTurf && !nextTurf.MobCanEnter(this)) {
+					//console.warn(`Mob is unexpectedly blocked! Invalidating old route...`);
+					this.moveRoute = null;
+				}
+				else {
+					this.targetPos = gridController.getRawPosFromGridCoords(gridTarget);
+					//console.log("getting new target pos: ", this.targetPos);
+				}
 			}
 			else {
 				console.error('trying to move, but no moveRoute!', this);

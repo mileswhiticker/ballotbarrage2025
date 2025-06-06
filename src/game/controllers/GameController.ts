@@ -19,9 +19,9 @@ class GameController {
 		this.gameCanvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
 		this.game2dRenderContext = this.gameCanvas.getContext('2d');
 
+		gridController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
 		mouseController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
 		mobController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
-		gridController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
 		playerController.Initialise();
 		enemyController.Initialise();
 
