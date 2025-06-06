@@ -20,7 +20,6 @@ class PlayerController {
 
 	private allPlayerCharacters: Ref<PlayerInfo>[] = [];
 	private nonPlayerCharacters: Ref<Ref<PlayerInfo>[]> = ref([]);
-	private currentPlayer: Ref<PlayerInfo|null> = ref(null);
 	private noPlayer: PlayerInfo = {
 		themePrimary: new ColourInfo("#808080"),
 		themeSecondary: new ColourInfo("#000000"),
@@ -31,6 +30,7 @@ class PlayerController {
 		money: 0,
 		id: PLAYERS.PLAYER_UNKNOWN
 	};
+	private humanPlayer: Ref<PlayerInfo> = ref(this.noPlayer);
 
 	Initialise() {
 		//what mobs should the player be able to place?
@@ -78,7 +78,7 @@ class PlayerController {
 			id: PLAYERS.PLAYER_BLUE
 		}));
 
-		this.currentPlayer.value = this.allPlayerCharacters[PLAYERS.PLAYER_PURPLE].value;
+		this.humanPlayer.value = this.allPlayerCharacters[PLAYERS.PLAYER_PURPLE].value;
 		this.nonPlayerCharacters.value.push(this.allPlayerCharacters[PLAYERS.PLAYER_RED]);
 		this.nonPlayerCharacters.value.push(this.allPlayerCharacters[PLAYERS.PLAYER_BLUE]);
 		//this.currentPlayer.value = this.noPlayer;
@@ -94,8 +94,8 @@ class PlayerController {
 	//	}
 	//}
 
-	getCurrentPlayer(){
-		return this.currentPlayer;
+	getHumanPlayer(){
+		return this.humanPlayer;
 	}
 
 	getNonPlayerCharacters() {

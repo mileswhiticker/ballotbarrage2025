@@ -50,17 +50,17 @@
 	const width = computed(() => `${gameWindowWidth.value}px`);
 	const height = computed(() => `${gameWindowHeight.value}px`);
 
-	const currentPlayer = computed(() => playerController.getCurrentPlayer());
+	const playerInfo = playerController.getHumanPlayer();
 	
 	watchEffect(() => {
-		//console.log(`${width.value},${height.value}`);
+		//console.log(`GameWrapper.vue playerInfo`, playerInfo.value);
 	});
 </script>
 
 <template>
 	<div id="gameWrapper" :style="{width, height}">
 		<GameCanvas :canvasWidth :canvasHeight />
-		<GameInterface :gameWindowWidth :gameWindowHeight :playerInfo={currentPlayer} />
+		<GameInterface :gameWindowWidth :gameWindowHeight :playerInfo/>
 	</div>
 </template>
 

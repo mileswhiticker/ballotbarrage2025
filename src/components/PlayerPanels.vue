@@ -11,7 +11,7 @@
 		<div v-for="curPlayerInfo in playerController.getNonPlayerCharacters().value" :key="curPlayerInfo.id">
 			<PlayerPanel :playerInfo="curPlayerInfo" :isCurrentPlayer="false" />
 		</div>
-		<PlayerPanel :playerInfo="playerController.getCurrentPlayer()" :isCurrentPlayer="true" />
+		<PlayerPanel :playerInfo="playerController.getHumanPlayer()" :isCurrentPlayer="true" />
 	</div>
 </template>
 

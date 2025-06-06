@@ -7,7 +7,7 @@
 	const props = defineProps<{
 		gameWindowWidth: Ref<number>,
 		gameWindowHeight: Ref<number>,
-		playerInfo: Ref<PlayerInfo>
+		playerInfo: Ref<PlayerInfo|null>
 	}>();
 
 	//const x = ref(0);
@@ -28,15 +28,14 @@
 	}
 
 	watchEffect(() => {
-		//console.log(`${props.gameWindowWidth},${props.gameWindowHeight}`, props.gameWindowWidth, props.gameWindowHeight);
+		//console.log(`GameInterface.vue playerInfo`, props.playerInfo);
 	});
-
 </script>
 
 <template>
 	<div id="gameInterface" @mousemove="handleMouseMove" @click="handleMouseClick">
-		<TopPanel :playerInfo />
-		<BottomPanel :playerInfo />
+		<TopPanel :playerInfo="props.playerInfo" />
+		<BottomPanel :playerInfo="props.playerInfo" />
 	</div>
 </template>
 

@@ -55,7 +55,7 @@
 	}
 	.playerPanel
 	{
-		width: 100px;
+		width: 110px;
 		padding: 5px;
 	}
 	.pcPanel {
