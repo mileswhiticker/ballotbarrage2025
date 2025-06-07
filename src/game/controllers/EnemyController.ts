@@ -1,13 +1,15 @@
 //import Mob from '@game/Mob.ts';
-import Mob, { MOBTYPE } from '@game/Mob.ts';
+import Mob, { MOBTYPE, type MobInfo } from '@game/Mob.ts';
 import Vector2 from '@utils/Vector2.ts';
 import mobController from '@controllers/MobController.ts';
 //import gridController from '@controllers/GridController.ts';
 import { ENEMY_SPAWNING_STRING } from '@utils/string_constants.ts';
 import Timer from '@utils/Timer.ts';
+import playerController from './PlayerController';
 
 class WaveEnemyDef {
 	mobType: MOBTYPE;
+	mobInfo?: MobInfo;
 	amountMax: number;
 	amountLeft: number = 0;
 	spawnProb: number = 0;
@@ -99,6 +101,7 @@ class EnemyController {
 		this.spawners.push(new EnemySpawner(new Vector2(10, 480)));
 
 		//create some sample waves
+		const parties = ["The Purple Party", "The Blue Party", "The Red Party"];
 		let enemyWave: EnemyWave;
 
 		//enemyWave = new EnemyWave();
@@ -108,17 +111,32 @@ class EnemyController {
 
 		enemyWave = new EnemyWave();
 		enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 15));
-		enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_BLUE, 3));
-		enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_RED, 3));
-		enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_PURPLE, 3));
+
+		//only add loyalist mobs for parties that are not the human player party
+		for (const party of parties) {
+			if (party != playerController.getHumanPlayer().value.playerParty) {
+				const loyalistMobType = playerController.getPartyLoyalistMobType(party);
+				if (loyalistMobType) {
+					enemyWave.enemyDefs.push(new WaveEnemyDef(loyalistMobType, 3));
+				}
+			}
+		}
+
 		this.upcomingWaves.push(enemyWave);
 		enemyWave.recalculateWaveInfo();
 
 		enemyWave = new EnemyWave();
 		enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 15));
-		enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_BLUE, 6));
-		enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_RED, 6));
-		enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_PURPLE, 6));
+		//only add loyalist mobs for parties that are not the human player party
+		for (const party of parties) {
+			if (party != playerController.getHumanPlayer().value.playerParty) {
+				const loyalistMobType = playerController.getPartyLoyalistMobType(party);
+				if (loyalistMobType) {
+					enemyWave.enemyDefs.push(new WaveEnemyDef(loyalistMobType, 6));
+				}
+			}
+		}
+
 		this.upcomingWaves.push(enemyWave);
 		enemyWave.recalculateWaveInfo();
 	}
@@ -191,7 +209,12 @@ class EnemyController {
 
 							//are there enemies left to spawn of this type?
 							if (spawningEnemyDef.amountLeft > 0) {
-								mobController.createActiveEnemyMob(spawningEnemyDef.mobType, curSpawner.spawnMob.pos);
+								if (spawningEnemyDef.mobInfo) {
+									mobController.createActiveEnemyMobAdvanced(spawningEnemyDef.mobType, curSpawner.spawnMob.pos, spawningEnemyDef.mobInfo);
+								}
+								else {
+									mobController.createActiveEnemyMob(spawningEnemyDef.mobType, curSpawner.spawnMob.pos);
+								}
 								spawningEnemyDef.amountLeft--;
 							}
 

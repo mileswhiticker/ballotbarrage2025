@@ -2,7 +2,7 @@
 //import resourceController from '@controllers/ResourceController.ts';
 
 import Mob, { AI_GOAL } from '@game/Mob.ts';
-import { MOBTYPE } from '@game/Mob.ts';
+import { MOBTYPE, type MobInfo } from '@game/Mob.ts';
 import Vector2 from '@utils/Vector2.ts';
 import { PLAYERS } from '@controllers/PlayerController.ts';
 //import gridController from '@controllers/GridController.ts';
@@ -64,6 +64,46 @@ class MobController {
 		//console.log(`createActiveEnemyMob(${mobType})`, newMob);
 	}
 
+	createActiveEnemyMobAdvanced(mobType: MOBTYPE, spawnloc: Vector2, mobInfo: MobInfo) {
+
+		//create the basic mob and apply starting settings
+		const newMob: Mob = new Mob(new Vector2(-9999, -9999), mobInfo.imgPath ? mobInfo.imgPath : IMGPATH_GREYMAN, mobType);
+		newMob.jumpToGridFromRawPos(spawnloc);
+		newMob.isAlive = true;
+		newMob.myGoal = AI_GOAL.SEEK_BOOTH;
+		newMob.party = "voter";
+
+		//some other customisable aspects
+		if (mobInfo.name) {
+			newMob.name = mobInfo.name;
+		}
+		else {
+			newMob.name = "Ordinary Voter";
+		}
+		if (mobInfo.desc) {
+			newMob.desc = mobInfo.desc;
+		}
+		else {
+			newMob.desc = "Just a punter heading in to vote";
+		}
+		if (mobInfo.health) {
+			newMob.health = mobInfo.health;
+		}
+		if (mobInfo.moveSpeed) {
+			newMob.moveSpeed = mobInfo.moveSpeed;
+		}
+		if (mobInfo.party) {
+			const startingLoyalty = newMob.health / 4 + 3 * Math.random() * newMob.health / 4;
+			newMob.addPartyLoyalty(mobInfo.party, startingLoyalty);
+		}
+
+		//track it
+		this.enemyMobs.push(newMob);
+		this.allMobs.push(newMob);
+
+		return newMob;
+	}
+
 	createPlayerMob(mobType: MOBTYPE, playerFaction: string) {
 		const newMob = this.createMobInstance(mobType);
 		newMob.isAlive = true;
@@ -80,7 +120,7 @@ class MobController {
 				{
 					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_MOB_AFRAME, MOBTYPE.AFRAME);
 					newMob.name = "A-Frame with posters";
-					newMob.placeableDesc = "A stationary poster saying \'Vote for me!\'";
+					newMob.desc = "A stationary poster saying \'Vote for me!\'";
 					newMob.isSolid = true;
 					break;
 				}
@@ -88,7 +128,7 @@ class MobController {
 				{
 					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_MOB_BBQ, MOBTYPE.SAUSAGESIZZLE);
 					newMob.name = "Sausage sizzle";
-					newMob.placeableDesc = "A stall selling a tasty snack.";
+					newMob.desc = "A stall selling a tasty snack.";
 					newMob.isSolid = true;
 					break;
 				}
@@ -96,7 +136,7 @@ class MobController {
 				{
 					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_MOB_VOLUNTEER, MOBTYPE.VOLUNTEER);
 					newMob.name = "Volunteers";
-					newMob.placeableDesc = "Your front line troopers, handing out flyers to voters.";
+					newMob.desc = "Your front line troopers, handing out flyers to voters.";
 					newMob.isSolid = true;
 					//newMob.presetAttackType(MISSILETYPE.FLYER);
 					break;
@@ -105,21 +145,21 @@ class MobController {
 				{
 					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_REDMAN, MOBTYPE.WANDER_ENEMY);
 					newMob.name = "Wandering enemy";
-					newMob.placeableDesc = "A bad dude";
+					newMob.desc = "A bad dude";
 					break;
 				}
 			case MOBTYPE.VOTER_UNDECIDED:
 				{
 					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_GREYMAN, MOBTYPE.VOTER_UNDECIDED);
 					newMob.name = "Wandering enemy";
-					newMob.placeableDesc = "A bad dude";
+					newMob.desc = "A bad dude";
 					break;
 				}
 			case MOBTYPE.VOTER_RED:
 				{
 					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_REDMAN, MOBTYPE.VOTER_RED);
 					newMob.name = "Wandering enemy";
-					newMob.placeableDesc = "A bad dude";
+					newMob.desc = "A bad dude";
 					const startingLoyalty = newMob.health / 4 + 3 * Math.random() * newMob.health / 4;
 					newMob.addPartyLoyalty(playerController.getPartyName(PLAYERS.PLAYER_RED), startingLoyalty);
 					break;
@@ -128,7 +168,7 @@ class MobController {
 				{
 					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_BLUEMAN, MOBTYPE.VOTER_BLUE);
 					newMob.name = "Wandering enemy";
-					newMob.placeableDesc = "A bad dude";
+					newMob.desc = "A bad dude";
 					const startingLoyalty = newMob.health / 4 + 3 * Math.random() * newMob.health / 4;
 					newMob.addPartyLoyalty(playerController.getPartyName(PLAYERS.PLAYER_BLUE), startingLoyalty);
 					break;
@@ -137,7 +177,7 @@ class MobController {
 				{
 					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_PURPLEMAN, MOBTYPE.VOTER_PURPLE);
 					newMob.name = "Wandering enemy";
-					newMob.placeableDesc = "A bad dude";
+					newMob.desc = "A bad dude";
 					const startingLoyalty = newMob.health / 4 + 3 * Math.random() * newMob.health / 4;
 					newMob.addPartyLoyalty(playerController.getPartyName(PLAYERS.PLAYER_PURPLE), startingLoyalty);
 					break;
@@ -146,14 +186,14 @@ class MobController {
 				{
 					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_BOOTHENTRY, MOBTYPE.BOOTHENTRY);
 					newMob.name = "An entrance into the voting booth";
-					newMob.placeableDesc = "The voters are trying to get here.";
+					newMob.desc = "The voters are trying to get here.";
 					break;
 				}
 			case MOBTYPE.ENEMYSPAWNER:
 				{
 					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_BUS, MOBTYPE.ENEMYSPAWNER);
 					newMob.name = "Voter arrival point";
-					newMob.placeableDesc = "Voters arrive from here";
+					newMob.desc = "Voters arrive from here";
 					break;
 				}
 			default:

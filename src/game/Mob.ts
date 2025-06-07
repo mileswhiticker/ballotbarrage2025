@@ -23,8 +23,29 @@ export enum MOBTYPE {
 	VOTER_BLUE,
 	VOTER_PURPLE,
 	//
+	VOTER_UNDECIDED_EASY,
+	VOTER_UNDECIDED_MED,
+	VOTER_UNDECIDED_HARD,
+	//
+	VOTER_DECIDED_EASY,
+	VOTER_DECIDED_MED,
+	VOTER_DECIDED_HARD,
+	//
+	VOTER_HOSTILE_EASY,
+	VOTER_HOSTILE_MED,
+	VOTER_HOSTILE_HARD,
+	//
 	BOOTHENTRY,
 	ENEMYSPAWNER,
+}
+
+export interface MobInfo {
+	health?: number;
+	imgPath?: string;
+	party?: string;
+	moveSpeed?: number;
+	name?: string;
+	desc?: string;
 }
 
 export enum AI_GOAL {
@@ -39,14 +60,14 @@ export default class Mob {
 	dims: Vector2;
 	targetPos: Vector2 | null = null;
 	moveRoute: GridRoute | null = null;
-	moveSpeed: number = 128;
+	moveSpeed: number = 64;
 	sprite: Sprite;
 	imagePath: string;
 	age: number = 0;
 	isAlive: boolean = false;
 	randomWander: boolean = false;
 	name: string = "UNKNOWN_NAME_NA";
-	placeableDesc: string = "UNKNOWN_DESC_NA";
+	desc: string = "UNKNOWN_DESC_NA";
 	mobType: MOBTYPE = MOBTYPE.UNKNOWN;
 	renderOpacity = 1;
 	isSolid: boolean = false; //can this mob block movement of other mobs?

@@ -162,6 +162,21 @@ class PlayerController {
 		}
 	}
 
+	getPartyLoyalistMobType(partyName: string): MOBTYPE | null {
+		//return the mob type that is loyal to the party
+		switch (partyName) {
+			case "The Purple Party":
+				return MOBTYPE.VOTER_PURPLE;
+			case "The Red Party":
+				return MOBTYPE.VOTER_RED;
+			case "The Blue Party":
+				return MOBTYPE.VOTER_BLUE;
+			default:
+				console.warn("PlayerController::getPartyLoyalistMobType() unknown party name: ", partyName);
+				return null;
+		}
+	}
+
 	slightlyRandomiseLoyalty(partyLoyalty: Map<string, number>) {
 		//check if there are any parties missing
 		for (const playerInfo of this.allPlayerCharacters) {

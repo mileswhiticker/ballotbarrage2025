@@ -75,8 +75,8 @@ class GameController {
 	ResetTimer() {
 		const enemySpawnTime = enemyController.getCurrentSpawningTimeMax();
 		const timerData = [
-			{ label: PLAYER_BUYING_STRING, seconds: 5, color: COLOUR_GREEN.hex_string },
-			{ label: PLAYER_BUILDING_STRING, seconds: 5, color: COLOUR_BLUE.hex_string },
+			{ label: PLAYER_BUYING_STRING, seconds: 0, color: COLOUR_GREEN.hex_string },
+			{ label: PLAYER_BUILDING_STRING, seconds: 0, color: COLOUR_BLUE.hex_string },
 			{ label: ENEMY_SPAWNING_STRING, seconds: enemySpawnTime, color: COLOUR_RED.hex_string },
 		];
 
