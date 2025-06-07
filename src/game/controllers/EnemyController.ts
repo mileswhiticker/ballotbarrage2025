@@ -3,6 +3,8 @@ import Mob, { MOBTYPE } from '@game/Mob.ts';
 import Vector2 from '@utils/Vector2.ts';
 import mobController from '@controllers/MobController.ts';
 //import gridController from '@controllers/GridController.ts';
+import { ENEMY_SPAWNING_STRING } from '@utils/string_constants.ts';
+import Timer from '@utils/Timer.ts';
 
 class WaveEnemyDef {
 	mobType: MOBTYPE;
@@ -21,7 +23,7 @@ class EnemyWave {
 	enemyDefs: WaveEnemyDef[] = [];
 	totalMobs: number = 0;
 
-	recalculateSpawnProbabilities() {
+	recalculateWaveInfo() {
 		this.totalMobs = 0;
 
 		//calculate the total size of the wave
@@ -62,7 +64,7 @@ class EnemyWave {
 			}
 		};
 
-		this.recalculateSpawnProbabilities();
+		this.recalculateWaveInfo();
 	}
 }
 
@@ -86,8 +88,12 @@ class EnemyController {
 	private spawners: EnemySpawner[] = [];
 	waveTime: number = 0;
 	waveStartTime: number = -1;
+	timer: Timer|null = null;
 
-	Initialise() {
+	Initialise(timer: Timer) {
+		this.timer = timer;
+		this.timer.timerSliceStartedCallbacks.push(this.timerSliceStarted.bind(this));
+
 		//create some spawn points
 		this.spawners.push(new EnemySpawner(new Vector2(10, 60)));
 		this.spawners.push(new EnemySpawner(new Vector2(10, 480)));
@@ -98,7 +104,7 @@ class EnemyController {
 		//enemyWave = new EnemyWave();
 		//enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 10));
 		//this.upcomingWaves.push(enemyWave);
-		//enemyWave.recalculateSpawnProbabilities();
+		//enemyWave.recalculateWaveInfo();
 
 		enemyWave = new EnemyWave();
 		enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 15));
@@ -106,7 +112,7 @@ class EnemyController {
 		enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_RED, 3));
 		enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_PURPLE, 3));
 		this.upcomingWaves.push(enemyWave);
-		enemyWave.recalculateSpawnProbabilities();
+		enemyWave.recalculateWaveInfo();
 
 		enemyWave = new EnemyWave();
 		enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 15));
@@ -114,8 +120,36 @@ class EnemyController {
 		enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_RED, 6));
 		enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_PURPLE, 6));
 		this.upcomingWaves.push(enemyWave);
-		enemyWave.recalculateSpawnProbabilities();
+		enemyWave.recalculateWaveInfo();
+	}
 
+	getCurrentSpawningTimeMax(): number {
+		if (this.upcomingWaves.length > 0) {
+
+			//how fast can our spawners spawn the mobs?
+			let spawnRate = 0;
+			for(const curSpawner of this.spawners) {
+				spawnRate += (1 / curSpawner.spawnCooldown);
+			}
+
+			const curWave = this.upcomingWaves[0];
+			const expectedDuration = curWave.totalMobs / spawnRate;
+
+			return expectedDuration;
+		}
+
+		console.error(`EnemyController::getCurrentSpawningTimeMax() but no current wave`);
+		return 0;
+	}
+
+	setActive(isActive: boolean) {
+		this.isActive = isActive;
+	}
+
+	timerSliceStarted(sliceLabel: string) {
+		if (sliceLabel === ENEMY_SPAWNING_STRING) {
+			this.startSpawning();
+		}
 	}
 
 	startSpawning() {
@@ -123,10 +157,16 @@ class EnemyController {
 		this.isSpawning = true;
 		this.waveTime = 0;
 		this.waveStartTime = Date.now() / 1000; //in seconds
+		this.isActive = true;
 	}
 
-	tLeftStartSpawning: number = 2;
+	isActive: boolean = false;
+	tLeftStartSpawning: number = 0;
 	update(deltaTime: number) {
+		if (!this.isActive) {
+			return;
+		}
+
 		if (this.tLeftStartSpawning > 0) {
 			this.tLeftStartSpawning -= deltaTime;
 			if (this.tLeftStartSpawning <= 0) {

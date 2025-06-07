@@ -23,14 +23,6 @@
 			timerCanvas.value.getContext('2d'),
 			new Vector2(25, 25),
 			new Vector2(50, 50));
-		//const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
-		//const context = canvas.getContext('2d');
-		//initialiseTimer(context,
-		//	new Vector2(170, 30),
-		//	new Vector2(50, 50))
-		//SetTimerData(sampleTimerdata);
-
-		//let timerAnimationFrameId = requestAnimationFrame(renderTimer);
 	});
 </script>
 

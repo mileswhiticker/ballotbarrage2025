@@ -8,6 +8,8 @@ import missileController from '@controllers/MissileController.ts';
 import resourceController from '@controllers/ResourceController.ts';
 //import Vector2 from '@utils/Vector2.ts';
 import Timer from '@utils/Timer.ts';
+import { PLAYER_BUYING_STRING, PLAYER_BUILDING_STRING, ENEMY_SPAWNING_STRING } from '@utils/string_constants.ts';
+import { COLOUR_RED, COLOUR_GREEN, COLOUR_BLUE } from '@utils/ColourInfo.ts';
 
 class GameController {
 	mobs: Mob[] = [];
@@ -34,11 +36,11 @@ class GameController {
 		mobController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
 		missileController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
 		playerController.Initialise();
-		enemyController.Initialise();
+		enemyController.Initialise(this.timer);
 
-		//for testing
-		this.timer.SetTimerData(Timer.sampleTimerdata);
-		this.timer.ResetTimer();
+		this.timer.timerSliceExpiryCallbacks.push(this.timerSliceExpired.bind(this));
+		//this.timer.timerSliceStartedCallbacks.push(enemyController.timerSliceStarted.bind(enemyController));
+		this.ResetTimer();
 		this.timer.StartTimer();
 
 		this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));
@@ -69,6 +71,22 @@ class GameController {
 		this.timer.render(deltaTime);
 
 		this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));
+	}
+
+	ResetTimer() {
+		const enemySpawnTime = enemyController.getCurrentSpawningTimeMax();
+		const timerData = [
+			{ label: PLAYER_BUYING_STRING, seconds: 5, color: COLOUR_GREEN.hex_string },
+			{ label: PLAYER_BUILDING_STRING, seconds: 5, color: COLOUR_BLUE.hex_string },
+			{ label: ENEMY_SPAWNING_STRING, seconds: enemySpawnTime, color: COLOUR_RED.hex_string },
+		];
+
+		this.timer.SetTimerData(timerData);
+		this.timer.ResetTimer();
+	}
+
+	timerSliceExpired(sliceLabel: string) {
+		//console.log(`GameController Timer slice expired: ${sliceLabel}`);
 	}
 
 	renderEmptyCanvas() {

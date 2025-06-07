@@ -1,5 +1,6 @@
 import Vector2 from '@utils/Vector2.ts';
 import { ref, type Ref } from 'vue';
+import { COLOUR_RED, COLOUR_GREEN, COLOUR_BLUE } from '@utils/ColourInfo.ts';
 
 type PieSlice = {
 	label: string;
@@ -19,11 +20,13 @@ export default class Timer {
 	private currentSliceIndex: number = 0; // index of the current slice
 	currentColour: Ref<string> = ref("#000000"); // default colour
 	formattedTimeLeft: Ref<string> = ref("00:00");
+	timerSliceExpiryCallbacks: ((sliceLabel: string) => void)[] = []; // callbacks for when a slice expires
+	timerSliceStartedCallbacks: ((sliceLabel: string) => void)[] = []; // callbacks for when a slice starts
 
 	static sampleTimerdata = [
-		{ label: "Red", seconds: 5, color: "#f44336" },
-		{ label: "Green", seconds: 10, color: "#4caf50" },
-		{ label: "Blue", seconds: 15, color: "#2196f3" }
+		{ label: "Green", seconds: 5, color: COLOUR_GREEN.hex_string },
+		{ label: "Blue", seconds: 10, color: COLOUR_BLUE.hex_string },
+		{ label: "Red", seconds: 15, color: COLOUR_RED.hex_string },
 	];
 
 	Initialise(context: CanvasRenderingContext2D, newCentrePos: Vector2, newDims: Vector2) {
@@ -82,6 +85,12 @@ export default class Timer {
 				this.currentSliceIndex++;
 				this.sliceTimeLeft = this.currentData[this.currentSliceIndex]?.seconds || 0;
 				//console.log("going to next slice", this.currentSliceIndex, this.sliceTimeLeft);
+				for (const callback of this.timerSliceExpiryCallbacks) {
+					callback(this.currentData[this.currentSliceIndex - 1].label);
+				}
+				for (const callback of this.timerSliceStartedCallbacks) {
+					callback(this.currentData[this.currentSliceIndex].label);
+				}
 			}
 
 			const rounded = Math.round(this.sliceTimeLeft);
