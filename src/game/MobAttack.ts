@@ -21,7 +21,7 @@ export class MobAttack {
 		return this.range;
 	}
 
-	mobEnteredTurfNearby(mob: Mob, turf: Turf) {
+	mobEnteredTurfNearby(mob: Mob) {
 		if(mob.party == this.ownerMob.party) {
 			//if the mob is not on the same party, do nothing
 			//console.log("MobAttack::mobEnteredTurfNearby() mob is friendly: ", mob.party, this.ownerMob.party);
@@ -33,7 +33,7 @@ export class MobAttack {
 		this.nearbyEnemyMobs.push(mob);
 	}
 
-	mobLeftTurfNearby(mob: Mob, turf: Turf) {
+	mobLeftTurfNearby(mob: Mob) {
 
 		for (let i = 0; i < this.nearbyEnemyMobs.length; i++) {
 			//there could be multiple entries in here
