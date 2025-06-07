@@ -84,6 +84,8 @@ class EnemyController {
 	//private tLeftStartSpawning: number = 0;
 	private baseSpawnRate: number = 0.5; // spawn cooldown per spawner
 	private spawners: EnemySpawner[] = [];
+	waveTime: number = 0;
+	waveStartTime: number = -1;
 
 	Initialise() {
 		//create some spawn points
@@ -119,6 +121,8 @@ class EnemyController {
 	startSpawning() {
 		//console.log('enemycontroller::startSpawning()');
 		this.isSpawning = true;
+		this.waveTime = 0;
+		this.waveStartTime = Date.now() / 1000; //in seconds
 	}
 
 	tLeftStartSpawning: number = 2;
@@ -131,6 +135,7 @@ class EnemyController {
 		}
 
 		if (this.isSpawning) {
+			this.waveTime += deltaTime;
 
 			if (this.upcomingWaves.length <= 0) {
 				this.isSpawning = false;

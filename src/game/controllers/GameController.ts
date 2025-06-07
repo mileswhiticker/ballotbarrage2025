@@ -8,12 +8,16 @@ import enemyController from '@controllers/EnemyController.ts';
 import missileController from '@controllers/MissileController.ts';
 import resourceController from '@controllers/ResourceController.ts';
 //import Vector2 from '@utils/Vector2.ts';
+import { renderTimer, initialiseTimer, sampleTimerdata, SetTimerData } from '@utils/Timer.ts';
+import Vector2 from '@utils/Vector2.ts';
 
 class GameController {
 	mobs: Mob[] = [];
 	mainRenderFrameId: number = -1;
 	gameCanvas: HTMLCanvasElement | null = null;
 	game2dRenderContext: CanvasRenderingContext2D | null = null;
+
+	gameTime: number = 0; //in seconds
 
 	InitializeGame() {
 		//console.log("GameController::InitializeGame() starting...");
@@ -28,6 +32,11 @@ class GameController {
 		missileController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
 		playerController.Initialise();
 		enemyController.Initialise();
+
+		initialiseTimer(this.game2dRenderContext as CanvasRenderingContext2D,
+			new Vector2(170, 30),
+			new Vector2(50, 50))
+		SetTimerData(sampleTimerdata);
 
 		this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));
 
@@ -45,6 +54,9 @@ class GameController {
 		mobController.update(deltaTime);
 
 		this.renderEmptyCanvas();
+
+		renderTimer(deltaTime);
+
 		gridController.renderGridLines();
 		gridController.renderDebug();
 		mobController.renderEnvMobs();
