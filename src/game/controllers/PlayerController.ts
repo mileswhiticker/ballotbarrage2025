@@ -5,6 +5,7 @@ import Mob from '@game/Mob.ts';
 import { MOBTYPE } from '@game/Mob.ts';
 import mobController from '@controllers/MobController.ts';
 import { ref, type Ref } from 'vue';
+import { IMGPATH_PURPLEMAN, IMGPATH_REDMAN, IMGPATH_BLUEMAN } from '../../assets/_AssetPaths';
 
 export enum PLAYERS {
 	PLAYER_UNKNOWN = -1,
@@ -175,6 +176,21 @@ class PlayerController {
 				console.warn("PlayerController::getPartyLoyalistMobType() unknown party name: ", partyName);
 				return null;
 		}
+	}
+
+	getPartyLoyalistImgPath(partyName: string): string | undefined {
+		switch (partyName) {
+			case "The Purple Party":
+				return IMGPATH_PURPLEMAN;
+			case "The Red Party":
+				return IMGPATH_REDMAN;
+			case "The Blue Party":
+				return IMGPATH_BLUEMAN;
+			default:
+				console.warn("PlayerController::getPartyLoyalistImgPath() unknown party name: ", partyName);
+		}
+
+		return undefined;
 	}
 
 	slightlyRandomiseLoyalty(partyLoyalty: Map<string, number>) {

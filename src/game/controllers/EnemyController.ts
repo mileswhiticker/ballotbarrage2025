@@ -103,14 +103,23 @@ class EnemyController {
 		//create some sample waves
 		const parties = ["The Purple Party", "The Blue Party", "The Red Party"];
 		let enemyWave: EnemyWave;
+		let enemyDef;
 
-		//enemyWave = new EnemyWave();
-		//enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 10));
-		//this.upcomingWaves.push(enemyWave);
-		//enemyWave.recalculateWaveInfo();
+		/* WAVE 1 */
 
 		enemyWave = new EnemyWave();
-		enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 15));
+		enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 10));
+		this.upcomingWaves.push(enemyWave);
+		enemyWave.recalculateWaveInfo();
+
+		/* WAVE 2 */
+
+		enemyWave = new EnemyWave();
+
+		//undecided voters
+		enemyDef = new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 15);
+		enemyDef.mobInfo = {healthMod: 2, speedMod: 64};
+		enemyWave.enemyDefs.push(enemyDef);
 
 		//only add loyalist mobs for parties that are not the human player party
 		for (const party of parties) {
@@ -125,14 +134,28 @@ class EnemyController {
 		this.upcomingWaves.push(enemyWave);
 		enemyWave.recalculateWaveInfo();
 
+		/* WAVE 3 */
+
 		enemyWave = new EnemyWave();
-		enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 15));
+
+		//undecided voters
+		enemyDef = new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 15);
+		enemyDef.mobInfo = { healthMod: 4, speedMod: 128 };
+		enemyWave.enemyDefs.push(enemyDef);
+
 		//only add loyalist mobs for parties that are not the human player party
 		for (const party of parties) {
 			if (party != playerController.getHumanPlayer().value.playerParty) {
 				const loyalistMobType = playerController.getPartyLoyalistMobType(party);
 				if (loyalistMobType) {
-					enemyWave.enemyDefs.push(new WaveEnemyDef(loyalistMobType, 6));
+					enemyDef = new WaveEnemyDef(loyalistMobType, 6);
+					enemyDef.mobInfo = {
+						healthMod: 3,
+						speedMod: 64,
+						party: party,
+						imgPath: playerController.getPartyLoyalistImgPath(party)
+					};
+					enemyWave.enemyDefs.push(enemyDef);
 				}
 			}
 		}
@@ -171,7 +194,7 @@ class EnemyController {
 	}
 
 	startSpawning() {
-		//console.log('enemycontroller::startSpawning()');
+		//console.log('enemycontroller::startSpawning()', this.upcomingWaves[0]);
 		this.isSpawning = true;
 		this.waveTime = 0;
 		this.waveStartTime = Date.now() / 1000; //in seconds

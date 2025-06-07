@@ -88,9 +88,15 @@ class MobController {
 		}
 		if (mobInfo.health) {
 			newMob.health = mobInfo.health;
+		} 
+		if (mobInfo.healthMod) {
+			newMob.health += mobInfo.healthMod;
 		}
 		if (mobInfo.moveSpeed) {
 			newMob.moveSpeed = mobInfo.moveSpeed;
+		}
+		if (mobInfo.speedMod) {
+			newMob.moveSpeed += mobInfo.speedMod;
 		}
 		if (mobInfo.party) {
 			const startingLoyalty = newMob.health / 4 + 3 * Math.random() * newMob.health / 4;

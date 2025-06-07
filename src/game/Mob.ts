@@ -41,9 +41,11 @@ export enum MOBTYPE {
 
 export interface MobInfo {
 	health?: number;
+	healthMod?: number;
 	imgPath?: string;
 	party?: string;
 	moveSpeed?: number;
+	speedMod?: number;
 	name?: string;
 	desc?: string;
 }
