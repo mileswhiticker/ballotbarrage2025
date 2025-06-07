@@ -188,7 +188,7 @@ class PlayerController {
 		//add some randomness to the loyalty
 		for (const playerInfo of this.allPlayerCharacters) {
 			const existingLoyalty = partyLoyalty.get(playerInfo.value.playerParty) || 0;
-			partyLoyalty.set(playerInfo.value.playerParty, existingLoyalty / 2 + existingLoyalty * Math.random());
+			partyLoyalty.set(playerInfo.value.playerParty, 2 * existingLoyalty / 3 + existingLoyalty * Math.random() / 3);
 		}
 	}
 }
