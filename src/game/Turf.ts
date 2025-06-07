@@ -50,7 +50,7 @@ export default class Turf {
 		};
 
 		for (const listeningMob of this.entryListeningMobs) {
-			listeningMob.mobEnteredTurfNearby(mob, this);
+			listeningMob.mobEnteredTurfNearby(mob);
 		}
 	}
 
@@ -75,7 +75,7 @@ export default class Turf {
 		}
 
 		for (const listeningMob of this.entryListeningMobs) {
-			listeningMob.mobLeftTurfNearby(mob, this);
+			listeningMob.mobLeftTurfNearby(mob);
 		}
 	}
 }

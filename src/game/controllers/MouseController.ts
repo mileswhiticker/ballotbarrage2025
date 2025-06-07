@@ -92,10 +92,10 @@ class MouseController {
 			const gridCoords = gridController.getGridCoords(transformedPosition);
 
 			//check if this grid cell is free to place something
-			const blockingMob = mobController.getPlayerMobInGridCell(gridCoords);
-			if (blockingMob) {
+			const turf = gridController.getTurfAtCoords(gridCoords);
+			if (!turf?.MobCanEnter(this.mobBuildGhost)) {
 				console.warn(`Player is trying to place a mobType ${this.mobBuildGhostType.value} in grid ${gridCoords.x},${gridCoords.y}\
-					but there is already a mobType ${blockingMob.mobType} there`);
+					but it is blocked`);
 				return;
 			}
 

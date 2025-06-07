@@ -4,7 +4,7 @@
 import Mob, { AI_GOAL } from '@game/Mob.ts';
 import { MOBTYPE } from '@game/Mob.ts';
 import Vector2 from '@utils/Vector2.ts';
-import gridController from '@controllers/GridController.ts';
+//import gridController from '@controllers/GridController.ts';
 
 import {
 	IMGPATH_GREYMAN,
@@ -23,7 +23,7 @@ class MobController {
 	enemyMobs: Mob[] = [];
 	playerMobs: Mob[] = [];
 	game2dRenderContext: CanvasRenderingContext2D | null = null;
-	playerGridMobs: (Mob|null)[][] = [];		//	[x grid number][y grid number] = mob in this grid cell
+	//playerGridMobs: (Mob|null)[][] = [];		//	[x grid number][y grid number] = mob in this grid cell
 	envMobs: Mob[] = [];
 	boothMobs: Mob[] = [];
 	enemySpawners: Mob[] = [];
@@ -49,47 +49,6 @@ class MobController {
 		this.envMobs.push(boothMob);
 		this.boothMobs.push(boothMob);
 		boothMob.jumpToGridFromRawPos(new Vector2(792, 130));
-
-		//for testing: create some random player mobs
-		let numMobs = 0;
-		let tries = 3;
-		while (numMobs > 0) {
-			const gridCoords = new Vector2(Math.floor(Math.random() * 27), Math.floor(Math.random() * 19));
-			//console.log("trying to create mob at...", gridCoords);
-			const blockingmob = mobController.getPlayerMobInGridCell(gridCoords);
-			if (blockingmob) {
-
-				//safety check
-				tries--;
-				if (tries <= 0) {
-					//console.warn("too many failed attempts in a row! finishing early");
-					break;
-				}
-
-				//skip this cell
-				//console.log("skipping blocker");
-				continue;
-			}
-			tries = 3;
-			numMobs--;
-
-			//create a random player mob
-			const result = Math.random() * 3;
-			let mobType;
-			if (result < 1) {
-				mobType = MOBTYPE.VOLUNTEER;
-			}
-			else if (result < 2) {
-				mobType = MOBTYPE.AFRAME;
-			}
-			else {
-				mobType = MOBTYPE.SAUSAGESIZZLE;
-			}
-			const playerMob = this.createPlayerMob(mobType);
-			playerMob.jumpToGridFromRawPos(gridController.getRawPosFromGridCoords(gridCoords));
-
-			//console.log("checking if grid update was successful", mobController.getPlayerMobInGridCell(gridCoords));
-		}
 	}
 
 	createActiveEnemyMob(mobType: MOBTYPE, spawnloc: Vector2) {
@@ -199,6 +158,24 @@ class MobController {
 		return newMob;
 	}
 
+	despawnMe(mob: Mob) {
+		//console.log(`MobController::despawnMe()`, mob);
+		//remove from player mobs
+		const playerIndex = this.playerMobs.indexOf(mob);
+		if (playerIndex >= 0) {
+			this.playerMobs.splice(playerIndex, 1);
+			return;
+		}
+
+		//remove from enemy mobs
+		const enemyIndex = this.enemyMobs.indexOf(mob);
+		if (enemyIndex >= 0) {
+			this.enemyMobs.splice(enemyIndex, 1);
+			return;
+		}
+		//console.warn(`MobController::despawnMe() mob not found in player or enemy mobs!`, mob);
+	}
+
 	update(deltaTime: number) {
 		for (let i = 0; i < this.enemyMobs.length; i++) {
 			const curMob = this.enemyMobs[i];
@@ -249,6 +226,7 @@ class MobController {
 		}
 	}
 
+	/*
 	updatePlayerMobGridPos(mob: Mob, oldGridPos: Vector2) {
 		//console.log('MobController::updatePlayerMobGridPos()', mob, oldGridPos);
 
@@ -297,7 +275,9 @@ class MobController {
 		const turf = gridController.getTurfAtCoords(mob.gridCoords);
 		turf?.MobEnter(mob);
 	}
+	*/
 
+	/*
 	getPlayerMobInGridCell(gridCoords: Vector2): Mob|null {
 		//console.error(`getPlayerMobInGridCell()`, gridCoords);
 
@@ -312,6 +292,7 @@ class MobController {
 		//could not find anything
 		return null;
 	}
+	*/
 
 	getRandomBoothMob(): Mob | null {
 		if (this.boothMobs.length > 0) {

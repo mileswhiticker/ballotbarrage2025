@@ -14,7 +14,7 @@ class MissileController {
 
 	update(deltaTime: number) {
 		for (let i = 0; i < this.allMissiles.length; i++) {
-			let curMissile = this.allMissiles[i];
+			const curMissile = this.allMissiles[i];
 			curMissile.update(deltaTime);
 
 			//render the sprite

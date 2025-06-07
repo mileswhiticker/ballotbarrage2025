@@ -134,16 +134,11 @@ export default class Mob {
 		this.pos.x = snappedPos.x;
 		this.pos.y = snappedPos.y;
 
-		//remmeber the old grid coords we were in
-		const oldGridPos = this.gridCoords.clone();
-
 		//apply the new grid coordinates
 		this.gridCoords = gridController.getGridCoords(rawPos);
 		//this.gridCoords.x = snappedPos.x / gridController.gridCellDim;
 		//this.gridCoords.y = snappedPos.y / gridController.gridCellDim;
 
-		//tell the grid to update its grid contents tracking
-		mobController.updatePlayerMobGridPos(this, oldGridPos);
 		this.postMoveUpdates();
 	}
 
@@ -179,17 +174,17 @@ export default class Mob {
 		}
 	}
 
-	mobEnteredTurfNearby(mob: Mob, turf: Turf) {
+	mobEnteredTurfNearby(mob: Mob) {
 		if (this.mobAttack) {
 			//console.log("mob entered turf nearby", mob, turf);
-			this.mobAttack.mobEnteredTurfNearby(mob, turf);
+			this.mobAttack.mobEnteredTurfNearby(mob);
 		};
 	}
 
-	mobLeftTurfNearby(mob: Mob, turf: Turf) {
+	mobLeftTurfNearby(mob: Mob) {
 		if (this.mobAttack) {
 			//console.log("mob entered turf nearby", mob, turf);
-			this.mobAttack.mobLeftTurfNearby(mob, turf);
+			this.mobAttack.mobLeftTurfNearby(mob);
 		};
 	}
 
@@ -247,6 +242,11 @@ export default class Mob {
 							case AI_GOAL.SEEK_BOOTH:
 								{
 									this.myGoal = AI_GOAL.IDLE;
+									if (this.curTurf) {
+										this.curTurf.MobLeave(this);
+										this.curTurf = null;
+									}
+									mobController.despawnMe(this);
 								}
 						}
 					}
@@ -291,14 +291,13 @@ export default class Mob {
 					//let  = new Vector2(Math.random() * 500, Math.random() * 500);
 
 					const startCoords = gridController.getGridCoords(this.pos);
-					const targetCoords = new Vector2(Math.floor(Math.random() * gridController.gridMax.x), Math.floor(Math.random() * gridController.gridMax.y));
-					const blockingMob = mobController.getPlayerMobInGridCell(targetCoords);
-					if (blockingMob) {
+					const targetTurf = gridController.getRandomTurf();
+					if (targetTurf.MobCanEnter(this)) {
 						//do another round
 						this.tLeftThinking = deltaTime * 0.1;
 						return;
 					}
-					this.moveRoute = gridController.pathToGrid(startCoords, targetCoords, true);
+					this.moveRoute = gridController.pathToGrid(startCoords, targetTurf.gridCoords, true);
 
 					//console.log(`new grid route:`, gridController.debugRoute);
 

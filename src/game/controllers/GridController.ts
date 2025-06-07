@@ -1,5 +1,5 @@
 import Mob from '@game/Mob.ts';
-import mobController from '@controllers/MobController.ts';
+//import mobController from '@controllers/MobController.ts';
 import Vector2 from '@utils/Vector2.ts';
 import Turf from '@game/Turf';
 //import { Sprite } from '@utils/Sprite.ts';
@@ -109,6 +109,10 @@ class GridController {
 		}
 
 		return allTurfs;
+	}
+
+	getRandomTurf(): Turf {
+		return this.allTurfs[Math.floor(Math.random() * this.allTurfs.length)];
 	}
 
 	pathToMob(mobSource: Mob, mobDest: Mob): GridRoute {
@@ -281,10 +285,17 @@ class GridController {
 			return false;
 		}
 
-		const gridCoords = new Vector2(xcoord, ycoord);
-		const blockingMob = mobController.getPlayerMobInGridCell(gridCoords);
-		if (blockingMob && blockingMob.blocksMovement()) {
+		const turf = this.getTurfAtCoords(new Vector2(xcoord, ycoord));
+		if (!turf) {
+			//edge of the map
+			//console.warn(`GridController::isWalkable() - No turf found at ${xcoord},${ycoord}`);
 			return false;
+		}
+
+		for (const checkMob of turf.mobsPresent) {
+			if (checkMob.blocksMovement()) {
+				return false;
+			}
 		}
 
 		return true;
