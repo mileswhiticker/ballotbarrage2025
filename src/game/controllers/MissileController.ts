@@ -20,7 +20,7 @@ class MissileController {
 			//render the sprite
 			if (this.game2dRenderContext) {
 				if (curMissile.sprite) {
-					curMissile.sprite.Render(this.game2dRenderContext);
+					curMissile.sprite.render(this.game2dRenderContext);
 				}
 			}
 

@@ -21,13 +21,14 @@ export default class Missile {
 	party: string = "na";
 	isAlive: boolean = true;
 
-	constructor(startPos: Vector2, targetPos: Vector2, imagePath: string) {
+	constructor(startPos: Vector2, targetPos: Vector2, imagePath: string, missileType: MISSILETYPE) {
 		this.pos = startPos;
 		this.targetPos = targetPos;
 		this.imagePath = imagePath;
 		this.sprite = new Sprite(imagePath);
 		this.sprite.pos = this.pos;
 		this.dims = new Vector2(64, 64);
+		this.missileType = missileType;
 	}
 
 	update(deltaTime: number) {

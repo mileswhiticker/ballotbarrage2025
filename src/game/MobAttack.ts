@@ -73,7 +73,9 @@ export class MobAttack {
 
 	doAttackMob(targetMob: Mob) {
 		//console.log("I am attacking a mob!", this, targetMob);
-		const newMissile = new Missile(this.ownerMob.pos.clone(), targetMob.pos.clone(), this.imgPath);
+		const newMissile = new Missile(this.ownerMob.pos.clone(), targetMob.pos.clone(), this.imgPath, this.missileType);
+		newMissile.mobTarget = targetMob;
+		newMissile.party = this.ownerMob.party;
 		missileController.trackMissile(newMissile);
 
 		this.tLeftAttack = this.attackCooldown;

@@ -4,6 +4,7 @@
 import Mob, { AI_GOAL } from '@game/Mob.ts';
 import { MOBTYPE } from '@game/Mob.ts';
 import Vector2 from '@utils/Vector2.ts';
+import { PLAYERS } from '@controllers/PlayerController.ts';
 //import gridController from '@controllers/GridController.ts';
 
 import {
@@ -18,8 +19,10 @@ import {
 	IMGPATH_BOOTHENTRY,
 	IMGPATH_BUS
 } from '@assets/_AssetPaths.ts'; 
+import playerController from './PlayerController';
 
 class MobController {
+	allMobs: Mob[] = [];
 	enemyMobs: Mob[] = [];
 	playerMobs: Mob[] = [];
 	game2dRenderContext: CanvasRenderingContext2D | null = null;
@@ -57,14 +60,14 @@ class MobController {
 		newMob.jumpToGridFromRawPos(spawnloc);
 		newMob.isAlive = true;
 		newMob.myGoal = AI_GOAL.SEEK_BOOTH;
-		newMob.party = "enemy";
+		newMob.party = "voter";
 		//console.log(`createActiveEnemyMob(${mobType})`, newMob);
 	}
 
-	createPlayerMob(mobType: MOBTYPE) {
+	createPlayerMob(mobType: MOBTYPE, playerFaction: string) {
 		const newMob = this.createMobInstance(mobType);
 		newMob.isAlive = true;
-		newMob.party = "player";
+		newMob.party = playerFaction;
 		this.playerMobs.push(newMob);
 
 		return newMob;
@@ -117,6 +120,8 @@ class MobController {
 					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_REDMAN, MOBTYPE.VOTER_RED);
 					newMob.name = "Wandering enemy";
 					newMob.placeableDesc = "A bad dude";
+					const startingLoyalty = newMob.health / 4 + 3 * Math.random() * newMob.health / 4;
+					newMob.addPartyLoyalty(playerController.getPartyName(PLAYERS.PLAYER_RED), startingLoyalty);
 					break;
 				}
 			case MOBTYPE.VOTER_BLUE:
@@ -124,6 +129,8 @@ class MobController {
 					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_BLUEMAN, MOBTYPE.VOTER_BLUE);
 					newMob.name = "Wandering enemy";
 					newMob.placeableDesc = "A bad dude";
+					const startingLoyalty = newMob.health / 4 + 3 * Math.random() * newMob.health / 4;
+					newMob.addPartyLoyalty(playerController.getPartyName(PLAYERS.PLAYER_BLUE), startingLoyalty);
 					break;
 				}
 			case MOBTYPE.VOTER_PURPLE:
@@ -131,6 +138,8 @@ class MobController {
 					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_PURPLEMAN, MOBTYPE.VOTER_PURPLE);
 					newMob.name = "Wandering enemy";
 					newMob.placeableDesc = "A bad dude";
+					const startingLoyalty = newMob.health / 4 + 3 * Math.random() * newMob.health / 4;
+					newMob.addPartyLoyalty(playerController.getPartyName(PLAYERS.PLAYER_PURPLE), startingLoyalty);
 					break;
 				}
 			case MOBTYPE.BOOTHENTRY:
@@ -155,10 +164,16 @@ class MobController {
 				}
 		}
 
+		this.allMobs.push(newMob);
 		return newMob;
 	}
 
 	despawnMe(mob: Mob) {
+		const mobIndex = this.allMobs.indexOf(mob);
+		if (mobIndex >= 0) {
+			this.allMobs.splice(mobIndex, 1);
+		}
+
 		//console.log(`MobController::despawnMe()`, mob);
 		//remove from player mobs
 		const playerIndex = this.playerMobs.indexOf(mob);
@@ -189,28 +204,16 @@ class MobController {
 		}
 	}
 
-	renderEnemyMobs() {
+	renderMobs() {
 		if (this.game2dRenderContext) {
-			for (let i = 0; i < this.enemyMobs.length; i++) {
-				const curMob = this.enemyMobs[i];
-				if (curMob.sprite) {
-					curMob.sprite.Render(this.game2dRenderContext);
-				}
-			}
-		}
-	}
+			for (let i = 0; i < this.allMobs.length; i++) {
+				const curMob = this.allMobs[i];
+				curMob.render(this.game2dRenderContext);
 
-	renderPlayerMobs() {
-		if (this.game2dRenderContext) {
-			for (let i = 0; i < this.playerMobs.length; i++) {
-				const curMob = this.playerMobs[i];
-				if (curMob.sprite) {
-					curMob.sprite.Render(this.game2dRenderContext);
-				}
-
+				//for debugging
 				for (const debugSprite of curMob.debugSprites) {
-					debugSprite.Render(this.game2dRenderContext);
-				 }
+					debugSprite.render(this.game2dRenderContext);
+				}
 			}
 		}
 	}
@@ -220,7 +223,7 @@ class MobController {
 			for (let i = 0; i < this.envMobs.length; i++) {
 				const curMob = this.envMobs[i];
 				if (curMob.sprite) {
-					curMob.sprite.Render(this.game2dRenderContext);
+					curMob.sprite.render(this.game2dRenderContext);
 				}
 			}
 		}

@@ -63,8 +63,7 @@ class GameController {
 		gridController.renderGridLines();
 		gridController.renderDebug();
 		mobController.renderEnvMobs();
-		mobController.renderPlayerMobs();
-		mobController.renderEnemyMobs();
+		mobController.renderMobs();
 		mouseController.renderBuildGhost();
 		missileController.update(deltaTime);
 

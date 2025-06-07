@@ -125,16 +125,16 @@ class GridController {
 	}
 
 	getTurfAtCoords(coords: Vector2): Turf | null {
-		if (this.turfGrid.length >= coords.x) {
-			if (this.turfGrid[coords.x].length >= coords.y) {
+		if (this.turfGrid.length > coords.x) {
+			if (this.turfGrid[coords.x].length > coords.y) {
 				return this.turfGrid[coords.x][coords.y];
 			}
 			else {
-				console.error(`GridController::getTurfAtCoords(${coords.x},${coords.y}) but outside ybounds!`, this.turfGrid[coords.x]);
+				//console.error(`GridController::getTurfAtCoords(${coords.x},${coords.y}) but outside ybounds!`, this.turfGrid[coords.x]);
 			}
 		}
 		else {
-			console.error(`GridController::getTurfAtCoords(${coords.x},${coords.y}) but outside xbounds!`, this.turfGrid);
+			//console.error(`GridController::getTurfAtCoords(${coords.x},${coords.y}) but outside xbounds!`, this.turfGrid);
 		}
 		return null;
 	}
@@ -325,7 +325,7 @@ class GridController {
 		if (this.game2dRenderContext) {
 			for (const turf of this.allTurfs) {
 				if (turf.sprite) {
-					turf.sprite.Render(this.game2dRenderContext);
+					turf.sprite.render(this.game2dRenderContext);
 				}
 			}
 		}

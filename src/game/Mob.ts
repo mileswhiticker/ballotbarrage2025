@@ -5,7 +5,9 @@ import mobController from '@controllers/MobController.ts';
 import { MISSILETYPE } from '@game/Missile';
 import Turf from '@game/Turf.ts';
 import {generateUUID} from '@utils/uuid.ts';
-import { MobAttack } from './MobAttack';
+import { MobAttack } from '@game/MobAttack';
+import type { ColourInfo } from '@utils/ColourInfo';
+import playerController from '@controllers/PlayerController';
 
 export enum MOBTYPE {
 	UNKNOWN = -1,
@@ -64,6 +66,7 @@ export default class Mob {
 
 	debugSprites: Sprite[] = [];
 	curTurf: Turf | null = null;
+	health: number = 5;
 
 	constructor(startPos: Vector2, imagePath: string, mobType: MOBTYPE) {
 		this.pos = startPos;
@@ -247,6 +250,22 @@ export default class Mob {
 										this.curTurf = null;
 									}
 									mobController.despawnMe(this);
+
+									//add a bit of randomness to the voting
+									playerController.slightlyRandomiseLoyalty(this.partyLoyalty);
+
+									//sort the party names in order of loyalty
+									const sortedParties = Array.from(this.partyLoyalty.entries())
+										.sort((a, b) => b[1] - a[1]) // sort by loyalty descending
+										.map(entry => entry[0]); // extract party names
+
+									//console.log(`sortedParties:`,sortedParties);
+
+									//cast votes
+									for (let pref = 0; pref < sortedParties.length; pref++) {
+										const partyName = sortedParties[pref];
+										playerController.castVote(partyName, pref);
+									}
 								}
 						}
 					}
@@ -316,6 +335,50 @@ export default class Mob {
 		}
 		else {
 			this.partyLoyalty.set(party, loyalty);
+		}
+		//console.log(`addPartyLoyalty()`, this.partyLoyalty);
+	}
+
+	underlayHalo: ColourInfo | null = null;
+	doDebug: boolean = false;
+	render(context: CanvasRenderingContext2D) {
+		//if (this.doDebug) console.log('rendermob', this);
+
+		/*if (this.underlayHalo) {
+			context.beginPath();
+			context.ellipse(
+				this.pos.x, this.pos.y,	// centerX, centerY
+				16, 32,					// radiusX, radiusY
+				0,						// rotation (in radians)
+				0, Math.PI * 2			// startAngle, endAngle
+			);
+			context.fillStyle = this.underlayHalo.hex_string;
+			context.fill();
+			context.strokeStyle = "black";
+			context.stroke();
+		}*/
+
+		for (let i = 0; i < this.partyLoyalty.size; i++) {
+
+			const party = Array.from(this.partyLoyalty.keys())[i];
+			const loyalty = this.partyLoyalty.get(party);
+
+			if (loyalty) {
+				context.strokeStyle = playerController.GetPartyColour(party).hex_string;
+				context.lineWidth = 3;
+
+				context.beginPath();
+				const lineStartX = this.pos.x;
+				const lineEndX = lineStartX + gridController.gridCellDim * (loyalty / Math.max(loyalty, this.health));
+				const lineY = this.pos.y + i * 6;
+				context.moveTo(lineStartX, lineY);
+				context.lineTo(lineEndX, lineY);
+				context.stroke();
+			}
+		}
+
+		if (this.sprite) {
+			this.sprite.render(context);
 		}
 	}
 }

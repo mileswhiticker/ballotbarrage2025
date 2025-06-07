@@ -4,6 +4,7 @@ import { ref, type Ref } from 'vue';
 import mobController from '@controllers/MobController.ts'
 import gridController from '@controllers/GridController.ts';
 import Vector2 from '@utils/Vector2.ts';
+import playerController from './PlayerController';
 
 class MouseController {
 	private mobBuildGhostType: Ref<MOBTYPE> = ref(MOBTYPE.NONE);
@@ -38,6 +39,7 @@ class MouseController {
 		this.mobBuildGhostType.value = MOBTYPE.NONE;
 
 		if (this.mobBuildGhost) {
+			mobController.despawnMe(this.mobBuildGhost);
 			this.mobBuildGhost = null;
 		}
 	}
@@ -48,7 +50,7 @@ class MouseController {
 
 	renderBuildGhost() {
 		if (this.game2dRenderContext && mouseController.mobBuildGhost && mouseController.mobBuildGhost.sprite) {
-			mouseController.mobBuildGhost.sprite.Render(this.game2dRenderContext);
+			mouseController.mobBuildGhost.sprite.render(this.game2dRenderContext);
 		}
 	}
 
@@ -102,7 +104,7 @@ class MouseController {
 			//const snappedPosition = gridController.snapToGrid(transformedPosition);
 
 			//console.log(`building new placeable mob...`);
-			const newMob = mobController.createPlayerMob(this.mobBuildGhostType.value);
+			const newMob = mobController.createPlayerMob(this.mobBuildGhostType.value, playerController.getHumanPlayer().value.playerParty);
 			newMob.jumpToGridFromRawPos(transformedPosition);
 
 			this.ClearBuildGhost();

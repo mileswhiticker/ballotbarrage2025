@@ -28,7 +28,9 @@ class PlayerController {
 		standsFor: "No one",
 		playerImagePath: './src/assets/greyquestion.png',
 		money: 0,
-		id: PLAYERS.PLAYER_UNKNOWN
+		id: PLAYERS.PLAYER_UNKNOWN,
+		votes: [],
+		formattedVotes: "No votes yet"
 	};
 	private humanPlayer: Ref<PlayerInfo> = ref(this.noPlayer);
 
@@ -53,7 +55,9 @@ class PlayerController {
 			standsFor: "Scientists, engineers, environmentalists",
 			playerImagePath: './src/assets/purpleface.png',
 			money: startingMoney,
-			id: PLAYERS.PLAYER_PURPLE
+			id: PLAYERS.PLAYER_PURPLE,
+			votes: [],
+			formattedVotes: "No votes yet"
 		}));
 
 		this.allPlayerCharacters.push(ref({
@@ -64,7 +68,9 @@ class PlayerController {
 			standsFor: "Unions, workers, tradespeople",
 			playerImagePath: './src/assets/redface.png',
 			money: startingMoney,
-			id: PLAYERS.PLAYER_RED
+			id: PLAYERS.PLAYER_RED,
+			votes: [],
+			formattedVotes: "No votes yet"
 		}));
 
 		this.allPlayerCharacters.push(ref({
@@ -75,8 +81,17 @@ class PlayerController {
 			standsFor: "Banks and big business",
 			playerImagePath: './src/assets/blueface.png',
 			money: startingMoney,
-			id: PLAYERS.PLAYER_BLUE
+			id: PLAYERS.PLAYER_BLUE,
+			votes: [],
+			formattedVotes: "No votes yet"
 		}));
+
+		//record starting votes
+		for (const playerInfo of this.allPlayerCharacters) {
+			for (let i = 0; i < this.allPlayerCharacters.length; i++) {
+				playerInfo.value.votes.push(0);
+			}
+		}
 
 		this.humanPlayer.value = this.allPlayerCharacters[PLAYERS.PLAYER_PURPLE].value;
 		this.nonPlayerCharacters.value.push(this.allPlayerCharacters[PLAYERS.PLAYER_RED]);
@@ -94,12 +109,72 @@ class PlayerController {
 	//	}
 	//}
 
+	getPartyName(playerId: PLAYERS): string {
+		if (playerId < this.allPlayerCharacters.length) {
+			const playerInfo = this.allPlayerCharacters[playerId];
+			return playerInfo.value.playerParty;
+		}
+
+		console.warn("PlayerController::getPartyName() unknown playerId: ", playerId);
+		return "Unknown Party";
+	}
+
 	getHumanPlayer(){
 		return this.humanPlayer;
 	}
 
 	getNonPlayerCharacters() {
 		return this.nonPlayerCharacters;
+	}
+	
+	GetPartyColour(partyName: string): ColourInfo {
+		for (const curPlayer of this.allPlayerCharacters) {
+			if (curPlayer.value.playerParty === partyName) {
+				return curPlayer.value.themePrimary;
+			}
+		}
+		console.warn("PlayerController::GetPartyColour() unknown player party: ", partyName);
+		return new ColourInfo("#000000"); // default to black if party not recognized
+	}
+
+	getPlayerInfoByPartyName(partyName: string): PlayerInfo | null {
+		for (const playerInfo of this.allPlayerCharacters) {
+			if (playerInfo.value.playerParty === partyName) {
+				return playerInfo.value;
+			}
+		}
+		console.warn("PlayerController::getPlayerInfoByPartyName() unknown party name: ", partyName);
+		return null;
+	}
+
+	castVote(partyName: string, preference: number) {
+		//console.log(`Casting vote for ${partyName} with preference ${preference}`);
+
+		//note: 0 is for first preference, 1 for second preference, etc.
+		const playerInfo = this.getPlayerInfoByPartyName(partyName);
+		if (playerInfo) {
+			playerInfo.votes[preference] += 1;
+			let voteString = "";
+			for (let i = 0; i < playerInfo.votes.length; i++) {
+				voteString += `${playerInfo.votes[i]} `;
+			}
+			playerInfo.formattedVotes = voteString;
+		}
+	}
+
+	slightlyRandomiseLoyalty(partyLoyalty: Map<string, number>) {
+		//check if there are any parties missing
+		for (const playerInfo of this.allPlayerCharacters) {
+			if (!partyLoyalty.has(playerInfo.value.playerParty)) {
+				partyLoyalty.set(playerInfo.value.playerParty, 1);
+			}
+		};
+
+		//add some randomness to the loyalty
+		for (const playerInfo of this.allPlayerCharacters) {
+			const existingLoyalty = partyLoyalty.get(playerInfo.value.playerParty) || 0;
+			partyLoyalty.set(playerInfo.value.playerParty, existingLoyalty / 2 + existingLoyalty * Math.random());
+		}
 	}
 }
 

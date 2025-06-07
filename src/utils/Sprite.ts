@@ -21,7 +21,8 @@ export class Sprite {
 		}
 	}
 
-	Render(context: CanvasRenderingContext2D) {
+	render(context: CanvasRenderingContext2D) {
+
 		if (this.debugRender) {
 			context.strokeStyle = '#f603a3';
 			context.lineWidth = 1;

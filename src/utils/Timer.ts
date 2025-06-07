@@ -88,8 +88,12 @@ export default class Timer {
 				for (const callback of this.timerSliceExpiryCallbacks) {
 					callback(this.currentData[this.currentSliceIndex - 1].label);
 				}
-				for (const callback of this.timerSliceStartedCallbacks) {
-					callback(this.currentData[this.currentSliceIndex].label);
+
+				//dont start the next slice if we have no more slices
+				if (this.currentSliceIndex < this.currentData.length) {
+					for (const callback of this.timerSliceStartedCallbacks) {
+						callback(this.currentData[this.currentSliceIndex].label);
+					}
 				}
 			}
 
