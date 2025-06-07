@@ -1,8 +1,8 @@
 import Mob from '@game/Mob.ts';
 import mobController from '@controllers/MobController.ts';
 import Vector2 from '@utils/Vector2.ts';
-import { Turf } from '@game/Turf';
-import { Sprite } from '@utils/Sprite.ts';
+import Turf from '@game/Turf';
+//import { Sprite } from '@utils/Sprite.ts';
 
 export class GridRoute {
 	squares: Vector2[] = [];
@@ -83,26 +83,54 @@ class GridController {
 		return new Vector2(gridCoords.x * this.gridCellDim, gridCoords.y * this.gridCellDim);
 	}
 
+	getTurfsInRange(gridCoords: Vector2, dist: number): Turf[] {
+
+		//this returns a circle around the central grid coords
+		//console.error(`getTurfsInRange()`, gridCoords, dist);
+		const startTurf = this.getTurfAtCoords(gridCoords);
+		const allTurfs: Turf[] = [];
+		if (startTurf) {
+			allTurfs.push(startTurf);
+		}
+
+		const distSqrd = dist * dist;
+		for (let i = gridCoords.x - dist; i <= gridCoords.x + dist; i++) {
+			for (let j = gridCoords.y - dist; j <= gridCoords.y + dist; j++) {
+				//is this in bounds
+				if (i < 0 || j < 0 || i >= this.turfGrid.length || j >= this.turfGrid[i].length) {
+					continue;
+				}
+
+				const turf = this.turfGrid[i][j];
+				if ((turf.gridCoords.x - gridCoords.x) ** 2 + (turf.gridCoords.y - gridCoords.y) ** 2 <= distSqrd) {
+					allTurfs.push(turf);
+				}
+			}
+		}
+
+		return allTurfs;
+	}
+
 	pathToMob(mobSource: Mob, mobDest: Mob): GridRoute {
 		return this.pathToGrid(mobSource.gridCoords, mobDest.gridCoords);
 	}
 
 	getTurfAtPosition(pos: Vector2): Turf | null {
 		const gridCoords = this.getGridCoords(pos);
-		return this.getTurfAtCoords(pos);
+		return this.getTurfAtCoords(gridCoords);
 	}
 
 	getTurfAtCoords(coords: Vector2): Turf | null {
-		if (this.turfGrid.length > coords.x) {
-			if (this.turfGrid[coords.x].length > coords.y) {
+		if (this.turfGrid.length >= coords.x) {
+			if (this.turfGrid[coords.x].length >= coords.y) {
 				return this.turfGrid[coords.x][coords.y];
 			}
 			else {
-				console.error(`GridController::getTurfAtCoords(${coords.x},${coords.y}) but outside ybounds!`);
+				console.error(`GridController::getTurfAtCoords(${coords.x},${coords.y}) but outside ybounds!`, this.turfGrid[coords.x]);
 			}
 		}
 		else {
-			console.error(`GridController::getTurfAtCoords(${coords.x},${coords.y}) but outside xbounds!`);
+			console.error(`GridController::getTurfAtCoords(${coords.x},${coords.y}) but outside xbounds!`, this.turfGrid);
 		}
 		return null;
 	}
@@ -192,7 +220,8 @@ class GridController {
 	}
 	
 	heuristic(a: Vector2, b: Vector2): number {
-		return this.heuristicManhattan(a, b);
+		//add a tiny bit of randomness to the heuristic to make pathing less formulaic
+		return this.heuristicManhattan(a, b) + Math.random() * 0.1;
 	}
 
 	heuristicManhattan(a: Vector2, b: Vector2): number {
@@ -283,7 +312,7 @@ class GridController {
 
 	renderTurfs() {
 		if (this.game2dRenderContext) {
-			for (let turf of this.allTurfs) {
+			for (const turf of this.allTurfs) {
 				if (turf.sprite) {
 					turf.sprite.Render(this.game2dRenderContext);
 				}

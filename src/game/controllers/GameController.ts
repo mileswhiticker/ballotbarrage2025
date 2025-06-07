@@ -5,6 +5,8 @@ import mobController from '@controllers/MobController.ts';
 import mouseController from '@controllers/MouseController.ts';
 import gridController from '@controllers/GridController.ts';
 import enemyController from '@controllers/EnemyController.ts';
+import missileController from '@controllers/MissileController.ts';
+import resourceController from '@controllers/ResourceController.ts';
 //import Vector2 from '@utils/Vector2.ts';
 
 class GameController {
@@ -19,9 +21,11 @@ class GameController {
 		this.gameCanvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
 		this.game2dRenderContext = this.gameCanvas.getContext('2d');
 
+		resourceController.Initialise();
 		gridController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
 		mouseController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
 		mobController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
+		missileController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
 		playerController.Initialise();
 		enemyController.Initialise();
 
@@ -45,8 +49,9 @@ class GameController {
 		gridController.renderDebug();
 		mobController.renderEnvMobs();
 		mobController.renderPlayerMobs();
-		mobController.renderGameMobs();
+		mobController.renderEnemyMobs();
 		mouseController.renderBuildGhost();
+		missileController.update(deltaTime);
 
 		this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));
 	}

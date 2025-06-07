@@ -2,6 +2,10 @@ import Vector2 from '@utils/Vector2.ts';
 import { Sprite } from '@utils/Sprite.ts';
 import gridController, { GridRoute } from '@controllers/GridController.ts';
 import mobController from '@controllers/MobController.ts';
+import { MISSILETYPE } from '@game/Missile';
+import Turf from '@game/Turf.ts';
+import {generateUUID} from '@utils/uuid.ts';
+import { MobAttack } from './MobAttack';
 
 export enum MOBTYPE {
 	UNKNOWN = -1,
@@ -33,7 +37,7 @@ export default class Mob {
 	dims: Vector2;
 	targetPos: Vector2 | null = null;
 	moveRoute: GridRoute | null = null;
-	moveSpeed: number = 64;
+	moveSpeed: number = 128;
 	sprite: Sprite;
 	imagePath: string;
 	age: number = 0;
@@ -50,6 +54,17 @@ export default class Mob {
 	tLeftThinking: number = 1;
 	myGoal: AI_GOAL = AI_GOAL.UNKNOWN;
 
+	partyLoyalty: Map<string, number> = new Map<string, number>();
+
+	party: string = "na"; //which party does this mob belong to? (for missiles, voters, etc)
+
+	uuid: string = generateUUID(); //unique identifier for this mob
+	mobAttack: MobAttack | null = null;
+	listeningTurfs: Turf[] = []; //turf this mob is listening to for nearby mobs
+
+	debugSprites: Sprite[] = [];
+	curTurf: Turf | null = null;
+
 	constructor(startPos: Vector2, imagePath: string, mobType: MOBTYPE) {
 		this.pos = startPos;
 		this.imagePath = imagePath;
@@ -57,18 +72,36 @@ export default class Mob {
 		this.sprite.pos = this.pos;
 		this.dims = new Vector2(64, 64);
 		this.mobType = mobType;
+
+		switch (mobType) {
+			case MOBTYPE.VOLUNTEER: {
+				//console.error('setting up flyer attack in Mob constructor');
+				this.mobAttack = new MobAttack(this);
+				this.mobAttack.presetAttackType(MISSILETYPE.FLYER);
+			}
+		}
 	}
 
-	update(deltaTime: number) {
+	update(deltaTime: number, doDebug: boolean = false) {
+		if (doDebug)	console.log("mob update",this);
 		if (this.isAlive) {
 			this.age += deltaTime;
 
-			if (this.targetPos || this.moveRoute)
-			{
+			if (this.targetPos || this.moveRoute) {
 				this.doMove(deltaTime);
 			}
 			else {
 				this.doThink(deltaTime);
+			}
+
+			if (this.mobAttack) {
+				//console.log("upadting mob with attack", this);
+				if (this.mobAttack.tLeftAttack <= 0) {
+					this.mobAttack.tryAttackMob();
+				}
+				else {
+					this.mobAttack.tLeftAttack -= deltaTime;
+				}
 			}
 		}
 	}
@@ -111,6 +144,53 @@ export default class Mob {
 
 		//tell the grid to update its grid contents tracking
 		mobController.updatePlayerMobGridPos(this, oldGridPos);
+		this.postMoveUpdates();
+	}
+
+	postMoveUpdates() {
+		for (const curTurf of this.listeningTurfs) {
+			curTurf.MobStopListening(this);
+		}
+
+		//clear old debug sprites for garbage collection
+		this.debugSprites = [];
+
+		if (this.mobAttack) {
+
+			const listeningTurfs = gridController.getTurfsInRange(this.gridCoords, this.mobAttack.getRange());
+			for (const turf of listeningTurfs) {
+				turf.MobStartListening(this);
+				this.listeningTurfs.push(turf);
+
+				//now create a debug sprite for this turf
+				//const newDebugSprite = new Sprite();
+				//newDebugSprite.pos = gridController.getRawPosFromGridCoords(turf.gridCoords);
+				//newDebugSprite.pos.add(new Vector2(gridController.gridCellDim / 2, gridController.gridCellDim / 2));
+				//this.debugSprites.push(newDebugSprite);
+			}
+		}
+
+		if (this.curTurf) {
+			this.curTurf.MobLeave(this);
+		}
+		this.curTurf = gridController.getTurfAtPosition(this.pos);
+		if (this.curTurf) {
+			this.curTurf.MobEnter(this);
+		}
+	}
+
+	mobEnteredTurfNearby(mob: Mob, turf: Turf) {
+		if (this.mobAttack) {
+			//console.log("mob entered turf nearby", mob, turf);
+			this.mobAttack.mobEnteredTurfNearby(mob, turf);
+		};
+	}
+
+	mobLeftTurfNearby(mob: Mob, turf: Turf) {
+		if (this.mobAttack) {
+			//console.log("mob entered turf nearby", mob, turf);
+			this.mobAttack.mobLeftTurfNearby(mob, turf);
+		};
 	}
 
 	doMove(deltaTime: number) {
@@ -142,6 +222,14 @@ export default class Mob {
 			//have we arrived?
 			if (arrived) {
 				//console.log("arrived at targetPos");
+				//trigger any turf events
+				if (this.curTurf) {
+					this.curTurf.MobLeave(this);
+				}
+				this.curTurf = gridController.getTurfAtPosition(this.pos);
+				if (this.curTurf) {
+					this.curTurf.MobEnter(this);
+				}
 
 				//reset the target
 				this.targetPos = null;
@@ -220,6 +308,15 @@ export default class Mob {
 		}
 		else {
 			//console.log("thinking", this);
+		}
+	}
+
+	addPartyLoyalty(party: string, loyalty: number) {
+		if (this.partyLoyalty.has(party)) {
+			this.partyLoyalty.set(party, this.partyLoyalty.get(party)! + loyalty)
+		}
+		else {
+			this.partyLoyalty.set(party, loyalty);
 		}
 	}
 }

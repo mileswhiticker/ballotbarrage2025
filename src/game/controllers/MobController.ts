@@ -1,26 +1,23 @@
 
-import resourceController from '@controllers/ResourceController.ts';
+//import resourceController from '@controllers/ResourceController.ts';
 
 import Mob, { AI_GOAL } from '@game/Mob.ts';
 import { MOBTYPE } from '@game/Mob.ts';
 import Vector2 from '@utils/Vector2.ts';
 import gridController from '@controllers/GridController.ts';
 
-const IMGPATH_GREYMAN: string = './src/assets/greyman.png';
-const IMGPATH_REDMAN: string = './src/assets/redman.png';
-const IMGPATH_BLUEMAN: string = './src/assets/blueman.png';
-const IMGPATH_PURPLEMAN: string = './src/assets/purpleman.png';
-const IMGPATH_VOLUNTEER: string = './src/assets/volunteer.png';
-//const PATH_BORDER10: string = './src/assets/10 Border 01.png';
-
-const IMGPATH_MOB_UNKNOWN: string = './src/assets/pinkquestion.png';
-//const IMGPATH_MOB_VOLUNTEER: string = './src/assets/greyman.png';
-const IMGPATH_MOB_AFRAME: string = './src/assets/aframe.png';
-//const IMGPATH_MOB_SAUSAGESIZZLE: string = './src/assets/sausagesizzle.png';
-const IMGPATH_MOB_BBQ: string = './src/assets/bbq.png';
-
-const IMGPATH_BOOTHENTRY: string = './src/assets/boothentry.png';
-const IMGPATH_BUS: string = './src/assets/bus.png';
+import {
+	IMGPATH_GREYMAN,
+	IMGPATH_REDMAN,
+	IMGPATH_BLUEMAN,
+	IMGPATH_PURPLEMAN,
+	IMGPATH_MOB_VOLUNTEER,
+	IMGPATH_MOB_AFRAME,
+	IMGPATH_MOB_BBQ,
+	IMGPATH_MOB_UNKNOWN,
+	IMGPATH_BOOTHENTRY,
+	IMGPATH_BUS
+} from '@assets/_AssetPaths.ts'; 
 
 class MobController {
 	enemyMobs: Mob[] = [];
@@ -33,18 +30,6 @@ class MobController {
 
 	Initialise(game2dRenderContext: CanvasRenderingContext2D) {
 		this.game2dRenderContext = game2dRenderContext;
-
-		resourceController.LoadImage(IMGPATH_GREYMAN);
-		resourceController.LoadImage(IMGPATH_REDMAN);
-		resourceController.LoadImage(IMGPATH_BLUEMAN);
-		resourceController.LoadImage(IMGPATH_PURPLEMAN);
-		resourceController.LoadImage(IMGPATH_VOLUNTEER);
-		resourceController.LoadImage(IMGPATH_MOB_AFRAME);
-		resourceController.LoadImage(IMGPATH_MOB_BBQ);
-		//resourceController.LoadImage(IMGPATH_MOB_VOLUNTEER);
-		resourceController.LoadImage(IMGPATH_MOB_UNKNOWN);
-		resourceController.LoadImage(IMGPATH_BOOTHENTRY);
-		resourceController.LoadImage(IMGPATH_BUS);
 
 		//for testing: create an enemy mob
 		//const newMob = this.createMobInstance(MOBTYPE.WANDER_ENEMY)
@@ -59,6 +44,7 @@ class MobController {
 		this.envMobs.push(boothMob);
 		this.boothMobs.push(boothMob);
 		boothMob.jumpToGridFromRawPos(new Vector2(792, 450));
+
 		boothMob = this.createMobInstance(MOBTYPE.BOOTHENTRY);
 		this.envMobs.push(boothMob);
 		this.boothMobs.push(boothMob);
@@ -112,11 +98,14 @@ class MobController {
 		newMob.jumpToGridFromRawPos(spawnloc);
 		newMob.isAlive = true;
 		newMob.myGoal = AI_GOAL.SEEK_BOOTH;
+		newMob.party = "enemy";
 		//console.log(`createActiveEnemyMob(${mobType})`, newMob);
 	}
 
 	createPlayerMob(mobType: MOBTYPE) {
 		const newMob = this.createMobInstance(mobType);
+		newMob.isAlive = true;
+		newMob.party = "player";
 		this.playerMobs.push(newMob);
 
 		return newMob;
@@ -143,10 +132,11 @@ class MobController {
 				}
 			case MOBTYPE.VOLUNTEER:
 				{
-					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_VOLUNTEER, MOBTYPE.VOLUNTEER);
+					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_MOB_VOLUNTEER, MOBTYPE.VOLUNTEER);
 					newMob.name = "Volunteers";
 					newMob.placeableDesc = "Your front line troopers, handing out flyers to voters.";
 					newMob.isSolid = true;
+					//newMob.presetAttackType(MISSILETYPE.FLYER);
 					break;
 				}
 			case MOBTYPE.WANDER_ENEMY:
@@ -215,13 +205,14 @@ class MobController {
 			curMob.update(deltaTime);
 		}
 
-		for (let i = 0; i < this.enemyMobs.length; i++) {
-			const curMob = this.enemyMobs[i];
+		for (let i = 0; i < this.playerMobs.length; i++) {
+			const curMob = this.playerMobs[i];
+			//console.log("mobcontroller upadting player mob", curMob);
 			curMob.update(deltaTime);
 		}
 	}
 
-	renderGameMobs() {
+	renderEnemyMobs() {
 		if (this.game2dRenderContext) {
 			for (let i = 0; i < this.enemyMobs.length; i++) {
 				const curMob = this.enemyMobs[i];
@@ -239,6 +230,10 @@ class MobController {
 				if (curMob.sprite) {
 					curMob.sprite.Render(this.game2dRenderContext);
 				}
+
+				for (const debugSprite of curMob.debugSprites) {
+					debugSprite.Render(this.game2dRenderContext);
+				 }
 			}
 		}
 	}

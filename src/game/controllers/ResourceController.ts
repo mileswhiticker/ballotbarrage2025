@@ -1,4 +1,19 @@
 
+import {
+	IMGPATH_GREYMAN,
+	IMGPATH_REDMAN,
+	IMGPATH_BLUEMAN,
+	IMGPATH_PURPLEMAN,
+	IMGPATH_MOB_AFRAME,
+	IMGPATH_MOB_BBQ,
+	IMGPATH_MOB_UNKNOWN,
+	IMGPATH_MOB_VOLUNTEER,
+	IMGPATH_BOOTHENTRY,
+	IMGPATH_BUS,
+	IMGPATH_MSL_SAUSAGESIZZLE,
+	IMGPATH_MSL_FLYER,
+} from '@assets/_AssetPaths.ts'; 
+
 class ResourceController {
 	gameCanvas: HTMLCanvasElement | null = null;
 	images = new Map<string, HTMLImageElement>();
@@ -8,6 +23,21 @@ class ResourceController {
 	}
 
 	Initialise() {
+		this.LoadImage(IMGPATH_GREYMAN);
+		this.LoadImage(IMGPATH_REDMAN);
+		this.LoadImage(IMGPATH_BLUEMAN);
+		this.LoadImage(IMGPATH_PURPLEMAN);
+		this.LoadImage(IMGPATH_MOB_UNKNOWN);
+
+		this.LoadImage(IMGPATH_MOB_AFRAME);
+		this.LoadImage(IMGPATH_MOB_BBQ);
+
+		this.LoadImage(IMGPATH_MOB_VOLUNTEER);
+		this.LoadImage(IMGPATH_BOOTHENTRY);
+		this.LoadImage(IMGPATH_BUS);
+
+		this.LoadImage(IMGPATH_MSL_FLYER);
+		this.LoadImage(IMGPATH_MSL_SAUSAGESIZZLE);
 	}
 
 	LinkCanvas(canvas: HTMLCanvasElement) {
