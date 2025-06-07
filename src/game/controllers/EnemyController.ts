@@ -53,7 +53,7 @@ class EnemyWave {
 	}
 
 	enemyDepleted(enemyDef: WaveEnemyDef) {
-		console.log("Enemy type depleted!", enemyDef);
+		//console.log("Enemy type depleted!", enemyDef);
 		for (let i = 0; i < this.enemyDefs.length; i++) {
 			const checkDef = this.enemyDefs[i];
 			if (checkDef.mobType === enemyDef.mobType) {
@@ -117,7 +117,7 @@ class EnemyController {
 	}
 
 	startSpawning() {
-		console.log('enemycontroller::startSpawning()');
+		//console.log('enemycontroller::startSpawning()');
 		this.isSpawning = true;
 	}
 
