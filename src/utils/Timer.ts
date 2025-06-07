@@ -1,86 +1,138 @@
-import enemyController from '@controllers/EnemyController.ts';
 import Vector2 from '@utils/Vector2.ts';
+import { ref, type Ref } from 'vue';
 
 type PieSlice = {
 	label: string;
-	value: number;
+	seconds: number;
 	color: string;
 };
 
-let game2dRenderContext: CanvasRenderingContext2D | null = null;
-let centrePos: Vector2 = new Vector2(0, 0);
-let dims: Vector2 = new Vector2(100, 100);
+export default class Timer {
+	currentData: PieSlice[] = [];
+	renderContext: CanvasRenderingContext2D | null = null;
+	dims: Vector2 = new Vector2(100, 100);
+	centrePos: Vector2 = new Vector2(0, 0);
+	angularRate: number = 0.5; // radians per second
+	isRunning: boolean = false;
+	currentAngle: number = 0; // in radians
+	private sliceTimeLeft: number = 0; // time left in the current slice
+	private currentSliceIndex: number = 0; // index of the current slice
+	currentColour: Ref<string> = ref("#000000"); // default colour
+	formattedTimeLeft: Ref<string> = ref("00:00");
 
-export function initialiseTimer(context: CanvasRenderingContext2D, newCentrePos: Vector2, newDims: Vector2) {
-	game2dRenderContext = context;
-	centrePos = newCentrePos;
-	dims = newDims;
-}
+	static sampleTimerdata = [
+		{ label: "Red", seconds: 5, color: "#f44336" },
+		{ label: "Green", seconds: 10, color: "#4caf50" },
+		{ label: "Blue", seconds: 15, color: "#2196f3" }
+	];
 
-export const sampleTimerdata = [
-	{ label: "Red", value: 30, color: "#f44336" },
-	{ label: "Green", value: 50, color: "#4caf50" },
-	{ label: "Blue", value: 20, color: "#2196f3" }
-];
-
-let currentData: PieSlice[] | null = null;
-let angularRate: number = 0.5; // radians per second
-
-export function SetTimerData(data: PieSlice[]) {
-	currentData = data;
-	let maxTime = 0;
-	for (const data of currentData) {
-		maxTime += data.value;
+	Initialise(context: CanvasRenderingContext2D, newCentrePos: Vector2, newDims: Vector2) {
+		this.renderContext = context;
+		this.centrePos = newCentrePos;
+		this.dims = newDims;
 	}
 
-	angularRate = (Math.PI * 2) / maxTime;
-}
+	SetTimerData(data: PieSlice[]) {
+		this.currentData = data;
+		let maxTime = 0;
+		for (const data of this.currentData) {
+			maxTime += data.seconds;
+		}
 
-export function renderTimer(
-	deltaTime: number
-): void {
-	if (!game2dRenderContext || !currentData) return;
-	//console.log(`drawPieChart()`);
+		this.angularRate = (Math.PI * 2) / maxTime;
+	}
 
-	const total = currentData.reduce((sum, slice) => sum + slice.value, 0);
-	const radius = Math.min(dims.x, dims.y) / 2;
-	const centerX = centrePos.x;
-	const centerY = centrePos.y
+	StartTimer() {
+		this.isRunning = true;
+	}
 
-	let startAngle = 0;
+	StopTimer() {
+		this.isRunning = false;
+	}
 
-	const currentAngle = (Date.now() / 1000 - enemyController.waveStartTime) * angularRate;
+	ResetTimer() {
+		this.currentSliceIndex = 0;
+		if (this.currentData.length > 0) {
+			this.sliceTimeLeft = this.currentData[0].seconds;
+		}
+		else {
+			this.sliceTimeLeft = 0;
+		}
+		this.currentAngle = 0;
+	}
 
-	for (const slice of currentData) {
-		const sliceAngle = (slice.value / total) * Math.PI * 2;
-		const endAngle = startAngle + sliceAngle;
-		//skip if the timer has already exceeded this slice
-		if (endAngle < currentAngle) {
+	render(deltaTime: number) {
+		if (!this.renderContext || !this.currentData) return;
+		//console.log(`renderTimer()`, deltaTime);
+		//if (deltaTime >= 100) {
+		//	deltaTime = 100;
+		//}
+
+		if (this.isRunning) {
+			this.sliceTimeLeft -= deltaTime;
+			this.currentAngle += this.angularRate * deltaTime;
+			//console.log(`renderTimer()`, this.sliceTimeLeft);
+
+			//for testing: remove this later
+			if (this.currentAngle >= Math.PI * 2) {
+				this.StopTimer();
+			}
+
+			if (this.sliceTimeLeft <= 0) {
+				this.currentSliceIndex++;
+				this.sliceTimeLeft = this.currentData[this.currentSliceIndex]?.seconds || 0;
+				//console.log("going to next slice", this.currentSliceIndex, this.sliceTimeLeft);
+			}
+
+			const rounded = Math.round(this.sliceTimeLeft);
+			const minutes = Math.min(Math.floor(rounded / 60), 99);
+			const seconds = rounded % 60;
+			this.formattedTimeLeft.value = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+		}
+
+		const total = this.currentData.reduce((sum, slice) => sum + slice.seconds, 0);
+		const radius = Math.min(this.dims.x, this.dims.y) / 2;
+		const centerX = this.centrePos.x;
+		const centerY = this.centrePos.y
+
+		let startAngle = 0;
+		this.renderContext.clearRect(0, 0, this.dims.x, this.dims.y);
+
+		let colourSet = false;
+		for (const slice of this.currentData) {
+			const sliceAngle = (slice.seconds / total) * Math.PI * 2;
+			const endAngle = startAngle + sliceAngle;
+			//skip if the timer has already exceeded this slice
+			if (endAngle < this.currentAngle) {
+				startAngle += sliceAngle;
+				continue;
+			}
+
+			if (!colourSet) {
+				colourSet = true;
+				this.currentColour.value = slice.color;
+			}
+			//console.log("timer setting new colour",slice.color);
+
+			let renderStartAngle = startAngle;
+			if (renderStartAngle < this.currentAngle) {
+				renderStartAngle = this.currentAngle;
+			}
+
+			this.renderContext.beginPath();
+			this.renderContext.moveTo(centerX, centerY);
+			this.renderContext.arc(
+				centerX,
+				centerY,
+				radius,
+				renderStartAngle,
+				endAngle
+			);
+			this.renderContext.closePath();
+			this.renderContext.fillStyle = slice.color;
+			this.renderContext.fill();
+
 			startAngle += sliceAngle;
-			continue;
 		}
-
-		let renderStartAngle = startAngle;
-		if (renderStartAngle < currentAngle) {
-			renderStartAngle = currentAngle;
-		}
-
-		game2dRenderContext.beginPath();
-		game2dRenderContext.moveTo(centerX, centerY);
-		game2dRenderContext.arc(
-			centerX,
-			centerY,
-			radius,
-			renderStartAngle,
-			endAngle
-		);
-		game2dRenderContext.closePath();
-		game2dRenderContext.fillStyle = slice.color;
-		game2dRenderContext.fill();
-
-		startAngle += sliceAngle;
 	}
-
-	//currentAngle += angularRate * deltaTime; // Update the angle based on deltaTime
-	//console.log(currentAngle);
 }

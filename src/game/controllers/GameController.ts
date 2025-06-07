@@ -1,5 +1,4 @@
 import Mob from '@game/Mob.ts';
-//import { MOBTYPE } from '@game/Mob.ts';
 import playerController from '@controllers/PlayerController.ts';
 import mobController from '@controllers/MobController.ts';
 import mouseController from '@controllers/MouseController.ts';
@@ -8,16 +7,20 @@ import enemyController from '@controllers/EnemyController.ts';
 import missileController from '@controllers/MissileController.ts';
 import resourceController from '@controllers/ResourceController.ts';
 //import Vector2 from '@utils/Vector2.ts';
-import { renderTimer, initialiseTimer, sampleTimerdata, SetTimerData } from '@utils/Timer.ts';
-import Vector2 from '@utils/Vector2.ts';
+import Timer from '@utils/Timer.ts';
 
 class GameController {
 	mobs: Mob[] = [];
 	mainRenderFrameId: number = -1;
 	gameCanvas: HTMLCanvasElement | null = null;
 	game2dRenderContext: CanvasRenderingContext2D | null = null;
+	timer: Timer;
 
 	gameTime: number = 0; //in seconds
+
+	constructor() {
+		this.timer = new Timer();
+	}
 
 	InitializeGame() {
 		//console.log("GameController::InitializeGame() starting...");
@@ -33,17 +36,17 @@ class GameController {
 		playerController.Initialise();
 		enemyController.Initialise();
 
-		initialiseTimer(this.game2dRenderContext as CanvasRenderingContext2D,
-			new Vector2(170, 30),
-			new Vector2(50, 50))
-		SetTimerData(sampleTimerdata);
+		//for testing
+		this.timer.SetTimerData(Timer.sampleTimerdata);
+		this.timer.ResetTimer();
+		this.timer.StartTimer();
 
 		this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));
 
 		//console.log("GameController::InitializeGame() finished");
 	}
 
-	tLastUpdate: number = 0;
+	tLastUpdate: number = Date.now();
 	Update() {
 		const tThisUpdate = Date.now();
 		const deltaTime = (tThisUpdate - this.tLastUpdate) / 1000;
@@ -55,8 +58,6 @@ class GameController {
 
 		this.renderEmptyCanvas();
 
-		renderTimer(deltaTime);
-
 		gridController.renderGridLines();
 		gridController.renderDebug();
 		mobController.renderEnvMobs();
@@ -64,6 +65,8 @@ class GameController {
 		mobController.renderEnemyMobs();
 		mouseController.renderBuildGhost();
 		missileController.update(deltaTime);
+
+		this.timer.render(deltaTime);
 
 		this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));
 	}
@@ -77,4 +80,5 @@ class GameController {
 	}
 }
 
-export const gameController = new GameController();
+const gameController = new GameController();
+export default gameController;

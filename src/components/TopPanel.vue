@@ -1,6 +1,7 @@
 <script setup lang="ts">
 	import PlayerPanels from '@components/PlayerPanels.vue';
 	import PlayerMoney from '@components/PlayerMoney.vue';
+	import GameTimer from '@components/GameTimer.vue';
 	import { PlayerInfo } from '@game/Player.ts';
 	import { watchEffect } from 'vue';
 
@@ -16,6 +17,7 @@
 <template>
 	<div id="topPanel">
 		<PlayerMoney :playerInfo />
+		<GameTimer />
 		<PlayerPanels />
 	</div>
 </template>
