@@ -155,7 +155,7 @@ class PlayerController {
 		const playerInfo = this.getPlayerInfoByPartyName(partyName);
 		if (playerInfo) {
 			playerInfo.votes[preference] += 1;
-			let voteString = "";
+			let voteString = "Votes: ";
 			for (let i = 0; i < playerInfo.votes.length; i++) {
 				voteString += `${playerInfo.votes[i]} `;
 			}
