@@ -103,8 +103,16 @@ export default class Mob {
 		switch (mobType) {
 			case MOBTYPE.VOLUNTEER: {
 				//console.error('setting up flyer attack in Mob constructor');
-				this.mobAttack = new MobAttack(this);
-				this.mobAttack.presetAttackType(MISSILETYPE.FLYER);
+				this.mobAttack = new MobAttack(this, MISSILETYPE.FLYER);
+				break;
+			}
+			case MOBTYPE.SAUSAGESIZZLE: {
+				this.mobAttack = new MobAttack(this, MISSILETYPE.SAUSAGE);
+				break;
+			}
+			case MOBTYPE.AFRAME: {
+				this.mobAttack = new MobAttack(this, MISSILETYPE.AFRAME);
+				break;
 			}
 		}
 	}
@@ -124,7 +132,7 @@ export default class Mob {
 			if (this.mobAttack) {
 				//console.log("upadting mob with attack", this);
 				if (this.mobAttack.tLeftAttack <= 0) {
-					this.mobAttack.tryAttackMob();
+					this.mobAttack.tryAttackMob(deltaTime);
 				}
 				else {
 					this.mobAttack.tLeftAttack -= deltaTime;
@@ -371,7 +379,25 @@ export default class Mob {
 		else {
 			this.partyLoyalty.set(party, loyalty);
 		}
+
+		if (this.partyLoyalty.get(party)! > this.health) {
+			this.partyLoyalty.set(party, this.health);
+		}
+
+		if (this.partyLoyalty.get(party)! < 0) {
+			this.partyLoyalty.set(party, 0);
+			//console.log(`Enemy mob loyalty for ${party} is nulled!`);
+		} else {
+			//console.log(`Enemy mob loyalty for ${party} set to ${this.partyLoyalty.get(party) }`);
+		}
+
 		//console.log(`addPartyLoyalty()`, this.partyLoyalty);
+	}
+
+	yum(yumAmount: number) {
+		this.partyLoyalty.forEach((value: number, key: string) => {
+			this.addPartyLoyalty(key, yumAmount);
+		});
 	}
 
 	underlayHalo: ColourInfo | null = null;

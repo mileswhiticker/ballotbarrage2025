@@ -7,6 +7,7 @@ export enum MISSILETYPE {
 	FLYER,
 	SAUSAGE,
 	DRINK,
+	AFRAME
 }
 
 export default class Missile {
@@ -54,6 +55,13 @@ export default class Missile {
 						if (this.mobTarget) {
 							this.mobTarget.addPartyLoyalty(this.party, 1);
 						}
+						break;
+					}
+					case MISSILETYPE.SAUSAGE: {
+						if (this.mobTarget) {
+							this.mobTarget.yum(-1);
+						}
+						break;
 					}
 				}
 			} else {

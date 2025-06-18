@@ -1,5 +1,5 @@
 import Mob from '@game/Mob';
-import Turf from '@game/Turf';
+//import Turf from '@game/Turf';
 import Missile, {MISSILETYPE} from '@game/Missile.ts';
 import { IMGPATH_MSL_FLYER, IMGPATH_MSL_SAUSAGESIZZLE } from '@assets/_AssetPaths.ts';
 import missileController from '@controllers/MissileController.ts';
@@ -12,9 +12,29 @@ export class MobAttack {
 	tLeftAttack: number = 0;
 	private imgPath: string = "na";
 	private nearbyEnemyMobs: Mob[] = [];
+	private auraRate: number = 1;	//used by aframe
 
-	constructor(mob: Mob) {
+	constructor(mob: Mob, missileType: MISSILETYPE) {
 		this.ownerMob = mob;
+		this.missileType = missileType;
+		switch (missileType) {
+			case MISSILETYPE.FLYER: {
+				this.range = 5;
+				this.attackCooldown = 0.5;
+				this.imgPath = IMGPATH_MSL_FLYER;
+				break;
+			}
+			case MISSILETYPE.SAUSAGE: {
+				this.range = 3;
+				this.attackCooldown = 1;
+				this.imgPath = IMGPATH_MSL_SAUSAGESIZZLE;
+				break;
+			}
+			case MISSILETYPE.AFRAME: {
+				this.range = 4;
+				break;
+			}
+		}
 	}
 
 	getRange() {
@@ -45,29 +65,22 @@ export class MobAttack {
 		}
 	}
 
-	presetAttackType(missileType: MISSILETYPE) {
-		this.missileType = missileType;
-		switch (missileType) {
-			case MISSILETYPE.FLYER: {
-				this.range = 5;
-				this.attackCooldown = 0.5;
-				this.imgPath = IMGPATH_MSL_FLYER;
-				break;
-			}
-			case MISSILETYPE.SAUSAGE: {
-				this.range = 3;
-				this.attackCooldown = 3;
-				this.imgPath = IMGPATH_MSL_SAUSAGESIZZLE;
-				break;
-			}
-		}
-	}
-
-	tryAttackMob() {
+	tryAttackMob(deltaTime: number) {
 		//console.log("I am trying to attack", this);
-		if (this.nearbyEnemyMobs.length > 0) {
-			this.doAttackMob(this.nearbyEnemyMobs[0]);
-			this.tLeftAttack = this.attackCooldown;
+		switch (this.missileType) {
+			case MISSILETYPE.AFRAME: {
+				this.nearbyEnemyMobs.forEach((value) => {
+					value.addPartyLoyalty(this.ownerMob.party, this.auraRate * deltaTime);
+				});
+				break;
+			}
+			default: {
+				if (this.nearbyEnemyMobs.length > 0) {
+					this.doAttackMob(this.nearbyEnemyMobs[0]);
+					this.tLeftAttack = this.attackCooldown;
+				}
+				break;
+			}
 		}
 	}
 
