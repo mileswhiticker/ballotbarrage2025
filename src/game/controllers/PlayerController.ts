@@ -168,8 +168,10 @@ class PlayerController {
 			playerInfo.formattedVotes = voteString;
 
 			// a first preference vote gets a small amount of electoral funding
-			playerInfo.money += this.getFirstPrefMoneyReward();
-			playerInfo.money = Math.round(playerInfo.money * 100) / 100;
+			if (preference == 0) {
+				playerInfo.money += this.getFirstPrefMoneyReward();
+				playerInfo.money = Math.round(playerInfo.money * 100) / 100;
+			}
 		}
 	}
 
