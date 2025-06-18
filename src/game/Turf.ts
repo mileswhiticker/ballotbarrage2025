@@ -32,11 +32,11 @@ export default class Turf {
 		};
 	}
 
-	MobCanEnter(mob: Mob) {
+	MobCanEnter(mob: Mob|null = null) {
 		if (this.blockingMobsPresent.length > 0) {
 			return false;
 		}
-		if (mob.isSolid) {
+		if (mob && mob.isSolid) {
 			//return false;
 		}
 		return true;

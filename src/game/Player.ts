@@ -24,4 +24,4 @@ export function random_name(): string {
 	return name;
 }
 
-export const startingMoney: number = 1000;
+export const startingMoney: number = 10;

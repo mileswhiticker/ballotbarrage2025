@@ -6,6 +6,8 @@ import { MOBTYPE } from '@game/Mob.ts';
 import mobController from '@controllers/MobController.ts';
 import { ref, type Ref } from 'vue';
 import { IMGPATH_PURPLEMAN, IMGPATH_REDMAN, IMGPATH_BLUEMAN } from '../../assets/_AssetPaths';
+import gridController from './GridController';
+import type Vector2 from '../../utils/Vector2';
 
 export enum PLAYERS {
 	PLAYER_UNKNOWN = -1,
@@ -214,6 +216,32 @@ class PlayerController {
 			const existingLoyalty = partyLoyalty.get(playerInfo.value.playerParty) || 0;
 			partyLoyalty.set(playerInfo.value.playerParty, 2 * existingLoyalty / 3 + existingLoyalty * Math.random() / 3);
 		}
+	}
+
+	humanCreateBuildGhost(sampleMob: Mob, gridPos: Vector2) {
+
+		//check if this grid cell is free to place something
+		const turf = gridController.getTurfAtCoords(gridPos);
+		if (!turf?.MobCanEnter(sampleMob)) {
+			console.warn(`Player is trying to place a mobType ${sampleMob.mobType} in grid ${gridPos.x},${gridPos.y}\
+					but it is blocked`);
+			return;
+		}
+
+		const humanPlayerInfo = playerController.getHumanPlayer().value;
+
+		//can the player afford this?
+		if (humanPlayerInfo.money < sampleMob.baseBuildCost) {
+			console.warn(`Player cannot afford mobType ${sampleMob.mobType}, costs ${sampleMob.baseBuildCost} but has ${humanPlayerInfo.money}`);
+			return;
+		}
+
+		//console.log(`building new placeable mob...`);
+		const newMob = mobController.createPlayerMob(sampleMob.mobType, humanPlayerInfo.playerParty);
+		newMob.jumpToGrid(gridPos);
+
+		//subtract the money
+		humanPlayerInfo.money -= sampleMob.baseBuildCost;
 	}
 }
 

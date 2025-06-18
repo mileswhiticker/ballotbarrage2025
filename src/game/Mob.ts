@@ -73,6 +73,7 @@ export default class Mob {
 	mobType: MOBTYPE = MOBTYPE.UNKNOWN;
 	renderOpacity = 1;
 	isSolid: boolean = false; //can this mob block movement of other mobs?
+	baseBuildCost: number = 5;
 
 	gridCoords: Vector2 = new Vector2(-1, -1);
 	thinkingTime: number = 1;
@@ -164,6 +165,17 @@ export default class Mob {
 		this.gridCoords = gridController.getGridCoords(rawPos);
 		//this.gridCoords.x = snappedPos.x / gridController.gridCellDim;
 		//this.gridCoords.y = snappedPos.y / gridController.gridCellDim;
+
+		this.postMoveUpdates();
+	}
+
+	jumpToGrid(gridPos: Vector2) {
+		const rawPos = gridController.getRawPosFromGridCoords(gridPos);
+
+		this.pos.x = rawPos.x;
+		this.pos.y = rawPos.y;
+
+		this.gridCoords = gridPos.clone();
 
 		this.postMoveUpdates();
 	}

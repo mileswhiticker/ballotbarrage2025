@@ -93,20 +93,8 @@ class MouseController {
 			//which grid cell is it?
 			const gridCoords = gridController.getGridCoords(transformedPosition);
 
-			//check if this grid cell is free to place something
-			const turf = gridController.getTurfAtCoords(gridCoords);
-			if (!turf?.MobCanEnter(this.mobBuildGhost)) {
-				console.warn(`Player is trying to place a mobType ${this.mobBuildGhostType.value} in grid ${gridCoords.x},${gridCoords.y}\
-					but it is blocked`);
-				return;
-			}
-
-			//const snappedPosition = gridController.snapToGrid(transformedPosition);
-
-			//console.log(`building new placeable mob...`);
-			const newMob = mobController.createPlayerMob(this.mobBuildGhostType.value, playerController.getHumanPlayer().value.playerParty);
-			newMob.jumpToGridFromRawPos(transformedPosition);
-
+			playerController.humanCreateBuildGhost(this.mobBuildGhost, gridCoords);
+			
 			this.ClearBuildGhost();
 		}
 	}
