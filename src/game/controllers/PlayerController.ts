@@ -120,6 +120,10 @@ class PlayerController {
 		return "Unknown Party";
 	}
 
+	getFirstPrefMoneyReward(): number {
+		return 7.68;
+	}
+
 	getHumanPlayer(){
 		return this.humanPlayer;
 	}
@@ -160,6 +164,10 @@ class PlayerController {
 				voteString += `${playerInfo.votes[i]} `;
 			}
 			playerInfo.formattedVotes = voteString;
+
+			// a first preference vote gets a small amount of electoral funding
+			playerInfo.money += this.getFirstPrefMoneyReward();
+			playerInfo.money = Math.round(playerInfo.money * 100) / 100;
 		}
 	}
 
