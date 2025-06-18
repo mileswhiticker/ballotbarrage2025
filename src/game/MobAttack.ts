@@ -65,6 +65,34 @@ export class MobAttack {
 		}
 	}
 
+	chooseTargetMob(): Mob | null {
+		switch (this.missileType) {
+			case MISSILETYPE.FLYER: {
+				for (const enemy of this.nearbyEnemyMobs) {
+					if (!enemy.isMaxLoyalty(this.ownerMob.party)) {
+						return enemy;
+					}
+				}
+				break;
+			}
+			case MISSILETYPE.SAUSAGE: {
+				for (const enemy of this.nearbyEnemyMobs) {
+					if (enemy.hasEnemyLoyalty(this.ownerMob.party)) {
+						return enemy;
+					}
+				}
+				break;
+			}
+			default: {
+				if (this.nearbyEnemyMobs.length > 0) {
+					return this.nearbyEnemyMobs[0];
+				}
+				break;
+			}
+		}
+		return null;
+	}
+
 	tryAttackMob(deltaTime: number) {
 		//console.log("I am trying to attack", this);
 		switch (this.missileType) {
@@ -75,8 +103,9 @@ export class MobAttack {
 				break;
 			}
 			default: {
-				if (this.nearbyEnemyMobs.length > 0) {
-					this.doAttackMob(this.nearbyEnemyMobs[0]);
+				const targetMob = this.chooseTargetMob();
+				if (targetMob) {
+					this.doAttackMob(targetMob);
 					this.tLeftAttack = this.attackCooldown;
 				}
 				break;

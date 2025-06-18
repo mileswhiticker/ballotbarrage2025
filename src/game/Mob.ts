@@ -400,6 +400,22 @@ export default class Mob {
 		});
 	}
 
+	isMaxLoyalty(party: string): boolean {
+		if (this.partyLoyalty.has(party) && this.partyLoyalty.get(party)! >= this.health) {
+			return true;
+		}
+		return false;
+	}
+
+	hasEnemyLoyalty(party: string): boolean {
+		for (const item of this.partyLoyalty) {
+			if (item[0] != party && item[1] > 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	underlayHalo: ColourInfo | null = null;
 	doDebug: boolean = false;
 	render(context: CanvasRenderingContext2D) {
