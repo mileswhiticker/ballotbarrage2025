@@ -107,10 +107,10 @@ class EnemyController {
 
 		/* WAVE 1 */
 
-		enemyWave = new EnemyWave();
-		enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 10));
-		this.upcomingWaves.push(enemyWave);
-		enemyWave.recalculateWaveInfo();
+		//enemyWave = new EnemyWave();
+		//enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 10));
+		//this.upcomingWaves.push(enemyWave);
+		//enemyWave.recalculateWaveInfo();
 
 		/* WAVE 2 */
 

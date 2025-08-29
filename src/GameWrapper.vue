@@ -1,4 +1,7 @@
 <script setup lang="ts">
+	//this component contains everything "inside" the game heirarchally
+	//it will contain most of the content of this vue app
+	//it excludes eg a <title> element, tagline, and homepage link
 	import GameCanvas from '@components/GameCanvas.vue';
 	import GameInterface from '@components/GameInterface.vue';
 	import { onMounted, onUnmounted, ref, computed, watchEffect } from 'vue';

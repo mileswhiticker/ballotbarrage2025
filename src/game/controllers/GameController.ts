@@ -20,11 +20,14 @@ class GameController {
 
 	gameTime: number = 0; //in seconds
 
+	renderGameWorld: boolean = false;
+	shutDown: boolean = false;
+
 	constructor() {
 		this.timer = new Timer();
 	}
 
-	InitializeGame() {
+	initialise() {
 		//console.log("GameController::InitializeGame() starting...");
 
 		this.gameCanvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
@@ -40,8 +43,6 @@ class GameController {
 
 		this.timer.timerSliceExpiryCallbacks.push(this.timerSliceExpired.bind(this));
 		//this.timer.timerSliceStartedCallbacks.push(enemyController.timerSliceStarted.bind(enemyController));
-		this.ResetTimer();
-		this.timer.StartTimer();
 
 		this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));
 
@@ -69,7 +70,21 @@ class GameController {
 
 		this.timer.render(deltaTime);
 
-		this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));
+		if (!this.shutDown) {
+			this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));
+		}
+	}
+
+	setupNewGame() {
+		//todo
+	}
+
+	setupNextRound() {
+		this.ResetTimer();
+	}
+
+	startNextRound() {
+		this.timer.StartTimer();
 	}
 
 	ResetTimer() {

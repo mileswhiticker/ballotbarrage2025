@@ -17,9 +17,9 @@ class MouseController {
 		this.game2dRenderContext = game2dRenderContext;
 
 		//we will need this to calculate the necessary mouse offset from the top left corner of the page
-		const gameInterface = document.getElementById('gameInterface');
-		if (gameInterface) {
-			this.interfaceBoundingClientRect = gameInterface.getBoundingClientRect();
+		const gameCanvas = document.getElementById('gameCanvas');
+		if (gameCanvas) {
+			this.interfaceBoundingClientRect = gameCanvas.getBoundingClientRect();
 		}
 	}
 
