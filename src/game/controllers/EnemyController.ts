@@ -93,6 +93,7 @@ class EnemyController {
 	timer: Timer|null = null;
 
 	Initialise(timer: Timer) {
+		console.log("EnemyController::Initialise()");
 		this.timer = timer;
 		this.timer.timerSliceStartedCallbacks.push(this.timerSliceStarted.bind(this));
 
@@ -194,7 +195,7 @@ class EnemyController {
 	}
 
 	startSpawning() {
-		//console.log('enemycontroller::startSpawning()', this.upcomingWaves[0]);
+		// console.log('enemycontroller::startSpawning()', this.upcomingWaves[0]);
 		this.isSpawning = true;
 		this.waveTime = 0;
 		this.waveStartTime = Date.now() / 1000; //in seconds
@@ -204,11 +205,13 @@ class EnemyController {
 	isActive: boolean = false;
 	tLeftStartSpawning: number = 0;
 	update(deltaTime: number) {
+
 		if (!this.isActive) {
 			return;
 		}
 
-		if (this.tLeftStartSpawning > 0) {
+		if (this.tLeftStartSpawning >= 0) {
+			// console.log("EnemyController::Update() ticking down");
 			this.tLeftStartSpawning -= deltaTime;
 			if (this.tLeftStartSpawning <= 0) {
 				this.startSpawning();

@@ -10,6 +10,7 @@ import resourceController from '@controllers/ResourceController.ts';
 import Timer from '@utils/Timer.ts';
 import { PLAYER_BUYING_STRING, PLAYER_BUILDING_STRING, ENEMY_SPAWNING_STRING } from '@utils/string_constants.ts';
 import { COLOUR_RED, COLOUR_GREEN, COLOUR_BLUE } from '@utils/ColourInfo.ts';
+import { nextTick } from 'vue';
 
 class GameController {
 	mobs: Mob[] = [];
@@ -27,8 +28,10 @@ class GameController {
 		this.timer = new Timer();
 	}
 
-	initialise() {
-		//console.log("GameController::InitializeGame() starting...");
+	async Initialise() {
+
+		await nextTick();
+		console.log("GameController::InitializeGame() starting...");
 
 		this.gameCanvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
 		this.game2dRenderContext = this.gameCanvas.getContext('2d');
@@ -47,6 +50,10 @@ class GameController {
 		this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));
 
 		//console.log("GameController::InitializeGame() finished");
+	}
+
+	async startGame(){
+		enemyController.setActive(true);
 	}
 
 	tLastUpdate: number = Date.now();
