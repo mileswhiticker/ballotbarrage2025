@@ -5,14 +5,14 @@
 	import GameCanvas from '@components/GameCanvas.vue';
 	import GameInterface from '@components/GameInterface.vue';
 	import { onMounted, onUnmounted, ref, computed, watchEffect } from 'vue';
-	import { PlayerInfo } from '@game/Player.ts';
+	// import { type PlayerInfo } from '@game/Player.ts';
 	import playerController from '@controllers/PlayerController';
 	
-	let gameWindowWidth = ref(0);
-	let gameWindowHeight = ref(0);
+	const gameWindowWidth = ref(0);
+	const gameWindowHeight = ref(0);
 
-	let canvasWidth = ref(0);
-	let canvasHeight = ref(0);
+	const canvasWidth = ref(0);
+	const canvasHeight = ref(0);
 
 	function resizeCanvas() {
 		//grab the new window size

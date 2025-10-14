@@ -1,10 +1,12 @@
 <script setup lang="ts">
-	import { ref, watchEffect } from 'vue';
-	import { PlayerInfo } from '@game/Player.ts';
+	import { watchEffect } from 'vue';
+	// import { type PlayerInfo } from '@game/Player.ts';
 
-	const props = defineProps<{
-		canvasWidth: Ref<number>,
-		canvasHeight: Ref<number>
+	defineProps<{
+		// canvasWidth: Ref<number>,
+		// canvasHeight: Ref<number>
+		canvasWidth: number,
+		canvasHeight: number
 	}>();
 
 	watchEffect(() => {
