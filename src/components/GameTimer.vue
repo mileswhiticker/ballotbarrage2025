@@ -1,12 +1,12 @@
 <script setup lang="ts">
-	import { computed, onMounted, ref, Ref } from 'vue';
-	import { renderTimer, initialiseTimer, sampleTimerdata, SetTimerData } from '@utils/Timer.ts';
+import {computed, onMounted, ref, type Ref} from 'vue';
+	// import { renderTimer, initialiseTimer, sampleTimerdata, SetTimerData } from '@utils/Timer.ts';
 	import Vector2 from '@utils/Vector2.ts';
 	import Timer from '@utils/Timer.ts';
 	import gameController from '@controllers/GameController.ts';
 
 	const timerCanvas = ref<HTMLCanvasElement | null>(null);
-	let gameTimer: Ref<Timer | null> = ref(null);
+	const gameTimer: Ref<Timer | null> = ref(null);
 	const textBgColor = computed(() => {
 		if (gameTimer.value) {
 			//console.log("new color:", gameTimer.value.currentColour);
@@ -18,12 +18,17 @@
 
 	onMounted(() => {
 		gameTimer.value = gameController.timer;
-		//console.log(gameTimer);
-		gameTimer.value.Initialise(
-			timerCanvas.value.getContext('2d'),
-			new Vector2(25, 25),
-			new Vector2(50, 50));
+		console.log("gameTimer onMounted", gameTimer.value);
+		if (timerCanvas.value) {
+			gameTimer.value.Initialise(
+				timerCanvas.value.getContext('2d') as CanvasRenderingContext2D,
+				new Vector2(25, 25),
+				new Vector2(50, 50));
+		} else {
+			console.error("Could not initialise timer due to null canvas");
+		}
 	});
+
 </script>
 
 <template>

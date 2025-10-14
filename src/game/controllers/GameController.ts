@@ -50,10 +50,12 @@ class GameController {
 		this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));
 
 		//console.log("GameController::InitializeGame() finished");
+
+		this.setupNextRound();
 	}
 
 	async startGame(){
-		enemyController.setActive(true);
+		this.startNextRound();
 	}
 
 	tLastUpdate: number = Date.now();
@@ -91,6 +93,7 @@ class GameController {
 	}
 
 	startNextRound() {
+		enemyController.setActive(true);
 		this.timer.StartTimer();
 	}
 
