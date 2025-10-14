@@ -81,6 +81,11 @@ export default class Timer {
 				this.StopTimer();
 			}
 
+			const rounded = Math.round(this.sliceTimeLeft);
+			const minutes = Math.min(Math.floor(rounded / 60), 99);
+			const seconds = rounded % 60;
+			this.formattedTimeLeft.value = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
 			if (this.sliceTimeLeft <= 0) {
 				this.currentSliceIndex++;
 				this.sliceTimeLeft = this.currentData[this.currentSliceIndex]?.seconds || 0;
@@ -96,11 +101,6 @@ export default class Timer {
 					}
 				}
 			}
-
-			const rounded = Math.round(this.sliceTimeLeft);
-			const minutes = Math.min(Math.floor(rounded / 60), 99);
-			const seconds = rounded % 60;
-			this.formattedTimeLeft.value = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 		}
 
 		const total = this.currentData.reduce((sum, slice) => sum + slice.seconds, 0);
