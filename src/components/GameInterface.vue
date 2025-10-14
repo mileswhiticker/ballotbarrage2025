@@ -1,5 +1,5 @@
 <script setup lang="ts">
-	import { type Ref, watchEffect } from 'vue';
+	import { watchEffect } from 'vue';
 	import BottomPanel from '@components/BottomPanel.vue';
 	import TopPanel from '@components/TopPanel.vue';
 	import { type PlayerInfo } from '@game/Player.ts';

@@ -1,15 +1,8 @@
 <script setup lang="ts">
-    import { ref, computed } from 'vue';
-    import GameWrapper from '@/GameWrapper.vue';
-    import SceneMainMenu from '@components/SceneMainMenu.vue';
+    import { computed } from 'vue';
+    // import GameWrapper from '@/GameWrapper.vue';
+    // import SceneMainMenu from '@components/SceneMainMenu.vue';
     import appController from '@controllers/AppController';
-
-	const current = ref('B')
-
-	const components = {
-		A: SceneMainMenu,
-		B: GameWrapper
-	}
 
     //const currentComponent = computed(() => components[current.value])
     const currentComponent = computed(() => appController.mountedSceneComponent);

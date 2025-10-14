@@ -19,7 +19,7 @@ class WaveEnemyDef {
 		this.amountLeft = amountMax;
 		this.amountMax = amountMax;
 	}
-};
+}
 
 class EnemyWave {
 	enemyDefs: WaveEnemyDef[] = [];
@@ -64,7 +64,7 @@ class EnemyWave {
 				this.enemyDefs.splice(i, 1);
 				break;
 			}
-		};
+		}
 
 		this.recalculateWaveInfo();
 	}
