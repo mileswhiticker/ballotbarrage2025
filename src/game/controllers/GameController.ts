@@ -6,11 +6,12 @@ import gridController from '@controllers/GridController.ts';
 import enemyController from '@controllers/EnemyController.ts';
 import missileController from '@controllers/MissileController.ts';
 import resourceController from '@controllers/ResourceController.ts';
+import appController, {GAMESCENE} from '@controllers/AppController.ts';
 //import Vector2 from '@utils/Vector2.ts';
 import Timer from '@utils/Timer.ts';
-import { PLAYER_BUYING_STRING, PLAYER_BUILDING_STRING, ENEMY_SPAWNING_STRING } from '@utils/string_constants.ts';
-import { COLOUR_RED, COLOUR_GREEN, COLOUR_BLUE } from '@utils/ColourInfo.ts';
-import { nextTick } from 'vue';
+import {ENEMY_SPAWNING_STRING, PLAYER_BUILDING_STRING, PLAYER_BUYING_STRING} from '@utils/string_constants.ts';
+import {COLOUR_BLUE, COLOUR_GREEN, COLOUR_RED} from '@utils/ColourInfo.ts';
+import {nextTick} from 'vue';
 
 class GameController {
 	mobs: Mob[] = [];
@@ -31,27 +32,34 @@ class GameController {
 	async Initialise() {
 
 		await nextTick();
-		console.log("GameController::InitializeGame() starting...");
-
-		this.gameCanvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
-		this.game2dRenderContext = this.gameCanvas.getContext('2d');
+		// console.log("GameController::Initialise()");
 
 		resourceController.Initialise();
-		gridController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
-		mouseController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
-		mobController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
-		missileController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
 		playerController.Initialise();
 		enemyController.Initialise(this.timer);
 
+		this.timer.timerSliceExpiryCallbacks = [];
 		this.timer.timerSliceExpiryCallbacks.push(this.timerSliceExpired.bind(this));
 		//this.timer.timerSliceStartedCallbacks.push(enemyController.timerSliceStarted.bind(enemyController));
-
-		this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));
 
 		//console.log("GameController::InitializeGame() finished");
 
 		this.setupNextRound();
+	}
+
+	async LateInitialise() {
+		await nextTick();
+		// console.log("GameController::LateInitialise()");
+
+		this.gameCanvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
+		this.game2dRenderContext = this.gameCanvas.getContext('2d');
+
+		gridController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
+		mouseController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
+		mobController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
+		missileController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
+
+		this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));
 	}
 
 	async startGame(){
@@ -63,29 +71,29 @@ class GameController {
 		const tThisUpdate = Date.now();
 		const deltaTime = (tThisUpdate - this.tLastUpdate) / 1000;
 		this.tLastUpdate = tThisUpdate;
-		//console.log("GameController::Update()", deltaTime);
+		// console.log("GameController::Update()", deltaTime);
 
 		enemyController.update(deltaTime);
 		mobController.update(deltaTime);
 
 		this.renderEmptyCanvas();
 
-		gridController.renderGridLines();
-		gridController.renderDebug();
-		mobController.renderEnvMobs();
-		mobController.renderMobs();
-		mouseController.renderBuildGhost();
+		switch(appController.curGameScene){
+			case GAMESCENE.ROUND_ACTIVE: {
+				gridController.renderGridLines();
+				gridController.renderDebug();
+				mobController.renderEnvMobs();
+				mobController.renderMobs();
+				mouseController.renderBuildGhost();
+				this.timer.render(deltaTime);
+				break;
+			}
+		}
 		missileController.update(deltaTime);
-
-		this.timer.render(deltaTime);
 
 		if (!this.shutDown) {
 			this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));
 		}
-	}
-
-	setupNewGame() {
-		//todo
 	}
 
 	setupNextRound() {

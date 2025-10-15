@@ -1,7 +1,5 @@
 <script setup lang="ts">
     import { computed } from 'vue';
-    // import GameWrapper from '@/GameWrapper.vue';
-    // import SceneMainMenu from '@components/SceneMainMenu.vue';
     import appController from '@controllers/AppController';
 
     //const currentComponent = computed(() => components[current.value])
@@ -20,11 +18,9 @@
         </div>
     </header>
 
-    <div v-if="currentComponent.value">
+    <div id="appWrapper" v-if="currentComponent.value">
         <component :is="currentComponent.value" />
     </div>
-    <!--<GameWrapper />-->
-    <!--<SceneMainMeu />-->
 </template>
 
 <style scoped>

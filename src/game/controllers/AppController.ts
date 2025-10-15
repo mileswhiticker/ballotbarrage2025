@@ -3,7 +3,9 @@ import { shallowRef, type Component } from 'vue';
 //import { Component, ComponentPublicInstance } from 'vue'
 // import gameController from '@controllers/GameController.ts';
 import SceneMainMenu from '@components/SceneMainMenu.vue';
-import GameWrapper from '@/GameWrapper.vue';
+import SceneCharSelect from '@components/SceneCharSelect.vue';
+import SceneRoundPre from '@components/SceneRoundPre.vue';
+import SceneGame from '@components/SceneGame.vue';
 import gameController from '@controllers/GameController.ts';
 
 export enum GAMESCENE {
@@ -17,83 +19,73 @@ export enum GAMESCENE {
 	GAMEOVER
 }
 
+export const GAMESCENE_STR = [
+	"UNKNOWN",
+	"MAIN_MENU",
+	"CHARSELECT",
+	"ROUND_PRE",
+	"ROUND_ACTIVE",
+	"ROUND_POST",
+	"ROUND_SHOP",
+	"GAMEOVER"];
+
+const sceneComponents: (Component|null)[] = [
+	null,
+	SceneMainMenu,
+	SceneCharSelect,
+	SceneRoundPre,
+	SceneGame,
+	null,	//ROUND_POST
+	null,	//ROUND_SHOP
+	null,	//GAMEOVER
+];
+
 class AppController {
 	curGameScene: GAMESCENE = GAMESCENE.UNKNOWN;
 	mountedSceneComponent = shallowRef<Component|null>(null);
 
 	initialise() {
 		// Set the initial game scene to MAIN_MENU
-		//gameController.initialise();
-		this.curGameScene = GAMESCENE.MAIN_MENU;
-		this.mountedSceneComponent.value = SceneMainMenu;
+		this.changeScene(GAMESCENE.MAIN_MENU);
 	}
 
-	onNewGame() {
-		if (this.curGameScene == GAMESCENE.MAIN_MENU) {
-			// console.log("AppController::onNewGame() called, switching to CHARSELECT scene");
-			console.log("AppController::onNewGame() called, switching to GAME scene");
-			this.mountedSceneComponent.value = GameWrapper;
+	changeScene(newSceneId: GAMESCENE){
 
-			gameController.Initialise().then(() => gameController.startGame());
+		//is there a predefined component for this?
+		const nextScene = sceneComponents[newSceneId];
+
+		//instantiate the new component
+		if(nextScene) {
+			this.mountedSceneComponent.value = nextScene;
+			this.curGameScene = newSceneId;
+
+			//handle other processing
+			switch(newSceneId){
+				case GAMESCENE.MAIN_MENU: {
+					break;
+				}
+				case GAMESCENE.CHARSELECT:
+				{
+					gameController.Initialise();
+					break;
+				}
+				case GAMESCENE.ROUND_PRE:
+				{
+					break;
+				}
+				case GAMESCENE.ROUND_ACTIVE:
+				{
+					gameController.LateInitialise();
+					gameController.startGame();
+					break;
+				}
+			}
+			console.log(`changeScene(${newSceneId}) success, changed scene to ${GAMESCENE_STR[newSceneId]}`);
 		} else {
-			console.error(`AppController::onRoundStart() called this.curGameScene expected to be GAMESCENE.MAIN_MENU (${GAMESCENE.MAIN_MENU}) but got ${this.curGameScene}`);
+			console.error(`changeScene(${newSceneId}) failed, no component defined for ${GAMESCENE_STR[newSceneId]}`);	//GAMESCENE_STR
 		}
 	}
-
-	onCharSelect() {
-		if (this.curGameScene == GAMESCENE.CHARSELECT) {
-			console.log("AppController::onCharSelect() called, switching to ROUND_PRE scene");
-		}
-		else {
-			console.error(`AppController::onRoundStart() called this.curGameScene expected to be GAMESCENE.CHARSELECT (${GAMESCENE.CHARSELECT}) but got ${this.curGameScene}`);
-		}
-	}
-
-	onRoundStart() {
-		if (this.curGameScene == GAMESCENE.ROUND_PRE) {
-			console.log("AppController::onRoundStart() called, switching to ROUND_ACTIVE scene");
-		}
-		else {
-			console.error(`AppController::onRoundStart() called this.curGameScene expected to be GAMESCENE.ROUND_PRE (${GAMESCENE.ROUND_PRE}) but got ${this.curGameScene}`);
-		}
-	}
-
-	onRoundEnd() {
-		if (this.curGameScene == GAMESCENE.ROUND_ACTIVE) {
-			console.log("AppController::onRoundEnd() called, switching to ROUND_POST scene");
-		}
-		else {
-			console.error(`AppController::onRoundEnd() called this.curGameScene expected to be GAMESCENE.ROUND_ACTIVE (${GAMESCENE.ROUND_ACTIVE}) but got ${this.curGameScene}`);
-		}
-	}
-
-	onRoundEndShopOpen() {
-		if (this.curGameScene == GAMESCENE.ROUND_POST) {
-			console.log("AppController::onRoundEndShopStart() called, opening shop dialogue");
-		}
-		else {
-			console.error(`AppController::onRoundEndShopStart() called this.curGameScene expected to be GAMESCENE.ROUND_POST (${GAMESCENE.ROUND_POST}) but got ${this.curGameScene}`);
-		}
-	}
-
-	onRoundEndShopClose() {
-		if (this.curGameScene == GAMESCENE.ROUND_POST) {
-			console.log("AppController::onRoundEndShopEnd() called, closing shop dialogue");
-		}
-		else {
-			console.error(`AppController::onRoundEndShopEnd() called this.curGameScene expected to be GAMESCENE.ROUND_POST (${GAMESCENE.ROUND_POST}) but got ${this.curGameScene}`);
-		}
-	}
-
-	onNextRound() {
-		if (this.curGameScene == GAMESCENE.ROUND_POST) {
-			console.log("AppController::onNextRound() called, switching to ROUND_PRE scene");
-		}
-		else {
-			console.error(`AppController::onNextRound() called this.curGameScene expected to be GAMESCENE.ROUND_POST (${GAMESCENE.ROUND_POST}) but got ${this.curGameScene}`);
-		}
-	}
-};
+}
 
 const appController = new AppController();
 export default appController;

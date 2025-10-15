@@ -2,17 +2,17 @@
 import appController, {GAMESCENE} from '@controllers/AppController.ts';
 
 function handleClick(event: MouseEvent) {
-	appController.changeScene(GAMESCENE.ROUND_PRE);
+	appController.changeScene(GAMESCENE.ROUND_ACTIVE);
 }
 </script>
 
 <template>
-	<div class="menuButton" @click="handleClick($event)">Choose this character</div>
+	<div class="button" @click="handleClick($event)">Begin round</div>
 </template>
 
 <style scoped>
 
-.menuButton{
+.button{
 	border: 5px solid;
 	background-color: red;
 	height: 75px;
@@ -20,7 +20,7 @@ function handleClick(event: MouseEvent) {
 	display: flex;
 }
 
-.menuButton:hover {
+.button:hover {
 	border: 5px ridge;
 }
 </style>

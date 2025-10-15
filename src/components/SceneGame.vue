@@ -6,7 +6,7 @@
 	import GameInterface from '@components/GameInterface.vue';
 	import { onMounted, onUnmounted, ref, computed, watchEffect } from 'vue';
 	// import { type PlayerInfo } from '@game/Player.ts';
-	import playerController from '@controllers/PlayerController';
+	import playerController from '@controllers/PlayerController.ts';
 	
 	const gameWindowWidth = ref(0);
 	const gameWindowHeight = ref(0);
@@ -56,7 +56,7 @@
 	const playerInfo = playerController.getHumanPlayer();
 	
 	watchEffect(() => {
-		//console.log(`GameWrapper.vue playerInfo`, playerInfo.value);
+		//console.log(`SceneGame.vue playerInfo`, playerInfo.value);
 	});
 </script>
 
