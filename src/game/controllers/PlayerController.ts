@@ -38,7 +38,7 @@ class PlayerController {
 	private humanPlayer: Ref<PlayerInfo> = ref(this.noPlayer);
 
 	Initialise() {
-		console.log("PlayerController::Initialise()");
+		// console.log("PlayerController::Initialise()");
 		//what mobs should the player be able to place?
 		this.allPlaceableMobs.push(mobController.createMobInstance(MOBTYPE.VOLUNTEER));
 		this.allPlaceableMobs.push(mobController.createMobInstance(MOBTYPE.AFRAME));

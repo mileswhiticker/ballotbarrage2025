@@ -93,7 +93,7 @@ class EnemyController {
 	timer: Timer|null = null;
 
 	Initialise(timer: Timer) {
-		console.log("EnemyController::Initialise()");
+		// console.log("EnemyController::Initialise()");
 		this.timer = timer;
 		this.timer.timerSliceStartedCallbacks.push(this.timerSliceStarted.bind(this));
 

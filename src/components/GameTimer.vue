@@ -18,7 +18,7 @@ import {computed, onMounted, ref, type Ref} from 'vue';
 
 	onMounted(() => {
 		gameTimer.value = gameController.timer;
-		console.log("gameTimer onMounted", gameTimer.value);
+		// console.log("gameTimer onMounted", gameTimer.value);
 		if (timerCanvas.value) {
 			gameTimer.value.Initialise(
 				timerCanvas.value.getContext('2d') as CanvasRenderingContext2D,
