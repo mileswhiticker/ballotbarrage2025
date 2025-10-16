@@ -10,12 +10,13 @@
 
 <template>
     <header id="header">
-        <div class="leftcol"><div class="homepagelink"><a href="http://mileswhiticker.xyz/">Home</a></div></div>
 
-        <div class="gametitle">
-            <h1>Ballot Barrage 2025</h1>
-            <p>Have fun!</p>
-        </div>
+		<div class="">
+			<div class=""><div class="homepagelink underline"><a href="https://mileswhiticker.xyz/"><< Home</a></div></div>
+			<div class="mb-4 flex justify-center font-bold text-lg p-4">
+				<h1>Ballot Barrage 2025</h1>
+			</div>
+		</div>
     </header>
 
     <div id="appWrapper" v-if="currentComponent.value">
@@ -24,13 +25,4 @@
 </template>
 
 <style scoped>
-#header{
-    display: flex;
-}
-	.leftcol {
-		width: 10%;
-		display: flex;
-	}
-.homepagelink{
-}
 </style>
