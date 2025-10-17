@@ -37,7 +37,7 @@ class PlayerController {
 	};
 	private humanPlayer: Ref<PlayerInfo> = ref(this.noPlayer);
 
-	Initialise() {
+	async Initialise() {
 		// console.log("PlayerController::Initialise()");
 		//what mobs should the player be able to place?
 		this.allPlaceableMobs.push(mobController.createMobInstance(MOBTYPE.VOLUNTEER));
@@ -112,6 +112,10 @@ class PlayerController {
 	//		money: 0
 	//	}
 	//}
+
+	getAllPlayerCharacters(){
+		return this.allPlayerCharacters;
+	}
 
 	getPartyName(playerId: PLAYERS): string {
 		if (playerId < this.allPlayerCharacters.length) {

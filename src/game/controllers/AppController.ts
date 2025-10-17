@@ -1,5 +1,5 @@
 
-import { shallowRef, type Component } from 'vue';
+import { shallowRef, reactive, type Component } from 'vue';
 //import { Component, ComponentPublicInstance } from 'vue'
 // import gameController from '@controllers/GameController.ts';
 import SceneMainMenu from '@components/SceneMainMenu.vue';
@@ -7,6 +7,9 @@ import SceneCharSelect from '@components/SceneCharSelect.vue';
 import SceneRoundPre from '@components/SceneRoundPre.vue';
 import SceneGame from '@components/SceneGame.vue';
 import gameController from '@controllers/GameController.ts';
+import playerController from "@controllers/PlayerController.ts";
+import {type CharSelectProps} from '@components/SceneCharSelect.vue';
+import resourceController from "@controllers/ResourceController.ts";
 
 export enum GAMESCENE {
 	UNKNOWN = 0,
@@ -43,13 +46,14 @@ const sceneComponents: (Component|null)[] = [
 class AppController {
 	curGameScene: GAMESCENE = GAMESCENE.UNKNOWN;
 	mountedSceneComponent = shallowRef<Component|null>(null);
+	mountedSceneComponentProps = shallowRef({});
 
 	initialise() {
 		// Set the initial game scene to MAIN_MENU
 		this.changeScene(GAMESCENE.MAIN_MENU);
 	}
 
-	changeScene(newSceneId: GAMESCENE){
+	async changeScene(newSceneId: GAMESCENE){
 
 		//is there a predefined component for this?
 		const nextScene = sceneComponents[newSceneId];
@@ -66,7 +70,23 @@ class AppController {
 				}
 				case GAMESCENE.CHARSELECT:
 				{
-					gameController.Initialise();
+					//now apply the props from the characters
+					const charSelectProps: CharSelectProps = reactive({
+						choosableChars: [],
+					});
+					this.mountedSceneComponentProps.value = charSelectProps;
+					resourceController.Initialise();
+					playerController.Initialise().then(() => {
+
+						//now pass that back to the UI for character select
+						for(const playerInfo of playerController.getAllPlayerCharacters().values()){
+							charSelectProps.choosableChars.push(playerInfo);
+						}
+						// console.log(`instatiated char select with ${playerController.getAllPlayerCharacters().length} characters`);
+						gameController.Initialise();
+					})
+
+
 					break;
 				}
 				case GAMESCENE.ROUND_PRE:
@@ -80,7 +100,7 @@ class AppController {
 					break;
 				}
 			}
-			console.log(`changeScene(${newSceneId}) success, changed scene to ${GAMESCENE_STR[newSceneId]}`);
+			// console.log(`changeScene(${newSceneId}) success, changed scene to ${GAMESCENE_STR[newSceneId]}`);
 		} else {
 			console.error(`changeScene(${newSceneId}) failed, no component defined for ${GAMESCENE_STR[newSceneId]}`);	//GAMESCENE_STR
 		}

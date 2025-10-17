@@ -4,6 +4,7 @@
 
     //const currentComponent = computed(() => components[current.value])
     const currentComponent = computed(() => appController.mountedSceneComponent);
+	const currentComponentProps = computed(() => appController.mountedSceneComponentProps);
     //appController.mountedSceneComponent = SceneMainMenu;
 	//const currentComponent2 = ref(GameWrapper);
 </script>
@@ -20,7 +21,7 @@
     </header>
 
     <div id="appWrapper" v-if="currentComponent.value">
-        <component :is="currentComponent.value" />
+        <component :is="currentComponent.value" v-bind="currentComponentProps.value" />
     </div>
 </template>
 

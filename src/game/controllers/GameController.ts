@@ -1,11 +1,9 @@
 import Mob from '@game/Mob.ts';
-import playerController from '@controllers/PlayerController.ts';
 import mobController from '@controllers/MobController.ts';
 import mouseController from '@controllers/MouseController.ts';
 import gridController from '@controllers/GridController.ts';
 import enemyController from '@controllers/EnemyController.ts';
 import missileController from '@controllers/MissileController.ts';
-import resourceController from '@controllers/ResourceController.ts';
 import appController, {GAMESCENE} from '@controllers/AppController.ts';
 //import Vector2 from '@utils/Vector2.ts';
 import Timer from '@utils/Timer.ts';
@@ -34,17 +32,15 @@ class GameController {
 		await nextTick();
 		// console.log("GameController::Initialise()");
 
-		resourceController.Initialise();
-		playerController.Initialise();
 		enemyController.Initialise(this.timer);
 
 		this.timer.timerSliceExpiryCallbacks = [];
 		this.timer.timerSliceExpiryCallbacks.push(this.timerSliceExpired.bind(this));
 		//this.timer.timerSliceStartedCallbacks.push(enemyController.timerSliceStarted.bind(enemyController));
 
-		//console.log("GameController::InitializeGame() finished");
-
 		this.setupNextRound();
+
+		// console.log("GameController::Initialise() finished");
 	}
 
 	async LateInitialise() {
