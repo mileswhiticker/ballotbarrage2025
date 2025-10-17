@@ -1,7 +1,7 @@
 
 //import resourceController from '@controllers/ResourceController.ts';
 
-import Mob, { AI_GOAL } from '@game/Mob.ts';
+import Mob, {AI_GOAL, BASE_MOB_HEALTHCAP} from '@game/Mob.ts';
 import { MOBTYPE, type MobInfo } from '@game/Mob.ts';
 import Vector2 from '@utils/Vector2.ts';
 import { PLAYERS } from '@controllers/PlayerController.ts';
@@ -96,7 +96,7 @@ class MobController {
 					newMobInfo.desc = "They're not sure about this whole \'voting\' thing";
 				}
 
-				newMobInfo.healthMod = 2;
+				newMobInfo.health = BASE_MOB_HEALTHCAP * 2;
 				newMobInfo.moveSpeed = 64;
 				break;
 			}
@@ -109,7 +109,7 @@ class MobController {
 					newMobInfo.desc = "You lot should all save your paper.";
 				}
 
-				newMobInfo.healthMod = 3;
+				newMobInfo.health = BASE_MOB_HEALTHCAP * 3;
 				newMobInfo.moveSpeed = 96;
 				break;
 			}
@@ -122,7 +122,7 @@ class MobController {
 					newMobInfo.desc = "I'm not walking, I'm travelling!";
 				}
 
-				newMobInfo.healthMod = 4;
+				newMobInfo.health = BASE_MOB_HEALTHCAP * 4;
 				newMobInfo.moveSpeed = 128;
 				break;
 			}
@@ -135,7 +135,7 @@ class MobController {
 		const mobInfo: MobInfo = {
 			name: "Undecided Voter",
 			desc: "Just a punter heading in to vote",
-			health: 1,
+			health: BASE_MOB_HEALTHCAP,
 			healthMod: 0,
 			moveSpeed: 32,
 			speedMod: 0,

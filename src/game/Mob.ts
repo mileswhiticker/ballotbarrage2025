@@ -9,6 +9,8 @@ import { MobAttack } from '@game/MobAttack';
 import type { ColourInfo } from '@utils/ColourInfo';
 import playerController from '@controllers/PlayerController';
 
+export const BASE_MOB_HEALTHCAP = 1;
+
 export enum MOBTYPE {
 	UNKNOWN = -1,
 	NONE,

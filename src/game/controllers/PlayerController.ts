@@ -1,7 +1,7 @@
 
 import { type PlayerInfo, random_name, startingMoney } from '@game/Player.ts';
 import { ColourInfo } from '@utils/ColourInfo.ts';
-import Mob from '@game/Mob.ts';
+import Mob, {BASE_MOB_HEALTHCAP} from '@game/Mob.ts';
 import { MOBTYPE } from '@game/Mob.ts';
 import mobController from '@controllers/MobController.ts';
 import { ref, type Ref } from 'vue';
@@ -257,9 +257,9 @@ class PlayerController {
 		//check if there are any parties missing
 		for (const playerInfo of this.allPlayerCharacters) {
 			if (!partyLoyalty.has(playerInfo.value.playerParty)) {
-				partyLoyalty.set(playerInfo.value.playerParty, 1);
+				partyLoyalty.set(playerInfo.value.playerParty, BASE_MOB_HEALTHCAP / 2);
 			}
-		};
+		}
 
 		//add some randomness to the loyalty
 		for (const playerInfo of this.allPlayerCharacters) {
