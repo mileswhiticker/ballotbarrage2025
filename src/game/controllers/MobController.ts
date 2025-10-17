@@ -140,7 +140,6 @@ class MobController {
 			moveSpeed: 32,
 			speedMod: 0,
 			imgPath: IMGPATH_GREYMAN,
-			party: NO_PARTY,
 		};
 		return mobInfo;
 	}

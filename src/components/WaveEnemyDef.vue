@@ -32,7 +32,7 @@
 						<b>Maximum possible loyalty:</b> {{100 * (waveEnemyDef.mobInfo.health + waveEnemyDef.mobInfo.healthMod)}}%
 					</li>
 					<li>
-						<b>Party member:</b> {{waveEnemyDef.mobInfo?.party}}
+						<b>Party member:</b> {{waveEnemyDef.mobInfo.party ? waveEnemyDef.mobInfo.party : "No party"}}
 					</li>
 					<li>
 						<b>Quantity:</b> {{waveEnemyDef.amountMax}}
