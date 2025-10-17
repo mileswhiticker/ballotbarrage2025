@@ -5,7 +5,7 @@ import Mob from '@game/Mob.ts';
 import { MOBTYPE } from '@game/Mob.ts';
 import mobController from '@controllers/MobController.ts';
 import { ref, type Ref } from 'vue';
-import { IMGPATH_PURPLEMAN, IMGPATH_REDMAN, IMGPATH_BLUEMAN } from '../../assets/_AssetPaths';
+import { IMGPATH_PURPLEMAN, IMGPATH_REDMAN, IMGPATH_BLUEMAN } from '@assets/_AssetPaths.ts';
 import gridController from './GridController';
 import type Vector2 from '../../utils/Vector2';
 
@@ -15,6 +15,8 @@ export enum PLAYERS {
 	PLAYER_PURPLE,
 	PLAYER_RED,
 	PLAYER_BLUE,
+	//
+	PLAYER_MAX
 }
 
 class PlayerController {
@@ -97,10 +99,51 @@ class PlayerController {
 			}
 		}
 
-		this.humanPlayer.value = this.allPlayerCharacters[PLAYERS.PLAYER_PURPLE].value;
 		this.nonPlayerCharacters.value.push(this.allPlayerCharacters[PLAYERS.PLAYER_RED]);
 		this.nonPlayerCharacters.value.push(this.allPlayerCharacters[PLAYERS.PLAYER_BLUE]);
+		this.nonPlayerCharacters.value.push(this.allPlayerCharacters[PLAYERS.PLAYER_PURPLE]);
+		this.setHumanPlayer(PLAYERS.PLAYER_PURPLE);
 		//this.currentPlayer.value = this.noPlayer;
+	}
+
+	setHumanPlayer(playerId: PLAYERS) {
+		// console.log(`PlayerController::setHumanPlayer(${playerId})`);
+		if(this.humanPlayer.value.id < PLAYERS.PLAYER_MAX && this.humanPlayer.value.id > PLAYERS.PLAYER_UNKNOWN) {
+			//add old player to NPC list
+			this.nonPlayerCharacters.value.push(this.allPlayerCharacters[this.humanPlayer.value.id]);
+		}
+
+		//is it a valid id for the new human player?
+		if(playerId < PLAYERS.PLAYER_MAX && playerId > PLAYERS.PLAYER_UNKNOWN){
+
+			//have we defined it correctly?
+			if(playerId < this.allPlayerCharacters.length){
+
+				//warning: this may be unsafe to do during a game. only do it out of game for now
+				this.humanPlayer.value = this.allPlayerCharacters[playerId].value;
+
+				//remove from NPC list
+				let success = false;
+				for(let index=0; index < this.nonPlayerCharacters.value.length; index++){
+					const checkPlayerInfo = this.nonPlayerCharacters.value[index];
+					if(checkPlayerInfo.value.id === playerId){
+						//remove this index
+						this.nonPlayerCharacters.value.splice(index, 1);
+						success = true;
+						break;
+					}
+				}
+
+				//sanity check
+				if(!success){
+					console.warn(`PlayerController::setHumanPlayer() unable to remove player ID ${playerId} from NPC list`);
+				}
+			} else {
+				console.error(`PlayerController::setHumanPlayer() unable to find the playerInfo object for player ID ${playerId}`);
+			}
+		} else {
+			console.error(`PlayerController::setHumanPlayer() undefined player ID ${playerId}`);
+		}
 	}
 
 	//newCurrentPlayer() {

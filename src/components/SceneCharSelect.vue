@@ -4,13 +4,21 @@
 	import { ref, type Ref} from "vue";
 	import type {PlayerInfo} from "@game/Player.ts";
 	import SelectableCharacter from "@components/SelectableCharacter.vue";
+	import playerController from "@controllers/PlayerController.ts";
 
 	export interface CharSelectProps {
 		choosableChars: Ref<PlayerInfo,PlayerInfo>[];
 	}
 	const props = defineProps<CharSelectProps>();
 
-	function handleClick(event: MouseEvent) {
+	function onClickChooseChar() {
+		//find which player object this is referring to
+		const chosenChar = props.choosableChars[charSelectIndex.value];
+
+		//apply it
+		playerController.setHumanPlayer(chosenChar.value.id);
+
+		//advance to the next scene
 		appController.changeScene(GAMESCENE.ROUND_PRE);
 	}
 
@@ -29,6 +37,6 @@
 		</div>
 	</div>
 	<div class="mb-4 flex justify-center font-bold text-lg p-4">
-		<fwb-button size="lg" @click="handleClick($event)">Choose this character</fwb-button>
+		<fwb-button size="lg" @click="onClickChooseChar($event)">Choose this character</fwb-button>
 	</div>
 </template>
