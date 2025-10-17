@@ -66,6 +66,7 @@ class AppController {
 			//handle other processing
 			switch(newSceneId){
 				case GAMESCENE.MAIN_MENU: {
+					this.mountedSceneComponentProps.value = {};
 					break;
 				}
 				case GAMESCENE.CHARSELECT:
@@ -91,10 +92,12 @@ class AppController {
 				}
 				case GAMESCENE.ROUND_PRE:
 				{
+					this.mountedSceneComponentProps.value = {};
 					break;
 				}
 				case GAMESCENE.ROUND_ACTIVE:
 				{
+					this.mountedSceneComponentProps.value = {};
 					gameController.LateInitialise();
 					gameController.startGame();
 					break;
