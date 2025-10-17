@@ -4,7 +4,8 @@ import { ColourInfo } from '@utils/ColourInfo.ts';
 export interface PlayerInfo {
 	themePrimary: ColourInfo;
 	themeSecondary: ColourInfo;
-	playerName: string; playerImagePath: string;
+	playerName: string;
+	playerImagePath: string;
 	playerParty: string;
 	standsFor: string;
 	money: number;
