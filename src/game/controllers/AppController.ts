@@ -4,12 +4,13 @@ import { shallowRef, reactive, type Component } from 'vue';
 // import gameController from '@controllers/GameController.ts';
 import SceneMainMenu from '@components/SceneMainMenu.vue';
 import SceneCharSelect from '@components/SceneCharSelect.vue';
-import SceneRoundPre from '@components/SceneRoundPre.vue';
+import SceneRoundPre, {type SceneRoundPreProps} from '@components/SceneRoundPre.vue';
 import SceneGame from '@components/SceneGame.vue';
 import gameController from '@controllers/GameController.ts';
 import playerController from "@controllers/PlayerController.ts";
 import {type CharSelectProps} from '@components/SceneCharSelect.vue';
 import resourceController from "@controllers/ResourceController.ts";
+import enemyController from "@controllers/EnemyController.ts";
 
 export enum GAMESCENE {
 	UNKNOWN = 0,
@@ -72,16 +73,16 @@ class AppController {
 				case GAMESCENE.CHARSELECT:
 				{
 					//now apply the props from the characters
-					const charSelectProps: CharSelectProps = reactive({
+					const sceneProps: CharSelectProps = reactive({
 						choosableChars: [],
 					});
-					this.mountedSceneComponentProps.value = charSelectProps;
+					this.mountedSceneComponentProps.value = sceneProps;
 					resourceController.Initialise();
 					playerController.Initialise().then(() => {
 
 						//now pass that back to the UI for character select
 						for(const playerInfo of playerController.getAllPlayerCharacters().values()){
-							charSelectProps.choosableChars.push(playerInfo);
+							sceneProps.choosableChars.push(playerInfo);
 						}
 						// console.log(`instatiated char select with ${playerController.getAllPlayerCharacters().length} characters`);
 						gameController.Initialise();
@@ -92,7 +93,10 @@ class AppController {
 				}
 				case GAMESCENE.ROUND_PRE:
 				{
-					this.mountedSceneComponentProps.value = {};
+					const sceneProps: SceneRoundPreProps = reactive({
+						enemyWave: enemyController.getCurrentEnemyWave(),
+					});
+					this.mountedSceneComponentProps.value = sceneProps;
 					break;
 				}
 				case GAMESCENE.ROUND_ACTIVE:

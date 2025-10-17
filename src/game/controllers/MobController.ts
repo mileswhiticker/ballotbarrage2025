@@ -20,6 +20,7 @@ import {
 	IMGPATH_BUS
 } from '@assets/_AssetPaths.ts'; 
 import playerController from './PlayerController';
+import {NO_PARTY} from "@utils/string_constants.ts";
 
 class MobController {
 	allMobs: Mob[] = [];
@@ -64,6 +65,86 @@ class MobController {
 		//console.log(`createActiveEnemyMob(${mobType})`, newMob);
 	}
 
+	createPresetMobInfo(mobLevel: number, partyname?: string){
+		const newMobInfo = this.createMobinfoFromTemplate();
+
+		if(partyname){
+			newMobInfo.party = partyname;
+			newMobInfo.imgPath = playerController.getPartyLoyalistImgPath(partyname) as string;
+		}
+
+		switch(mobLevel)
+		{
+			default: {
+				if(partyname){
+					newMobInfo.name = "Party supporter";
+					newMobInfo.desc = "Not sure what they are doing yet";
+				} else {
+					newMobInfo.name = "Undecided Voter";
+					newMobInfo.desc = "Just a punter chasing some democracy sausage";
+				}
+
+				//nothing else, use default template values
+				break;
+			}
+			case 1: {
+				if(partyname){
+					newMobInfo.name = "New party member";
+					newMobInfo.desc = "Full of that new convert zeal";
+				} else {
+					newMobInfo.name = "Confused voter";
+					newMobInfo.desc = "They're not sure about this whole \'voting\' thing";
+				}
+
+				newMobInfo.healthMod = 2;
+				newMobInfo.moveSpeed = 64;
+				break;
+			}
+			case 2: {
+				if(partyname){
+					newMobInfo.name = "Regular party member";
+					newMobInfo.desc = "Not their first election.";
+				} else {
+					newMobInfo.name = "Annoyed voter";
+					newMobInfo.desc = "You lot should all save your paper.";
+				}
+
+				newMobInfo.healthMod = 3;
+				newMobInfo.moveSpeed = 96;
+				break;
+			}
+			case 3: {
+				if(partyname){
+					newMobInfo.name = "Party veteran";
+					newMobInfo.desc = "Been around the block once or twice";
+				} else {
+					newMobInfo.name = "Sovereign citizen";
+					newMobInfo.desc = "I'm not walking, I'm travelling!";
+				}
+
+				newMobInfo.healthMod = 4;
+				newMobInfo.moveSpeed = 128;
+				break;
+			}
+		}
+
+		return newMobInfo;
+	}
+
+	createMobinfoFromTemplate(){
+		const mobInfo: MobInfo = {
+			name: "Undecided Voter",
+			desc: "Just a punter heading in to vote",
+			health: 1,
+			healthMod: 0,
+			moveSpeed: 32,
+			speedMod: 0,
+			imgPath: IMGPATH_GREYMAN,
+			party: NO_PARTY,
+		};
+		return mobInfo;
+	}
+
 	createActiveEnemyMobAdvanced(mobType: MOBTYPE, spawnloc: Vector2, mobInfo: MobInfo) {
 
 		//create the basic mob and apply starting settings
@@ -88,7 +169,7 @@ class MobController {
 		}
 		if (mobInfo.health) {
 			newMob.health = mobInfo.health;
-		} 
+		}
 		if (mobInfo.healthMod) {
 			newMob.health += mobInfo.healthMod;
 		}

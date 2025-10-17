@@ -40,14 +40,14 @@ export enum MOBTYPE {
 }
 
 export interface MobInfo {
-	health?: number;
-	healthMod?: number;
-	imgPath?: string;
-	party?: string;
-	moveSpeed?: number;
-	speedMod?: number;
-	name?: string;
-	desc?: string;
+	health: number;
+	healthMod: number;
+	imgPath: string;
+	party: string;
+	moveSpeed: number;
+	speedMod: number;
+	name: string;
+	desc: string;
 }
 
 export enum AI_GOAL {
@@ -224,14 +224,14 @@ export default class Mob {
 		if (this.mobAttack) {
 			//console.log("mob entered turf nearby", mob, turf);
 			this.mobAttack.mobEnteredTurfNearby(mob);
-		};
+		}
 	}
 
 	mobLeftTurfNearby(mob: Mob) {
 		if (this.mobAttack) {
 			//console.log("mob entered turf nearby", mob, turf);
 			this.mobAttack.mobLeftTurfNearby(mob);
-		};
+		}
 	}
 
 	doMove(deltaTime: number) {
