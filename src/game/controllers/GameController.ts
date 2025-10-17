@@ -32,13 +32,11 @@ class GameController {
 		await nextTick();
 		// console.log("GameController::Initialise()");
 
-		enemyController.Initialise(this.timer);
+		enemyController.ResetTimerLink(this.timer);
 
 		this.timer.timerSliceExpiryCallbacks = [];
 		this.timer.timerSliceExpiryCallbacks.push(this.timerSliceExpired.bind(this));
 		//this.timer.timerSliceStartedCallbacks.push(enemyController.timerSliceStarted.bind(enemyController));
-
-		this.setupNextRound();
 
 		// console.log("GameController::Initialise() finished");
 	}
@@ -114,7 +112,7 @@ class GameController {
 	}
 
 	timerSliceExpired(sliceLabel: string) {
-		//console.log(`GameController Timer slice expired: ${sliceLabel}`);
+		console.log(`GameController Timer slice expired: ${sliceLabel}`);
 	}
 
 	renderEmptyCanvas() {

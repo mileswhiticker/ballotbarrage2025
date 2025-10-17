@@ -92,10 +92,13 @@ class EnemyController {
 	waveStartTime: number = -1;
 	timer: Timer|null = null;
 
-	Initialise(timer: Timer) {
-		// console.log("EnemyController::Initialise()");
+	ResetTimerLink(timer: Timer){
 		this.timer = timer;
 		this.timer.timerSliceStartedCallbacks.push(this.timerSliceStarted.bind(this));
+	}
+
+	Initialise() {
+		// console.log("EnemyController::Initialise()");
 
 		//create some spawn points
 		this.spawners.push(new EnemySpawner(new Vector2(10, 60)));
@@ -108,10 +111,10 @@ class EnemyController {
 
 		/* WAVE 1 */
 
-		//enemyWave = new EnemyWave();
-		//enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 10));
-		//this.upcomingWaves.push(enemyWave);
-		//enemyWave.recalculateWaveInfo();
+		enemyWave = new EnemyWave();
+		enemyWave.enemyDefs.push(new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 10));
+		this.upcomingWaves.push(enemyWave);
+		enemyWave.recalculateWaveInfo();
 
 		/* WAVE 2 */
 
