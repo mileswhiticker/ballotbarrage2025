@@ -12,7 +12,7 @@ export class MobAttack {
 	tLeftAttack: number = 0;
 	private imgPath: string = "na";
 	private nearbyEnemyMobs: Mob[] = [];
-	private auraRate: number = 1;	//used by aframe
+	private auraRate: number = 0.25;	//used by aframe
 
 	constructor(mob: Mob, missileType: MISSILETYPE) {
 		this.ownerMob = mob;
