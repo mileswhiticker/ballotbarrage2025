@@ -99,6 +99,17 @@ class GameController {
 		this.timer.StartTimer();
 	}
 
+	tryFinishRound(){
+		//assume that safety checks have been done at this point
+		//here we will just make sure we only end the round once
+		if(appController.curGameScene === GAMESCENE.ROUND_ACTIVE){
+			console.log(`GameController::tryFinishRound() success`);
+			appController.changeScene(GAMESCENE.ROUND_POST);
+		} else {
+			console.error(`WARN: GameController::tryFinishRound() but not in active game round`);
+		}
+	}
+
 	ResetTimer() {
 		const enemySpawnTime = enemyController.getCurrentSpawningTimeMax();
 		const timerData = [

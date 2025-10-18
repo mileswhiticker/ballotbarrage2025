@@ -77,6 +77,10 @@ export class EnemyWave {
 
 		this.recalculateWaveInfo();
 	}
+
+	areEnemiesDepleted(){
+		return this.enemyDefs.length === 0;
+	}
 }
 
 class EnemySpawner {
@@ -300,6 +304,28 @@ class EnemyController {
 		this.isActive = true;
 	}
 
+	areEnemiesDefeated(){
+		if(mobController.getEnemyMobs().length > 0){
+			return false;
+		}
+
+		if(this.isSpawning) {
+			return false;
+		}
+
+		if(this.getCurrentEnemyWave()?.areEnemiesDepleted()) {
+			return true;
+		}
+
+		if(!this.getCurrentEnemyWave()){
+			console.error(`warn EnemyController::areEnemiesDefected() no current enemy wave`);
+			return true;
+		}
+
+		console.error(`WARN EnemyController::areEnemiesDefected() unknown edge case`);
+		return true;
+	}
+
 	isActive: boolean = false;
 	tLeftStartSpawning: number = 0;
 	update(deltaTime: number) {
@@ -335,9 +361,6 @@ class EnemyController {
 							if (spawningEnemyDef.amountLeft > 0) {
 								if (spawningEnemyDef.mobInfo) {
 									mobController.createActiveEnemyMobAdvanced(spawningEnemyDef.mobType, curSpawner.spawnMob.pos, spawningEnemyDef.mobInfo);
-								}
-								else {
-									mobController.createActiveEnemyMob(spawningEnemyDef.mobType, curSpawner.spawnMob.pos);
 								}
 								spawningEnemyDef.amountLeft--;
 							}

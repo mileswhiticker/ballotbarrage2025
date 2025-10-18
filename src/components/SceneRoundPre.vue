@@ -51,7 +51,8 @@ import {ref} from "vue";
 		<h2>No punters in this wave.</h2>
 	</div>
 	<div class="mb-4 flex justify-center font-bold text-lg p-4">
-		<fwb-button size="lg" @click="handleClick()" :disabled="waveSelectIndex!=0">Begin round</fwb-button>
+		<fwb-button size="lg" @click="handleClick()" :disabled="waveSelectIndex!=0" :color="waveSelectIndex!=0 ? 'alternative' : 'default'"
+		>Begin round</fwb-button>
 	</div>
 </template>
 

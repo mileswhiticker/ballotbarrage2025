@@ -24,6 +24,7 @@ import playerController from './PlayerController';
 class MobController {
 	allMobs: Mob[] = [];
 	enemyMobs: Mob[] = [];
+	defeatedEnemyMobs: Mob[] = [];
 	playerMobs: Mob[] = [];
 	game2dRenderContext: CanvasRenderingContext2D | null = null;
 	//playerGridMobs: (Mob|null)[][] = [];		//	[x grid number][y grid number] = mob in this grid cell
@@ -313,9 +314,20 @@ class MobController {
 		const enemyIndex = this.enemyMobs.indexOf(mob);
 		if (enemyIndex >= 0) {
 			this.enemyMobs.splice(enemyIndex, 1);
+
+			//remember it
+			this.defeatedEnemyMobs.push(mob);
 			return;
 		}
 		//console.warn(`MobController::despawnMe() mob not found in player or enemy mobs!`, mob);
+	}
+
+	getEnemyMobs(){
+		return this.enemyMobs;
+	}
+
+	getDefeatedEnemyMobs(){
+		return this.defeatedEnemyMobs;
 	}
 
 	update(deltaTime: number) {

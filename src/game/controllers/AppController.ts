@@ -11,6 +11,8 @@ import playerController from "@controllers/PlayerController.ts";
 import {type CharSelectProps} from '@components/SceneCharSelect.vue';
 import resourceController from "@controllers/ResourceController.ts";
 import enemyController from "@controllers/EnemyController.ts";
+import SceneRoundPost from "@components/SceneRoundPost.vue";
+import SceneShop from "@components/SceneShop.vue";
 
 export enum GAMESCENE {
 	UNKNOWN = 0,
@@ -39,8 +41,8 @@ const sceneComponents: (Component|null)[] = [
 	SceneCharSelect,
 	SceneRoundPre,
 	SceneGame,
-	null,	//ROUND_POST
-	null,	//ROUND_SHOP
+	SceneRoundPost,
+	SceneShop,
 	null,	//GAMEOVER
 ];
 
@@ -104,6 +106,14 @@ class AppController {
 					this.mountedSceneComponentProps.value = {};
 					gameController.LateInitialise();
 					gameController.startGame();
+					break;
+				}
+				case GAMESCENE.ROUND_POST:
+				{
+					// const sceneProps: SceneRoundPostProps = reactive({
+					// 	enemyWaves: enemyController.getAllWaves(),
+					// });
+					// this.mountedSceneComponentProps.value = sceneProps;
 					break;
 				}
 			}

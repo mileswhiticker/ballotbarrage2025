@@ -8,6 +8,8 @@ import {generateUUID} from '@utils/uuid.ts';
 import { MobAttack } from '@game/MobAttack';
 import type { ColourInfo } from '@utils/ColourInfo';
 import playerController from '@controllers/PlayerController';
+import enemyController from "@controllers/EnemyController.ts";
+import gameController from "@controllers/GameController.ts";
 
 export const BASE_MOB_HEALTHCAP = 1;
 
@@ -311,6 +313,11 @@ export default class Mob {
 									for (let pref = 0; pref < sortedParties.length; pref++) {
 										const partyName = sortedParties[pref];
 										playerController.castVote(partyName, pref);
+									}
+
+									//ready to finish the round?
+									if(enemyController.areEnemiesDefeated()){
+										gameController.tryFinishRound();
 									}
 								}
 						}
