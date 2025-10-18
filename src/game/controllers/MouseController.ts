@@ -7,14 +7,15 @@ import Vector2 from '@utils/Vector2.ts';
 import playerController from './PlayerController';
 
 class MouseController {
-	private mobBuildGhostType: Ref<MOBTYPE> = ref(MOBTYPE.NONE);
-	private mobBuildGhostElement: HTMLElement | null = null;
+	private mobBuildGhostType: Ref<MOBTYPE> = ref(0);	//MOBTYPE.NONE
+	// private mobBuildGhostElement: HTMLElement | null = null;
 	mobBuildGhost: Mob | null = null;
 	interfaceBoundingClientRect: DOMRect | null = null;
 	game2dRenderContext: CanvasRenderingContext2D | null = null;
 
 	Initialise(game2dRenderContext: CanvasRenderingContext2D) {
 		this.game2dRenderContext = game2dRenderContext;
+		this.mobBuildGhostType.value = MOBTYPE.NONE;
 
 		//we will need this to calculate the necessary mouse offset from the top left corner of the page
 		const gameCanvas = document.getElementById('gameCanvas');
