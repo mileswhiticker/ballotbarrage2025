@@ -194,15 +194,15 @@ class EnemyController {
 		enemyWave = new EnemyWave();
 
 		//undecided voters
-		enemyDef = new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 10);
+		enemyDef = new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 20);
 		enemyDef.mobInfo = mobController.createPresetMobInfo(1);
 		enemyWave.enemyDefs.push(enemyDef);
 
-		enemyDef = new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 20);
+		enemyDef = new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 10);
 		enemyDef.mobInfo = mobController.createPresetMobInfo(2);
 		enemyWave.enemyDefs.push(enemyDef);
 
-		enemyDef = new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 10);
+		enemyDef = new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 5);
 		enemyDef.mobInfo = mobController.createPresetMobInfo(3);
 		enemyWave.enemyDefs.push(enemyDef);
 
@@ -230,10 +230,6 @@ class EnemyController {
 		enemyWave = new EnemyWave();
 
 		//undecided voters
-		enemyDef = new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 20);
-		enemyDef.mobInfo = mobController.createPresetMobInfo(1);
-		enemyWave.enemyDefs.push(enemyDef);
-
 		enemyDef = new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 15);
 		enemyDef.mobInfo = mobController.createPresetMobInfo(2);
 		enemyWave.enemyDefs.push(enemyDef);
