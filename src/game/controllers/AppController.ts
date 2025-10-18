@@ -94,7 +94,7 @@ class AppController {
 				case GAMESCENE.ROUND_PRE:
 				{
 					const sceneProps: SceneRoundPreProps = reactive({
-						enemyWave: enemyController.getCurrentEnemyWave(),
+						enemyWaves: enemyController.getAllWaves(),
 					});
 					this.mountedSceneComponentProps.value = sceneProps;
 					break;

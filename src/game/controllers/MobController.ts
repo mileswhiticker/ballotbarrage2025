@@ -20,7 +20,6 @@ import {
 	IMGPATH_BUS
 } from '@assets/_AssetPaths.ts'; 
 import playerController from './PlayerController';
-import {NO_PARTY} from "@utils/string_constants.ts";
 
 class MobController {
 	allMobs: Mob[] = [];
@@ -72,13 +71,14 @@ class MobController {
 			newMobInfo.party = partyname;
 			newMobInfo.imgPath = playerController.getPartyLoyalistImgPath(partyname) as string;
 		}
+		newMobInfo.mobLevel = mobLevel;
 
 		switch(mobLevel)
 		{
 			default: {
 				if(partyname){
 					newMobInfo.name = "Party supporter";
-					newMobInfo.desc = "Not sure what they are doing yet";
+					newMobInfo.desc = "Pretty cluey about politics by now";
 				} else {
 					newMobInfo.name = "Undecided Voter";
 					newMobInfo.desc = "Just a punter chasing some democracy sausage";
@@ -93,7 +93,7 @@ class MobController {
 					newMobInfo.desc = "Full of that new convert zeal";
 				} else {
 					newMobInfo.name = "Confused voter";
-					newMobInfo.desc = "They're not sure about this whole \'voting\' thing";
+					newMobInfo.desc = "Unsure about this whole \'voting\' thing";
 				}
 
 				newMobInfo.health = BASE_MOB_HEALTHCAP * 2;
@@ -140,6 +140,7 @@ class MobController {
 			moveSpeed: 32,
 			speedMod: 0,
 			imgPath: IMGPATH_GREYMAN,
+			mobLevel: 0,
 		};
 		return mobInfo;
 	}

@@ -48,6 +48,7 @@ export interface MobInfo {
 	party?: string;
 	moveSpeed: number;
 	speedMod: number;
+	mobLevel: number;
 	name: string;
 	desc: string;
 }

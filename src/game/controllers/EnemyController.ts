@@ -29,14 +29,17 @@ export class WaveEnemyDef {
 
 export class EnemyWave {
 	public enemyDefs: WaveEnemyDef[] = [];
-	totalMobs: number = 0;
+	public totalMobs: number = 0;
+	public totalDifficulty: number = 0;
 
 	recalculateWaveInfo() {
 		this.totalMobs = 0;
+		this.totalDifficulty = 0;
 
 		//calculate the total size of the wave
 		for (const enemyDef of this.enemyDefs) {
 			this.totalMobs += enemyDef.amountMax;
+			this.totalDifficulty += enemyDef.amountMax * (1 + enemyDef.mobInfo.mobLevel);
 		}
 
 		for (const enemyDef of this.enemyDefs) {
@@ -98,6 +101,10 @@ class EnemyController {
 	waveStartTime: number = -1;
 	timer: Timer|null = null;
 
+	public getAllWaves(): EnemyWave[] {
+		return this.upcomingWaves;
+	}
+
 	public getCurrentEnemyWave(){
 		if(this.upcomingWaves.length > 0){
 			return this.upcomingWaves[0];
@@ -138,8 +145,6 @@ class EnemyController {
 		//undecided voters
 		enemyDef = new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 15);
 		enemyDef.mobInfo = mobController.createPresetMobInfo(1);
-		enemyDef.mobInfo.healthMod = 2;
-		enemyDef.mobInfo.speedMod = 64;
 		enemyWave.enemyDefs.push(enemyDef);
 
 		//only add loyalist mobs for parties that are not the human player party

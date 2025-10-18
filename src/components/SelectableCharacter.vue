@@ -23,6 +23,7 @@
 
 	<fwb-card
 		:class="{ 'w-md': focussed, 'w-xs opacity-25': !focussed }"
+		class="hover:cursor-pointer"
 		:img-alt="`Player ${playerInfo.value.playerName}`"
 		:img-src="playerInfo.value.playerImagePath"
 		variant="image"
