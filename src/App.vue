@@ -11,7 +11,6 @@
 
 <template>
     <header id="header">
-
 		<div class="">
 			<div class=""><div class="homepagelink underline"><a href="https://mileswhiticker.xyz/"><< Home</a></div></div>
 			<div class="mb-0 flex justify-center font-bold text-lg p-4">
