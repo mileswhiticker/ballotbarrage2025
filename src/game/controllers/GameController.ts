@@ -131,7 +131,7 @@ class GameController {
 		return this.gametimerate === 0;
 	}
 
-	tryTrogglePause(){
+	tryTogglePause(){
 		if(this.gametimerate === 1){
 			this.gametimerate = 0;
 			return true;
