@@ -131,15 +131,22 @@ class GameController {
 		return this.gametimerate === 0;
 	}
 
-	togglePause(){
-		if(this.gametimerate != 0){
+	tryTrogglePause(){
+		if(this.gametimerate === 1){
 			this.gametimerate = 0;
-		} else {
+			return true;
+		} else if(this.gametimerate === 0){
 			this.gametimerate = 1;
+			return true;
 		}
+		return false;
 	}
 
 	tryFastForwardRound(){
+		if(this.gametimerate === 1){
+			this.gametimerate = 75;
+			return true;
+		}
 		return false;
 	}
 

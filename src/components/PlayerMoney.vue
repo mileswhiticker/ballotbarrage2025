@@ -1,13 +1,13 @@
 <script setup lang="ts">
-	import { watchEffect, ref, Ref, computed } from "vue";
-	import { type PlayerInfo, random_name, startingMoney } from '@game/Player.ts';
-	import playerController from '@controllers/PlayerController.ts';
+	import { watchEffect } from "vue";
+	// import { computed, type Ref } from "vue";
+	import { type PlayerInfo } from '@game/Player.ts';
 
 	const props = defineProps<{
 		playerInfo: Ref<PlayerInfo>
 	}>();
 
-	const isValid = computed(() => !!playerInfo.value);
+	// const isValid = computed(() => !!playerInfo.value);
 
 	watchEffect(() => {
 		//console.log(`PlayerMoney.vue playerInfo`, props.playerInfo, props.playerInfo.value);

@@ -8,9 +8,9 @@
 		if(gameController.isPaused() != paused.value){
 			console.warn(`WARNING: PauseButton.vue onClick() the locally stored value of \'paused\' (${paused.value}) does not match gameController.isPaused() (${gameController.isPaused()})`);
 		}
-		gameController.togglePause();
-		paused.value = gameController.isPaused();
-		// paused.value = ! paused.value;
+		if(gameController.tryTrogglePause()){
+			paused.value = gameController.isPaused();
+		}
 	}
 
 </script>
