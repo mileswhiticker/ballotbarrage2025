@@ -2,8 +2,10 @@
 	import PlayerPanels from '@components/PlayerPanels.vue';
 	import PlayerMoney from '@components/PlayerMoney.vue';
 	import GameTimer from '@components/GameTimer.vue';
-	import { PlayerInfo } from '@game/Player.ts';
+	import { type PlayerInfo } from '@game/Player.ts';
 	import { watchEffect } from 'vue';
+	import PauseButton from "@components/PauseButton.vue";
+	import FastForwardButton from "@components/FastForwardButton.vue";
 
 	const props = defineProps<{
 		playerInfo: Ref<PlayerInfo|null>
@@ -16,6 +18,10 @@
 
 <template>
 	<div id="topPanel">
+		<div class="flex flex-col w-40">
+			<PauseButton />
+			<FastForwardButton />
+		</div>
 		<PlayerMoney :playerInfo />
 		<GameTimer />
 		<PlayerPanels />

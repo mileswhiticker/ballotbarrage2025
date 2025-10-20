@@ -17,6 +17,7 @@ class GameController {
 	gameCanvas: HTMLCanvasElement | null = null;
 	game2dRenderContext: CanvasRenderingContext2D | null = null;
 	timer: Timer;
+	gametimerate: number = 1;
 
 	gameTime: number = 0; //in seconds
 
@@ -63,7 +64,7 @@ class GameController {
 	tLastUpdate: number = Date.now();
 	Update() {
 		const tThisUpdate = Date.now();
-		const deltaTime = (tThisUpdate - this.tLastUpdate) / 1000;
+		const deltaTime = this.gametimerate * (tThisUpdate - this.tLastUpdate) / 1000;
 		this.tLastUpdate = tThisUpdate;
 		// console.log("GameController::Update()", deltaTime);
 
@@ -123,7 +124,23 @@ class GameController {
 	}
 
 	timerSliceExpired(sliceLabel: string) {
-		console.log(`GameController Timer slice expired: ${sliceLabel}`);
+		// console.log(`GameController Timer slice expired: ${sliceLabel}`);
+	}
+
+	isPaused(){
+		return this.gametimerate === 0;
+	}
+
+	togglePause(){
+		if(this.gametimerate != 0){
+			this.gametimerate = 0;
+		} else {
+			this.gametimerate = 1;
+		}
+	}
+
+	tryFastForwardRound(){
+		return false;
 	}
 
 	renderEmptyCanvas() {
