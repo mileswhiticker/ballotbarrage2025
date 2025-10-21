@@ -28,7 +28,8 @@ export class WaveEnemyDef {
 }
 
 export class EnemyWave {
-	public enemyDefs: WaveEnemyDef[] = [];
+	public remainingEnemyDefs: WaveEnemyDef[] = [];
+	public allEnemyDefs: WaveEnemyDef[] = [];
 	public totalMobs: number = 0;
 	public totalDifficulty: number = 0;
 
@@ -37,12 +38,12 @@ export class EnemyWave {
 		this.totalDifficulty = 0;
 
 		//calculate the total size of the wave
-		for (const enemyDef of this.enemyDefs) {
+		for (const enemyDef of this.remainingEnemyDefs) {
 			this.totalMobs += enemyDef.amountMax;
 			this.totalDifficulty += enemyDef.amountMax * (1 + enemyDef.mobInfo.mobLevel);
 		}
 
-		for (const enemyDef of this.enemyDefs) {
+		for (const enemyDef of this.remainingEnemyDefs) {
 			enemyDef.spawnProb = enemyDef.amountMax / this.totalMobs;
 		}
 	}
@@ -54,7 +55,7 @@ export class EnemyWave {
 		const result = Math.random();
 
 		let curCounter = 0;
-		for (const enemyDef of this.enemyDefs) {
+		for (const enemyDef of this.remainingEnemyDefs) {
 			curCounter += enemyDef.spawnProb;
 			if (curCounter >= result) {
 				return enemyDef;
@@ -67,19 +68,19 @@ export class EnemyWave {
 
 	enemyDepleted(enemyDef: WaveEnemyDef) {
 		//console.log("Enemy type depleted!", enemyDef);
-		for (let i = 0; i < this.enemyDefs.length; i++) {
-			const checkDef = this.enemyDefs[i];
+		for (let i = 0; i < this.remainingEnemyDefs.length; i++) {
+			const checkDef = this.remainingEnemyDefs[i];
 			if (checkDef.mobType === enemyDef.mobType) {
-				this.enemyDefs.splice(i, 1);
+				this.remainingEnemyDefs.splice(i, 1);
 				break;
 			}
 		}
 
-		this.recalculateWaveInfo();
+		// this.recalculateWaveInfo();
 	}
 
 	areEnemiesDepleted(){
-		return this.enemyDefs.length === 0;
+		return this.remainingEnemyDefs.length === 0;
 	}
 }
 
@@ -138,8 +139,9 @@ class EnemyController {
 		enemyWave = new EnemyWave();
 		enemyDef = new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 10);
 		enemyDef.mobInfo = mobController.createPresetMobInfo(0);
-		enemyWave.enemyDefs.push(enemyDef);
+		enemyWave.remainingEnemyDefs.push(enemyDef);
 		this.upcomingWaves.push(enemyWave);
+		enemyWave.allEnemyDefs = enemyWave.remainingEnemyDefs.slice();
 		enemyWave.recalculateWaveInfo();
 
 		/* WAVE 2 */
@@ -149,7 +151,7 @@ class EnemyController {
 		//undecided voters
 		enemyDef = new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 15);
 		enemyDef.mobInfo = mobController.createPresetMobInfo(1);
-		enemyWave.enemyDefs.push(enemyDef);
+		enemyWave.remainingEnemyDefs.push(enemyDef);
 
 		//only add loyalist mobs for parties that are not the human player party
 		for (const party of parties) {
@@ -158,12 +160,13 @@ class EnemyController {
 				if (loyalistMobType) {
 					enemyDef = new WaveEnemyDef(loyalistMobType, 3);
 					enemyDef.mobInfo = mobController.createPresetMobInfo(0, party);
-					enemyWave.enemyDefs.push(enemyDef);
+					enemyWave.remainingEnemyDefs.push(enemyDef);
 				}
 			}
 		}
 
 		this.upcomingWaves.push(enemyWave);
+		enemyWave.allEnemyDefs = enemyWave.remainingEnemyDefs.slice();
 		enemyWave.recalculateWaveInfo();
 
 		/* WAVE 3 */
@@ -173,10 +176,10 @@ class EnemyController {
 		//undecided voters
 		enemyDef = new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 10);
 		enemyDef.mobInfo = mobController.createPresetMobInfo(1);
-		enemyWave.enemyDefs.push(enemyDef);
+		enemyWave.remainingEnemyDefs.push(enemyDef);
 		enemyDef = new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 5);
 		enemyDef.mobInfo = mobController.createPresetMobInfo(2);
-		enemyWave.enemyDefs.push(enemyDef);
+		enemyWave.remainingEnemyDefs.push(enemyDef);
 
 		//only add loyalist mobs for parties that are not the human player party
 		for (const party of parties) {
@@ -185,12 +188,13 @@ class EnemyController {
 				if (loyalistMobType) {
 					enemyDef = new WaveEnemyDef(loyalistMobType, 6);
 					enemyDef.mobInfo = mobController.createPresetMobInfo(1, party);
-					enemyWave.enemyDefs.push(enemyDef);
+					enemyWave.remainingEnemyDefs.push(enemyDef);
 				}
 			}
 		}
 
 		this.upcomingWaves.push(enemyWave);
+		enemyWave.allEnemyDefs = enemyWave.remainingEnemyDefs.slice();
 		enemyWave.recalculateWaveInfo();
 
 		/* WAVE 4 */
@@ -200,15 +204,15 @@ class EnemyController {
 		//undecided voters
 		enemyDef = new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 20);
 		enemyDef.mobInfo = mobController.createPresetMobInfo(1);
-		enemyWave.enemyDefs.push(enemyDef);
+		enemyWave.remainingEnemyDefs.push(enemyDef);
 
 		enemyDef = new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 10);
 		enemyDef.mobInfo = mobController.createPresetMobInfo(2);
-		enemyWave.enemyDefs.push(enemyDef);
+		enemyWave.remainingEnemyDefs.push(enemyDef);
 
 		enemyDef = new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 5);
 		enemyDef.mobInfo = mobController.createPresetMobInfo(3);
-		enemyWave.enemyDefs.push(enemyDef);
+		enemyWave.remainingEnemyDefs.push(enemyDef);
 
 		//only add loyalist mobs for parties that are not the human player party
 		for (const party of parties) {
@@ -217,16 +221,17 @@ class EnemyController {
 				if (loyalistMobType) {
 					enemyDef = new WaveEnemyDef(loyalistMobType, 10);
 					enemyDef.mobInfo = mobController.createPresetMobInfo(1, party);
-					enemyWave.enemyDefs.push(enemyDef);
+					enemyWave.remainingEnemyDefs.push(enemyDef);
 
 					enemyDef = new WaveEnemyDef(loyalistMobType, 5);
 					enemyDef.mobInfo = mobController.createPresetMobInfo(2, party);
-					enemyWave.enemyDefs.push(enemyDef);
+					enemyWave.remainingEnemyDefs.push(enemyDef);
 				}
 			}
 		}
 
 		this.upcomingWaves.push(enemyWave);
+		enemyWave.allEnemyDefs = enemyWave.remainingEnemyDefs.slice();
 		enemyWave.recalculateWaveInfo();
 
 		/* WAVE 5 */
@@ -236,11 +241,11 @@ class EnemyController {
 		//undecided voters
 		enemyDef = new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 15);
 		enemyDef.mobInfo = mobController.createPresetMobInfo(2);
-		enemyWave.enemyDefs.push(enemyDef);
+		enemyWave.remainingEnemyDefs.push(enemyDef);
 
 		enemyDef = new WaveEnemyDef(MOBTYPE.VOTER_UNDECIDED, 10);
 		enemyDef.mobInfo = mobController.createPresetMobInfo(3);
-		enemyWave.enemyDefs.push(enemyDef);
+		enemyWave.remainingEnemyDefs.push(enemyDef);
 
 		//only add loyalist mobs for parties that are not the human player party
 		for (const party of parties) {
@@ -249,22 +254,22 @@ class EnemyController {
 				if (loyalistMobType) {
 					enemyDef = new WaveEnemyDef(loyalistMobType, 15);
 					enemyDef.mobInfo = mobController.createPresetMobInfo(1, party);
-					enemyWave.enemyDefs.push(enemyDef);
+					enemyWave.remainingEnemyDefs.push(enemyDef);
 
 					enemyDef = new WaveEnemyDef(loyalistMobType, 10);
 					enemyDef.mobInfo = mobController.createPresetMobInfo(2, party);
-					enemyWave.enemyDefs.push(enemyDef);
+					enemyWave.remainingEnemyDefs.push(enemyDef);
 
 					enemyDef = new WaveEnemyDef(loyalistMobType, 5);
 					enemyDef.mobInfo = mobController.createPresetMobInfo(3, party);
-					enemyWave.enemyDefs.push(enemyDef);
+					enemyWave.remainingEnemyDefs.push(enemyDef);
 				}
 			}
 		}
 
 		this.upcomingWaves.push(enemyWave);
+		enemyWave.allEnemyDefs = enemyWave.remainingEnemyDefs.slice();
 		enemyWave.recalculateWaveInfo();
-
 	}
 
 	getCurrentSpawningTimeMax(): number {

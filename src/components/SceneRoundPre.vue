@@ -3,12 +3,13 @@ import appController, { GAMESCENE } from '@controllers/AppController.ts';
 import { FwbButton } from "flowbite-vue";
 import {EnemyWave} from "@controllers/EnemyController.ts";
 import WaveEnemyDef from "@components/WaveEnemyDef.vue";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 
 	export interface SceneRoundPreProps {
 		enemyWaves: EnemyWave[];
+		nextRoundIndex: number;
 	}
-	defineProps<SceneRoundPreProps>();
+	const props = defineProps<SceneRoundPreProps>();
 
 	function handleClick() {
 		appController.changeScene(GAMESCENE.ROUND_ACTIVE);
@@ -20,6 +21,9 @@ import {ref} from "vue";
 		waveSelectIndex.value=waveIndex;
 	}
 
+	onMounted(() => {
+		waveSelectIndex.value = props.nextRoundIndex;
+	})
 </script>
 
 <template>
@@ -28,21 +32,21 @@ import {ref} from "vue";
 			 :class="{ 'transform scale-110 z-1': index===waveSelectIndex, ' z-0': index!=waveSelectIndex}"
 			 class="relative flex justify-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row w-40 dark:border-gray-700 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 hover:cursor-pointer">
 			<div class="p-4 leading-normal items-center">
-				<h5 v-if="index > 0" class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Wave {{index}}</h5>
+				<h5 v-if="index != nextRoundIndex" class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Wave {{index + 1}}</h5>
 				<h5 v-else class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white pulse-text">Next wave</h5>
 			</div>
 		</div>
 	</div>
-	<div class="mb-4 flex flex-row justify-center font-bold text-lg p-4 flex-col">
+	<div class="mb-4 flex flex-row justify-center font-bold text-lg p-4">
 		<div class="w-100">
-		<h1 v-if="waveSelectIndex ===0">Incoming wave of punters:</h1>
+		<h1 v-if="waveSelectIndex === nextRoundIndex">Incoming wave of punters:</h1>
 		<h1 v-else>Wave {{waveSelectIndex}} of upcoming punters:</h1>
 		<em>Mobs: {{enemyWaves[waveSelectIndex].totalMobs}}, estimated difficulty: {{enemyWaves[waveSelectIndex].totalDifficulty}}</em>
 		</div>
 	</div>
 	<div v-if="waveSelectIndex >= 0 && waveSelectIndex < enemyWaves.length">
 		<div class="mb-4 flex flex-wrap justify-center font-bold text-lg p-4">
-			<div v-for="(enemyDef, index) in enemyWaves[waveSelectIndex].enemyDefs" :key="index" class="m3">
+			<div v-for="(enemyDef, index) in enemyWaves[waveSelectIndex].allEnemyDefs" :key="index" class="m3">
 				<WaveEnemyDef :waveEnemyDef="enemyDef"></WaveEnemyDef>
 			</div>
 		</div>
@@ -51,7 +55,7 @@ import {ref} from "vue";
 		<h2>No punters in this wave.</h2>
 	</div>
 	<div class="mb-4 flex justify-center font-bold text-lg p-4">
-		<fwb-button size="lg" @click="handleClick()" :disabled="waveSelectIndex!=0" :color="waveSelectIndex!=0 ? 'alternative' : 'default'"
+		<fwb-button v-if="waveSelectIndex===nextRoundIndex" size="lg" @click="handleClick()" color="default"
 		>Begin round</fwb-button>
 	</div>
 </template>

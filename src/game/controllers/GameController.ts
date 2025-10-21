@@ -1,4 +1,4 @@
-import Mob from '@game/Mob.ts';
+// import Mob from '@game/Mob.ts';
 import mobController from '@controllers/MobController.ts';
 import mouseController from '@controllers/MouseController.ts';
 import gridController from '@controllers/GridController.ts';
@@ -12,16 +12,17 @@ import {COLOUR_BLUE, COLOUR_GREEN, COLOUR_RED} from '@utils/ColourInfo.ts';
 import {nextTick} from 'vue';
 
 class GameController {
-	mobs: Mob[] = [];
+	get currentRoundIndex(): number {
+		return this._currentRoundIndex;
+	}
 	mainRenderFrameId: number = -1;
 	gameCanvas: HTMLCanvasElement | null = null;
 	game2dRenderContext: CanvasRenderingContext2D | null = null;
 	timer: Timer;
 	gametimerate: number = 1;
 
-	gameTime: number = 0; //in seconds
+	private _currentRoundIndex: number = 0;
 
-	renderGameWorld: boolean = false;
 	shutDown: boolean = false;
 
 	constructor() {
@@ -105,6 +106,7 @@ class GameController {
 		//here we will just make sure we only end the round once
 		if(appController.curGameScene === GAMESCENE.ROUND_ACTIVE){
 			console.log(`GameController::tryFinishRound() success`);
+			this._currentRoundIndex += 1;
 			appController.changeScene(GAMESCENE.ROUND_POST);
 		} else {
 			console.error(`WARN: GameController::tryFinishRound() but not in active game round`);
