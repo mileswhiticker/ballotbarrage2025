@@ -2,21 +2,15 @@
 
 	import type {PlayerInfo} from "@game/Player.ts";
 	import {onMounted, ref} from "vue";
+	import {getOrdinalFromNum} from "@utils/misc.ts";
 
 	export interface PlayerRankingCardProps {
 		playerInfo: PlayerInfo;
 		leadingCandidate: boolean;
 		isHumanPlayer: boolean;
+		hideTitle: boolean;
 	}
 	const props = defineProps<PlayerRankingCardProps>();
-
-	const ordinals = ['1st','2nd','3rd','4th','5th','6th'];
-	function getOrdinalFromNum(number: number){
-		if(number < ordinals.length){
-			return ordinals[number];
-		}
-		return `${number}st`;
-	}
 
 	const leadingCandidateElement = ref(null);
 
@@ -33,7 +27,7 @@
 		<div v-if="isHumanPlayer">YOU ARE IN THE LEAD</div>
 		<div v-else>Leading candidate:</div>
 	</div>
-	<div v-else>
+	<div v-else-if="!hideTitle">
 		<em v-if="isHumanPlayer">Runner up (you)</em>
 		<em v-else>Runner up</em>
 	</div>

@@ -14,7 +14,11 @@
 		<h1>Wave complete!</h1>
 	</div>
 	<div v-for="(playerDef, index) in playerController.sortedPlayerCharacters" :key="index" class="m3 flex flex-col items-center">
-		<PlayerRankingCard :playerInfo="playerDef" :leadingCandidate="index===0" :isHumanPlayer="playerController.getHumanPlayer().value.id === playerDef.id" />
+		<PlayerRankingCard
+			:playerInfo="playerDef"
+			:leadingCandidate="index===0"
+			:isHumanPlayer="playerController.getHumanPlayer().value.id === playerDef.id"
+			:hideTitle="false"/>
 	</div>
 	<div class="mb-4 flex justify-center font-bold text-lg p-4">
 		<fwb-button size="lg" @click="onClickContinue()" >Continue</fwb-button>

@@ -7,6 +7,7 @@ import { ref, type Ref } from 'vue';
 import { IMGPATH_PURPLEMAN, IMGPATH_REDMAN, IMGPATH_BLUEMAN } from '@assets/_AssetPaths.ts';
 import gridController from './GridController';
 import  Vector2 from '../../utils/Vector2';
+import {getOrdinalFromNum} from "@utils/misc.ts";
 
 export enum PLAYERS {
 	PLAYER_UNKNOWN = -1,
@@ -182,6 +183,20 @@ class PlayerController {
 
 	getNonPlayerCharacters() {
 		return this.nonPlayerCharacters;
+	}
+
+	getPlayerRanking(playerId: PLAYERS): string {
+		if(!this.sortedPlayerCharacters.length){
+			return "No polling";
+		}
+
+		for(let index=0; index<this.sortedPlayerCharacters.length; index++){
+			const checkPlayerInfo = this.sortedPlayerCharacters[index];
+			if(checkPlayerInfo.id === playerId){
+				return getOrdinalFromNum(index);
+			}
+		}
+		return "Unknown candidate";
 	}
 
 	sortedPlayerCharacters: PlayerInfo[] = [];
