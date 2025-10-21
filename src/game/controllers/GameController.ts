@@ -11,6 +11,8 @@ import {ENEMY_SPAWNING_STRING, PLAYER_BUILDING_STRING, PLAYER_BUYING_STRING} fro
 import {COLOUR_BLUE, COLOUR_GREEN, COLOUR_RED} from '@utils/ColourInfo.ts';
 import {nextTick} from 'vue';
 
+export const GAME_FF_RATE = 75;
+
 class GameController {
 	get currentRoundIndex(): number {
 		return this._currentRoundIndex;
@@ -19,11 +21,11 @@ class GameController {
 	gameCanvas: HTMLCanvasElement | null = null;
 	game2dRenderContext: CanvasRenderingContext2D | null = null;
 	timer: Timer;
-	gametimerate: number = 1;
+	gameTimeRate: number = 1;
 
 	private _currentRoundIndex: number = 0;
 
-	shutDown: boolean = false;
+	gameRunning: boolean = false;
 
 	constructor() {
 		this.timer = new Timer();
@@ -34,7 +36,7 @@ class GameController {
 		await nextTick();
 		// console.log("GameController::Initialise()");
 
-		enemyController.ResetTimerLink(this.timer);
+		enemyController.SetTimerLink(this.timer);
 
 		this.timer.timerSliceExpiryCallbacks = [];
 		this.timer.timerSliceExpiryCallbacks.push(this.timerSliceExpired.bind(this));
@@ -43,7 +45,7 @@ class GameController {
 		// console.log("GameController::Initialise() finished");
 	}
 
-	async LateInitialise() {
+	async ComponentInitialise() {
 		await nextTick();
 		// console.log("GameController::LateInitialise()");
 
@@ -54,18 +56,12 @@ class GameController {
 		mouseController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
 		mobController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
 		missileController.Initialise(this.game2dRenderContext as CanvasRenderingContext2D);
-
-		this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));
-	}
-
-	async startGame(){
-		this.startNextRound();
 	}
 
 	tLastUpdate: number = Date.now();
 	Update() {
 		const tThisUpdate = Date.now();
-		const deltaTime = this.gametimerate * (tThisUpdate - this.tLastUpdate) / 1000;
+		const deltaTime = this.gameTimeRate * (tThisUpdate - this.tLastUpdate) / 1000;
 		this.tLastUpdate = tThisUpdate;
 		// console.log("GameController::Update()", deltaTime);
 
@@ -87,26 +83,39 @@ class GameController {
 		}
 		missileController.update(deltaTime);
 
-		if (!this.shutDown) {
+		if (this.gameRunning) {
 			this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));
+		} else {
+			// console.log(`GameController::Update() with id ${this.mainRenderFrameId} is gracefully stopping`);
+			this.mainRenderFrameId = -1;
 		}
 	}
 
 	setupNextRound() {
+		// console.log(`GameController::setupNextRound()`);
 		this.ResetTimer();
+		this.gameTimeRate = 1;
 	}
 
 	startNextRound() {
+		// console.log(`GameController::startNextRound()`);
+		this.gameRunning = true;
+		this.mainRenderFrameId = requestAnimationFrame(this.Update.bind(this));
 		enemyController.setActive(true);
 		this.timer.StartTimer();
+
+		//reset this
+		this.tLastUpdate = Date.now();
 	}
 
 	tryFinishRound(){
 		//assume that safety checks have been done at this point
 		//here we will just make sure we only end the round once
 		if(appController.curGameScene === GAMESCENE.ROUND_ACTIVE){
-			console.log(`GameController::tryFinishRound() success`);
+			this.timer.StopTimer();
+			// console.log(`GameController::tryFinishRound() success`);
 			this._currentRoundIndex += 1;
+			this.gameRunning = false;
 			appController.changeScene(GAMESCENE.ROUND_POST);
 		} else {
 			console.error(`WARN: GameController::tryFinishRound() but not in active game round`);
@@ -116,8 +125,8 @@ class GameController {
 	ResetTimer() {
 		const enemySpawnTime = enemyController.getCurrentSpawningTimeMax();
 		const timerData = [
-			{ label: PLAYER_BUYING_STRING, seconds: 0, color: COLOUR_GREEN.hex_string },
-			{ label: PLAYER_BUILDING_STRING, seconds: 0, color: COLOUR_BLUE.hex_string },
+			// { label: PLAYER_BUYING_STRING, seconds: 0, color: COLOUR_GREEN.hex_string },
+			// { label: PLAYER_BUILDING_STRING, seconds: 0, color: COLOUR_BLUE.hex_string },
 			{ label: ENEMY_SPAWNING_STRING, seconds: enemySpawnTime, color: COLOUR_RED.hex_string },
 		];
 
@@ -130,23 +139,23 @@ class GameController {
 	}
 
 	isPaused(){
-		return this.gametimerate === 0;
+		return this.gameTimeRate === 0;
 	}
 
 	tryTogglePause(){
-		if(this.gametimerate === 1){
-			this.gametimerate = 0;
+		if(this.gameTimeRate === 1){
+			this.gameTimeRate = 0;
 			return true;
-		} else if(this.gametimerate === 0){
-			this.gametimerate = 1;
+		} else if(this.gameTimeRate === 0){
+			this.gameTimeRate = 1;
 			return true;
 		}
 		return false;
 	}
 
 	tryFastForwardRound(){
-		if(this.gametimerate === 1){
-			this.gametimerate = 75;
+		if(this.gameTimeRate === 1){
+			this.gameTimeRate = GAME_FF_RATE;
 			return true;
 		}
 		return false;

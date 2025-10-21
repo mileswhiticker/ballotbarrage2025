@@ -5,7 +5,7 @@ import { shallowRef, reactive, type Component } from 'vue';
 import SceneMainMenu from '@components/SceneMainMenu.vue';
 import SceneCharSelect from '@components/SceneCharSelect.vue';
 import SceneRoundPre, {type SceneRoundPreProps} from '@components/SceneRoundPre.vue';
-import SceneGame from '@components/SceneGame.vue';
+import SceneRoundActive from '@components/SceneRoundActive.vue';
 import gameController from '@controllers/GameController.ts';
 import playerController from "@controllers/PlayerController.ts";
 import {type CharSelectProps} from '@components/SceneCharSelect.vue';
@@ -40,7 +40,7 @@ const sceneComponents: (Component|null)[] = [
 	SceneMainMenu,
 	SceneCharSelect,
 	SceneRoundPre,
-	SceneGame,
+	SceneRoundActive,
 	SceneRoundPost,
 	SceneShop,
 	null,	//GAMEOVER
@@ -100,13 +100,14 @@ class AppController {
 						nextRoundIndex: gameController.currentRoundIndex,
 					});
 					this.mountedSceneComponentProps.value = sceneProps;
+					gameController.setupNextRound();
 					break;
 				}
 				case GAMESCENE.ROUND_ACTIVE:
 				{
 					this.mountedSceneComponentProps.value = {};
-					gameController.LateInitialise();
-					gameController.startGame();
+					gameController.ComponentInitialise();
+					gameController.startNextRound();
 					break;
 				}
 				case GAMESCENE.ROUND_POST:

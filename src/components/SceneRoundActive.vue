@@ -4,7 +4,7 @@
 	//it excludes eg a <title> element, tagline, and homepage link
 	import GameCanvas from '@components/GameCanvas.vue';
 	import GameInterface from '@components/GameInterface.vue';
-	import { onMounted, onUnmounted, ref, computed, watchEffect } from 'vue';
+	import { onMounted, onUnmounted, ref, computed } from 'vue';
 	// import { type PlayerInfo } from '@game/Player.ts';
 	import playerController from '@controllers/PlayerController.ts';
 	
@@ -54,10 +54,6 @@
 	const height = computed(() => `${gameWindowHeight.value}px`);
 
 	const playerInfo = playerController.getHumanPlayer();
-	
-	watchEffect(() => {
-		//console.log(`SceneGame.vue playerInfo`, playerInfo.value);
-	});
 </script>
 
 <template>

@@ -47,6 +47,13 @@ export default class Timer {
 
 	StartTimer() {
 		this.isRunning = true;
+
+		//if we are starting a fresh timer, trigger the first slice
+		if(this.currentAngle == 0){
+			for (const callback of this.timerSliceStartedCallbacks) {
+				callback(this.currentData[this.currentSliceIndex].label);
+			}
+		}
 	}
 
 	StopTimer() {
@@ -66,10 +73,7 @@ export default class Timer {
 
 	render(deltaTime: number) {
 		if (!this.renderContext || !this.currentData) return;
-		//console.log(`renderTimer()`, deltaTime);
-		//if (deltaTime >= 100) {
-		//	deltaTime = 100;
-		//}
+		// console.log(`renderTimer()`, deltaTime);
 
 		if (this.isRunning) {
 			this.sliceTimeLeft -= deltaTime;

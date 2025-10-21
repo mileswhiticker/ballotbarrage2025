@@ -6,6 +6,7 @@ import mobController from '@controllers/MobController.ts';
 import { ENEMY_SPAWNING_STRING } from '@utils/string_constants.ts';
 import Timer from '@utils/Timer.ts';
 import playerController from './PlayerController';
+import gameController from "@controllers/GameController.ts";
 
 export class WaveEnemyDef {
 	mobType: MOBTYPE;
@@ -62,6 +63,11 @@ export class EnemyWave {
 			}
 		}
 
+		//randomness failed so just send this one
+		if(this.remainingEnemyDefs.length > 0){
+			return this.remainingEnemyDefs[0];
+		}
+
 		//we couldnt choose one
 		return null;
 	}
@@ -79,7 +85,7 @@ export class EnemyWave {
 		// this.recalculateWaveInfo();
 	}
 
-	areEnemiesDepleted(){
+	isRoundEnemiesDepleted(){
 		return this.remainingEnemyDefs.length === 0;
 	}
 }
@@ -112,14 +118,18 @@ class EnemyController {
 
 	public getCurrentEnemyWave(){
 		if(this.upcomingWaves.length > 0){
-			return this.upcomingWaves[0];
+			return this.upcomingWaves[gameController.currentRoundIndex];
 		}
 		return null;
 	}
 
-	ResetTimerLink(timer: Timer){
-		this.timer = timer;
-		this.timer.timerSliceStartedCallbacks.push(this.timerSliceStarted.bind(this));
+	SetTimerLink(timer: Timer){
+		if(!this.timer){
+			this.timer = timer;
+			this.timer.timerSliceStartedCallbacks.push(this.timerSliceStarted.bind(this));
+		} else {
+			console.warn(`EnemyController::SetTimerLink() but timer is already linked to EC!`, timer);
+		}
 	}
 
 	Initialise() {
@@ -281,7 +291,7 @@ class EnemyController {
 				spawnRate += (1 / curSpawner.spawnCooldown);
 			}
 
-			const curWave = this.upcomingWaves[0];
+			const curWave = this.upcomingWaves[gameController.currentRoundIndex];
 			const expectedDuration = curWave.totalMobs / spawnRate;
 
 			return expectedDuration;
@@ -296,6 +306,7 @@ class EnemyController {
 	}
 
 	timerSliceStarted(sliceLabel: string) {
+		// console.log(`EnemyController::timerSliceStarted(${sliceLabel})`);
 		if (sliceLabel === ENEMY_SPAWNING_STRING) {
 			this.startSpawning();
 		}
@@ -320,17 +331,17 @@ class EnemyController {
 			return false;
 		}
 
-		if(this.getCurrentEnemyWave() && this.getCurrentEnemyWave()?.areEnemiesDepleted()) {
-			// console.log(`EnemyController::areEnemiesDefeated() this.getCurrentEnemyWave()?.areEnemiesDepleted()=true`);
-			return true;
-		}
-
 		if(!this.getCurrentEnemyWave()){
 			console.error(`ERROR EnemyController::areEnemiesDefected() no current enemy wave`);
 			return true;
 		}
 
-		console.error(`ERROR EnemyController::areEnemiesDefected() unknown edge case`);
+		if(this.getCurrentEnemyWave()?.isRoundEnemiesDepleted()) {
+			// console.log(`EnemyController::areEnemiesDefeated() expected graceful true`);
+			return true;
+		}
+
+		console.error(`ERROR EnemyController::areEnemiesDefected() unknown edge case, current enemy wave:`,this.getCurrentEnemyWave());
 		return true;
 	}
 
@@ -342,14 +353,6 @@ class EnemyController {
 			return;
 		}
 
-		if (this.tLeftStartSpawning >= 0) {
-			// console.log("EnemyController::Update() ticking down");
-			this.tLeftStartSpawning -= deltaTime;
-			if (this.tLeftStartSpawning <= 0) {
-				this.startSpawning();
-			}
-		}
-
 		if (this.isSpawning) {
 			this.waveTime += deltaTime;
 
@@ -357,7 +360,7 @@ class EnemyController {
 				this.isSpawning = false;
 			}
 			else {
-				const curWave = this.upcomingWaves[0];
+				const curWave = this.upcomingWaves[gameController.currentRoundIndex];
 				for (const curSpawner of this.spawners) {
 					if (curSpawner.timeLeftToSpawn <= 0) {
 						curSpawner.timeLeftToSpawn = curSpawner.spawnCooldown;
@@ -377,8 +380,12 @@ class EnemyController {
 							if (spawningEnemyDef.amountLeft <= 0) {
 								curWave.enemyDepleted(spawningEnemyDef);
 							}
-						} else {
+						}
+						else
+						{
+							//there are no more enemies to spawn so we can stop here
 							this.isSpawning = false;
+							break;
 						}
 
 					} else {

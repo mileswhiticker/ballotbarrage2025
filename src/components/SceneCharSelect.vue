@@ -6,7 +6,6 @@
 	import SelectableCharacter from "@components/SelectableCharacter.vue";
 	import playerController from "@controllers/PlayerController.ts";
 	import enemyController from "@controllers/EnemyController.ts";
-	import gameController from "@controllers/GameController.ts";
 
 	export interface CharSelectProps {
 		choosableChars: Ref<PlayerInfo,PlayerInfo>[];
@@ -23,7 +22,6 @@
 
 		//waves are customised based on player selection
 		enemyController.Initialise();
-		gameController.setupNextRound();
 
 		//advance to the next scene
 		appController.changeScene(GAMESCENE.ROUND_PRE);
