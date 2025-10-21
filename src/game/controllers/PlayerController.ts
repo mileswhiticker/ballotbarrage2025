@@ -1,13 +1,12 @@
 
 import { type PlayerInfo, random_name, startingMoney } from '@game/Player.ts';
 import { ColourInfo } from '@utils/ColourInfo.ts';
-import Mob, {BASE_MOB_HEALTHCAP} from '@game/Mob.ts';
-import { MOBTYPE } from '@game/Mob.ts';
+import Mob, {BASE_MOB_HEALTHCAP, MOBTYPE} from '@game/Mob.ts';
 import mobController from '@controllers/MobController.ts';
 import { ref, type Ref } from 'vue';
 import { IMGPATH_PURPLEMAN, IMGPATH_REDMAN, IMGPATH_BLUEMAN } from '@assets/_AssetPaths.ts';
 import gridController from './GridController';
-import type Vector2 from '../../utils/Vector2';
+import  Vector2 from '../../utils/Vector2';
 
 export enum PLAYERS {
 	PLAYER_UNKNOWN = -1,
@@ -20,10 +19,13 @@ export enum PLAYERS {
 }
 
 class PlayerController {
+	get allPlayerCharacters(): Ref<PlayerInfo>[] {
+		return this._allPlayerCharacters;
+	}
 	allPlaceableMobs: Mob[] = [];
 	playerPlaceableMobs: Mob[] = [];
 
-	private allPlayerCharacters: Ref<PlayerInfo>[] = [];
+	private _allPlayerCharacters: Ref<PlayerInfo>[] = [];
 	private nonPlayerCharacters: Ref<Ref<PlayerInfo>[]> = ref([]);
 	private noPlayer: PlayerInfo = {
 		themePrimary: new ColourInfo("#808080"),
@@ -53,7 +55,7 @@ class PlayerController {
 
 		//create all player archetypes and default them to being NPCs
 
-		this.allPlayerCharacters.push(ref({
+		this._allPlayerCharacters.push(ref({
 			themePrimary: new ColourInfo("#800080"),
 			themeSecondary: new ColourInfo("#000000"),
 			playerName: random_name(),
@@ -66,7 +68,7 @@ class PlayerController {
 			formattedVotes: "No votes yet"
 		}));
 
-		this.allPlayerCharacters.push(ref({
+		this._allPlayerCharacters.push(ref({
 			themePrimary: new ColourInfo("#ff0000"),
 			themeSecondary: new ColourInfo("#0000ff"),
 			playerName: random_name(),
@@ -79,7 +81,7 @@ class PlayerController {
 			formattedVotes: "No votes yet"
 		}));
 
-		this.allPlayerCharacters.push(ref({
+		this._allPlayerCharacters.push(ref({
 			themePrimary: new ColourInfo("#0000ff"),
 			themeSecondary: new ColourInfo("#ffffff"),
 			playerName: random_name(),
@@ -93,15 +95,15 @@ class PlayerController {
 		}));
 
 		//record starting votes
-		for (const playerInfo of this.allPlayerCharacters) {
-			for (let i = 0; i < this.allPlayerCharacters.length; i++) {
+		for (const playerInfo of this._allPlayerCharacters) {
+			for (let i = 0; i < this._allPlayerCharacters.length; i++) {
 				playerInfo.value.votes.push(0);
 			}
 		}
 
-		this.nonPlayerCharacters.value.push(this.allPlayerCharacters[PLAYERS.PLAYER_RED]);
-		this.nonPlayerCharacters.value.push(this.allPlayerCharacters[PLAYERS.PLAYER_BLUE]);
-		this.nonPlayerCharacters.value.push(this.allPlayerCharacters[PLAYERS.PLAYER_PURPLE]);
+		this.nonPlayerCharacters.value.push(this._allPlayerCharacters[PLAYERS.PLAYER_RED]);
+		this.nonPlayerCharacters.value.push(this._allPlayerCharacters[PLAYERS.PLAYER_BLUE]);
+		this.nonPlayerCharacters.value.push(this._allPlayerCharacters[PLAYERS.PLAYER_PURPLE]);
 		this.setHumanPlayer(PLAYERS.PLAYER_PURPLE);
 		//this.currentPlayer.value = this.noPlayer;
 	}
@@ -110,17 +112,17 @@ class PlayerController {
 		// console.log(`PlayerController::setHumanPlayer(${playerId})`);
 		if(this.humanPlayer.value.id < PLAYERS.PLAYER_MAX && this.humanPlayer.value.id > PLAYERS.PLAYER_UNKNOWN) {
 			//add old player to NPC list
-			this.nonPlayerCharacters.value.push(this.allPlayerCharacters[this.humanPlayer.value.id]);
+			this.nonPlayerCharacters.value.push(this._allPlayerCharacters[this.humanPlayer.value.id]);
 		}
 
 		//is it a valid id for the new human player?
 		if(playerId < PLAYERS.PLAYER_MAX && playerId > PLAYERS.PLAYER_UNKNOWN){
 
 			//have we defined it correctly?
-			if(playerId < this.allPlayerCharacters.length){
+			if(playerId < this._allPlayerCharacters.length){
 
 				//warning: this may be unsafe to do during a game. only do it out of game for now
-				this.humanPlayer.value = this.allPlayerCharacters[playerId].value;
+				this.humanPlayer.value = this._allPlayerCharacters[playerId].value;
 
 				//remove from NPC list
 				let success = false;
@@ -157,12 +159,12 @@ class PlayerController {
 	//}
 
 	getAllPlayerCharacters(){
-		return this.allPlayerCharacters;
+		return this._allPlayerCharacters;
 	}
 
 	getPartyName(playerId: PLAYERS): string {
-		if (playerId < this.allPlayerCharacters.length) {
-			const playerInfo = this.allPlayerCharacters[playerId];
+		if (playerId < this._allPlayerCharacters.length) {
+			const playerInfo = this._allPlayerCharacters[playerId];
 			return playerInfo.value.playerParty;
 		}
 
@@ -181,9 +183,58 @@ class PlayerController {
 	getNonPlayerCharacters() {
 		return this.nonPlayerCharacters;
 	}
+
+	sortedPlayerCharacters: PlayerInfo[] = [];
+	sortPlayerCharacters(){
+		this.sortedPlayerCharacters = [];
+		// console.log(`sortPlayerCharacters()`);
+
+		for(const curPlayerInfo of this._allPlayerCharacters) {
+			// console.log(`sorting: `, curPlayerInfo);
+
+			//no sorting possible for length 1 arrays
+			if(!this.sortedPlayerCharacters.length){
+				this.sortedPlayerCharacters.push(curPlayerInfo.value);
+				// console.log(`adding at front of array`);
+				continue;
+			}
+
+			//check all other entries
+			let success = false;
+			for(let index=0; index<this.sortedPlayerCharacters.length; index++) {
+				const checkPlayerInfo = this.sortedPlayerCharacters[index];
+				// console.log(`checking: `, checkPlayerInfo);
+
+				//recursively loop through preferences to see if we are winning
+				//this is not the correct way of doing preference allocation but it's computationally simpler which is ok for basic checks
+				for(let prefNum = 0; prefNum < checkPlayerInfo.votes.length; prefNum++){
+					if(checkPlayerInfo.votes[prefNum] < curPlayerInfo.value.votes[prefNum]){
+						//found it
+						this.sortedPlayerCharacters.splice(index, 0, curPlayerInfo.value);
+						success = true;
+						// console.log(`found prefNum ${prefNum} with index ${index}`);
+						break;
+					} else if(checkPlayerInfo.votes[prefNum] > curPlayerInfo.value.votes[prefNum]) {
+						//no point checking more
+						break;
+					}
+				}
+
+				if(success){
+					break;
+				}
+			}
+
+			//if we didn't find a place, add it to the end
+			if(!success){
+				this.sortedPlayerCharacters.push(curPlayerInfo.value);
+				// console.log(`adding to end`);
+			}
+		}
+	}
 	
 	GetPartyColour(partyName: string): ColourInfo {
-		for (const curPlayer of this.allPlayerCharacters) {
+		for (const curPlayer of this._allPlayerCharacters) {
 			if (curPlayer.value.playerParty === partyName) {
 				return curPlayer.value.themePrimary;
 			}
@@ -193,7 +244,7 @@ class PlayerController {
 	}
 
 	getPlayerInfoByPartyName(partyName: string): PlayerInfo | null {
-		for (const playerInfo of this.allPlayerCharacters) {
+		for (const playerInfo of this._allPlayerCharacters) {
 			if (playerInfo.value.playerParty === partyName) {
 				return playerInfo.value;
 			}
@@ -255,14 +306,14 @@ class PlayerController {
 
 	slightlyRandomiseLoyalty(partyLoyalty: Map<string, number>) {
 		//check if there are any parties missing
-		for (const playerInfo of this.allPlayerCharacters) {
+		for (const playerInfo of this._allPlayerCharacters) {
 			if (!partyLoyalty.has(playerInfo.value.playerParty)) {
 				partyLoyalty.set(playerInfo.value.playerParty, BASE_MOB_HEALTHCAP / 2);
 			}
 		}
 
 		//add some randomness to the loyalty
-		for (const playerInfo of this.allPlayerCharacters) {
+		for (const playerInfo of this._allPlayerCharacters) {
 			const existingLoyalty = partyLoyalty.get(playerInfo.value.playerParty) || 0;
 			partyLoyalty.set(playerInfo.value.playerParty, 2 * existingLoyalty / 3 + existingLoyalty * Math.random() / 3);
 		}

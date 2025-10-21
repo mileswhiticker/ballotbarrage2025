@@ -10,6 +10,7 @@ import Timer from '@utils/Timer.ts';
 import {ENEMY_SPAWNING_STRING, PLAYER_BUILDING_STRING, PLAYER_BUYING_STRING} from '@utils/string_constants.ts';
 import {COLOUR_BLUE, COLOUR_GREEN, COLOUR_RED} from '@utils/ColourInfo.ts';
 import {nextTick} from 'vue';
+import playerController from "@controllers/PlayerController.ts";
 
 export const GAME_FF_RATE = 75;
 
@@ -116,6 +117,7 @@ class GameController {
 			// console.log(`GameController::tryFinishRound() success`);
 			this._currentRoundIndex += 1;
 			this.gameRunning = false;
+			playerController.sortPlayerCharacters();
 			appController.changeScene(GAMESCENE.ROUND_POST);
 		} else {
 			console.error(`WARN: GameController::tryFinishRound() but not in active game round`);
