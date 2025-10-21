@@ -1,12 +1,13 @@
 <script setup lang="ts">
 
 	import type {PlayerInfo} from "@game/Player.ts";
+	import {nextTick, onMounted, ref, watchEffect} from "vue";
 
 	export interface PlayerRankingCardProps {
 		playerInfo: PlayerInfo;
 		leadingCandidate: boolean;
 	}
-	defineProps<PlayerRankingCardProps>();
+	const props = defineProps<PlayerRankingCardProps>();
 
 	const ordinals = ['1st','2nd','3rd','4th','5th','6th'];
 	function getOrdinalFromNum(number: number){
@@ -16,10 +17,18 @@
 		return `${number}st`;
 	}
 
+	const leadingCandidateElement = ref(null);
+
+	onMounted(() => {
+		if(leadingCandidateElement.value){
+			(leadingCandidateElement.value as HTMLElement).style.setProperty('--bg-color', `${props.playerInfo.themePrimary.hex_string}`);
+		}
+	});
+
 </script>
 
 <template>
-	<h1 v-if="leadingCandidate" class="racing-stripes">Leading candidate:</h1>
+	<h1 v-if="leadingCandidate" class="racing-stripes" ref="leadingCandidateElement">Leading candidate:</h1>
 	<em v-else>Runner up</em>
 	<div class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row md:w-xl dark:border-gray-700 dark:bg-gray-800 "
 		 :class="{'leader' : leadingCandidate}">
@@ -64,11 +73,11 @@ img{
 }
 
 .racing-stripes{
-	--angle: 120deg;           /* stripe angle */
-	--stripe-size: 18px;      /* width of each stripe band */
-	--speed: 1.6s;            /* animation duration */
-	--text-color: #fff;    /* base text color (visible where stripe is) */
-	--bg-color: #000080;      /* fallback background behind text */
+	--angle: 120deg;		/* stripe angle */
+	--stripe-size: 18px;	/* width of each stripe band */
+	--speed: 1.6s;			/* animation duration */
+	--text-color: #fff;		/* base text color (visible where stripe is) */
+	--bg-color: #000080;	/* fallback background behind text */
 
 	font-weight: 900;
 	font-size: clamp(2rem, 8vw, 6rem);
