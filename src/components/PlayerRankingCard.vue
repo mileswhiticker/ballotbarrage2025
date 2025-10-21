@@ -1,11 +1,12 @@
 <script setup lang="ts">
 
 	import type {PlayerInfo} from "@game/Player.ts";
-	import {nextTick, onMounted, ref, watchEffect} from "vue";
+	import {onMounted, ref} from "vue";
 
 	export interface PlayerRankingCardProps {
 		playerInfo: PlayerInfo;
 		leadingCandidate: boolean;
+		isHumanPlayer: boolean;
 	}
 	const props = defineProps<PlayerRankingCardProps>();
 
@@ -28,8 +29,14 @@
 </script>
 
 <template>
-	<h1 v-if="leadingCandidate" class="racing-stripes" ref="leadingCandidateElement">Leading candidate:</h1>
-	<em v-else>Runner up</em>
+	<div v-if="leadingCandidate" class="racing-stripes" ref="leadingCandidateElement">
+		<div v-if="isHumanPlayer">YOU ARE IN THE LEAD</div>
+		<div v-else>Leading candidate:</div>
+	</div>
+	<div v-else>
+		<em v-if="isHumanPlayer">Runner up (you)</em>
+		<em v-else>Runner up</em>
+	</div>
 	<div class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row md:w-xl dark:border-gray-700 dark:bg-gray-800 "
 		 :class="{'leader' : leadingCandidate}">
 		<img class="object-cover w-full rounded-t-lg md:h-[32rem] md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" :src="playerInfo.playerImagePath" :alt="`Image of candidate ${playerInfo.playerName}`">
