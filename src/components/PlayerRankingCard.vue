@@ -39,7 +39,7 @@
 	</div>
 	<div class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row md:w-xl dark:border-gray-700 dark:bg-gray-800 "
 		 :class="{'leader' : leadingCandidate}">
-		<img class="object-cover w-full rounded-t-lg md:h-[32rem] md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" :src="playerInfo.playerImagePath" :alt="`Image of candidate ${playerInfo.playerName}`">
+		<img class="object-cover w-full rounded-t-lg md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" :src="playerInfo.playerImagePath" :alt="`Image of candidate ${playerInfo.playerName}`">
 		<div class="flex flex-col justify-between p-4 leading-normal w-100">
 			<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{playerInfo.playerName}}</h5>
 			<div class="mb-3 font-normal text-gray-700 dark:text-gray-400">Candidate for {{playerInfo.playerParty}}</div>
