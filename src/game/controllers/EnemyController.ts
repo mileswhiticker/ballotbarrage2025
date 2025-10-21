@@ -306,23 +306,26 @@ class EnemyController {
 
 	areEnemiesDefeated(){
 		if(mobController.getEnemyMobs().length > 0){
+			// console.log(`EnemyController::areEnemiesDefeated() mobController.getEnemyMobs().length=${mobController.getEnemyMobs().length}`);
 			return false;
 		}
 
 		if(this.isSpawning) {
+			// console.log(`EnemyController::areEnemiesDefeated() this.isSpawning=true`);
 			return false;
 		}
 
-		if(this.getCurrentEnemyWave()?.areEnemiesDepleted()) {
+		if(this.getCurrentEnemyWave() && this.getCurrentEnemyWave()?.areEnemiesDepleted()) {
+			// console.log(`EnemyController::areEnemiesDefeated() this.getCurrentEnemyWave()?.areEnemiesDepleted()=true`);
 			return true;
 		}
 
 		if(!this.getCurrentEnemyWave()){
-			console.error(`warn EnemyController::areEnemiesDefected() no current enemy wave`);
+			console.error(`ERROR EnemyController::areEnemiesDefected() no current enemy wave`);
 			return true;
 		}
 
-		console.error(`WARN EnemyController::areEnemiesDefected() unknown edge case`);
+		console.error(`ERROR EnemyController::areEnemiesDefected() unknown edge case`);
 		return true;
 	}
 
@@ -369,6 +372,8 @@ class EnemyController {
 							if (spawningEnemyDef.amountLeft <= 0) {
 								curWave.enemyDepleted(spawningEnemyDef);
 							}
+						} else {
+							this.isSpawning = false;
 						}
 
 					} else {
