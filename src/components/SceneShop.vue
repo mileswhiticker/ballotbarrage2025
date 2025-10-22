@@ -31,8 +31,8 @@
 		<div class="mx-auto text-2xl mb-6">Tactics available to add to your campaign:</div>
 		<div class="relative flex flex-col w-4/5 overflow-hidden">
 			<div class="absolute inset-0 flex flex-row justify-between items-center">
-				<div class="fadeRight w-4/5  h-72 relative z-20"></div>
-				<div class="fadeLeft w-4/5  h-72 relative z-20"></div>
+				<div class="fadeRight w-60  h-72 relative z-20"></div>
+				<div class="fadeLeft w-60  h-72 relative z-20"></div>
 			</div>
 			<div class="absolute inset-0 flex flex-row justify-between items-center h-72">
 				<div><img src="../assets/chevron-double-left.svg" alt="My logo" width="200" height="200" class="relative z-20 chevron"></div>
@@ -65,6 +65,7 @@
 }
 
 .chevron {
+	/* this is #000080 based on https://codepen.io/sosuke/pen/Pjoqqp */
 	filter: invert(8%) sepia(74%) saturate(7286%) hue-rotate(245deg) brightness(74%) contrast(127%);
 }
 
