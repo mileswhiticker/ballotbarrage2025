@@ -1,9 +1,9 @@
 <script setup lang="ts">
 	import PlaceableMob from '@components/PlaceableMob.vue';
-	import { PlayerInfo } from '@game/Player.ts';
+	import { type PlayerInfo } from '@game/Player.ts';
 	import playerController from '@controllers/PlayerController.ts';
-	import mouseController from '@controllers/MouseController.ts';
-	const props = defineProps<{
+	import { type Ref } from "vue";
+	defineProps<{
 		playerInfo: Ref<PlayerInfo>
 	}>();
 </script>
@@ -11,15 +11,9 @@
 <template>
 	<div id="bottomPanel">
 		<div id="placeableDiv">
-			<div v-for="(value, key) in playerController.playerPlaceableMobs" :key="key">
+			<div v-for="(value, key) in playerController.humanPlaceableMobs" :key="key">
 				<PlaceableMob :playerInfo :placeableMob="value" />
 			</div>
-			<!--<PlaceableMob :playerInfo />
-			<PlaceableMob :playerInfo />
-			<PlaceableMob :playerInfo />
-			<PlaceableMob :playerInfo />
-			<PlaceableMob :playerInfo />
-			<PlaceableMob :playerInfo />-->
 		</div>
 	</div>
 </template>
@@ -29,7 +23,6 @@
 		background-color: purple;
 		overflow-x: scroll;
 		overflow-y: hidden;
-		background-color: purple;
 		grid-row-start: 3;
 	}
 	#placeableDiv {
