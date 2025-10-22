@@ -23,8 +23,9 @@ class PlayerController {
 	get allPlayerCharacters(): Ref<PlayerInfo>[] {
 		return this._allPlayerCharacters;
 	}
-	allPlaceableMobs: Mob[] = [];
-	playerPlaceableMobs: Mob[] = [];
+	// allPlaceableMobs: Mob[] = [];
+	humanBuyableMobs: Mob[] = [];
+	humanPlaceableMobs: Mob[] = [];
 
 	private _allPlayerCharacters: Ref<PlayerInfo>[] = [];
 	private nonPlayerCharacters: Ref<Ref<PlayerInfo>[]> = ref([]);
@@ -45,14 +46,10 @@ class PlayerController {
 	async Initialise() {
 		// console.log("PlayerController::Initialise()");
 		//what mobs should the player be able to place?
-		this.allPlaceableMobs.push(mobController.createMobInstance(MOBTYPE.VOLUNTEER));
-		this.allPlaceableMobs.push(mobController.createMobInstance(MOBTYPE.AFRAME));
-		this.allPlaceableMobs.push(mobController.createMobInstance(MOBTYPE.SAUSAGESIZZLE));
-
-		//for now, let the player place all of them
-		for (const curMob of this.allPlaceableMobs) {
-			this.playerPlaceableMobs.push(curMob);
-		}
+		this.humanPlaceableMobs.push(mobController.createMobInstance(MOBTYPE.VOLUNTEER));
+		this.humanBuyableMobs.push(mobController.createMobInstance(MOBTYPE.AFRAME));
+		this.humanBuyableMobs.push(mobController.createMobInstance(MOBTYPE.VOLUNTEER2));
+		this.humanBuyableMobs.push(mobController.createMobInstance(MOBTYPE.SAUSAGESIZZLE));
 
 		//create all player archetypes and default them to being NPCs
 
@@ -347,8 +344,8 @@ class PlayerController {
 		const humanPlayerInfo = playerController.getHumanPlayer().value;
 
 		//can the player afford this?
-		if (humanPlayerInfo.money < sampleMob.baseBuildCost) {
-			console.warn(`Player cannot afford mobType ${sampleMob.mobType}, costs ${sampleMob.baseBuildCost} but has ${humanPlayerInfo.money}`);
+		if (humanPlayerInfo.money < sampleMob.buildCost) {
+			console.warn(`Player cannot afford mobType ${sampleMob.mobType}, costs ${sampleMob.buildCost} but has ${humanPlayerInfo.money}`);
 			return;
 		}
 
@@ -357,7 +354,7 @@ class PlayerController {
 		newMob.jumpToGrid(gridPos);
 
 		//subtract the money
-		humanPlayerInfo.money -= sampleMob.baseBuildCost;
+		humanPlayerInfo.money -= sampleMob.buildCost;
 	}
 }
 

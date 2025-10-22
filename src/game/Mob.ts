@@ -18,6 +18,7 @@ export enum MOBTYPE {
 	NONE,
 	//
 	VOLUNTEER,
+	VOLUNTEER2,
 	AFRAME,
 	SAUSAGESIZZLE,
 	//
@@ -78,7 +79,8 @@ export default class Mob {
 	mobType: MOBTYPE = MOBTYPE.UNKNOWN;
 	renderOpacity = 1;
 	isSolid: boolean = false; //can this mob block movement of other mobs?
-	baseBuildCost: number = 5;
+	buildCost: number = 5;
+	buyCost: number = 20;
 
 	gridCoords: Vector2 = new Vector2(-1, -1);
 	thinkingTime: number = 1;
@@ -109,6 +111,11 @@ export default class Mob {
 			case MOBTYPE.VOLUNTEER: {
 				//console.error('setting up flyer attack in Mob constructor');
 				this.mobAttack = new MobAttack(this, MISSILETYPE.FLYER);
+				break;
+			}
+			case MOBTYPE.VOLUNTEER2: {
+				//console.error('setting up flyer attack in Mob constructor');
+				this.mobAttack = new MobAttack(this, MISSILETYPE.CONVINCE);
 				break;
 			}
 			case MOBTYPE.SAUSAGESIZZLE: {
@@ -411,10 +418,8 @@ export default class Mob {
 	}
 
 	isMaxLoyalty(party: string): boolean {
-		if (this.partyLoyalty.has(party) && this.partyLoyalty.get(party)! >= this.health) {
-			return true;
-		}
-		return false;
+		return this.partyLoyalty.has(party) && this.partyLoyalty.get(party)! >= this.health;
+
 	}
 
 	hasEnemyLoyalty(party: string): boolean {

@@ -17,7 +17,7 @@ import {
 	IMGPATH_MOB_BBQ,
 	IMGPATH_MOB_UNKNOWN,
 	IMGPATH_BOOTHENTRY,
-	IMGPATH_BUS
+	IMGPATH_BUS, IMGPATH_MOB_VOLUNTEER2
 } from '@assets/_AssetPaths.ts'; 
 import playerController from './PlayerController';
 
@@ -221,14 +221,21 @@ class MobController {
 					break;
 				}
 			case MOBTYPE.VOLUNTEER:
-				{
-					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_MOB_VOLUNTEER, MOBTYPE.VOLUNTEER);
-					newMob.name = "Volunteers";
-					newMob.desc = "Your front line troopers, handing out flyers to voters.";
-					newMob.isSolid = true;
-					//newMob.presetAttackType(MISSILETYPE.FLYER);
-					break;
-				}
+			{
+				newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_MOB_VOLUNTEER, MOBTYPE.VOLUNTEER);
+				newMob.name = "Volunteers";
+				newMob.desc = "Your front line troopers, handing out flyers to voters.";
+				newMob.isSolid = true;
+				break;
+			}
+			case MOBTYPE.VOLUNTEER2:
+			{
+				newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_MOB_VOLUNTEER2, MOBTYPE.VOLUNTEER2);
+				newMob.name = "Confident Volunteers";
+				newMob.desc = "Able to pitch your candidate to voters.";
+				newMob.isSolid = true;
+				break;
+			}
 			case MOBTYPE.WANDER_ENEMY:
 				{
 					newMob = new Mob(new Vector2(-9999, -9999), IMGPATH_REDMAN, MOBTYPE.WANDER_ENEMY);

@@ -38,11 +38,15 @@
 			<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{playerInfo.playerName}}</h5>
 			<div class="mb-3 font-normal text-gray-700 dark:text-gray-400">Candidate for {{playerInfo.playerParty}}</div>
 			<table>
-				<tr><td><b>Preference</b></td><td><b>Number of Votes</b></td></tr>
+				<thead>
+				<tr><th><b>Preference</b></th><th><b>Number of Votes</b></th></tr>
+				</thead>
+				<tbody>
 				<tr v-for="(voteDef, index) in playerInfo.votes" :key="index">
 					<td>{{getOrdinalFromNum(index)}}</td>
 					<td>{{voteDef}}</td>
 				</tr>
+				</tbody>
 			</table>
 		</div>
 	</div>

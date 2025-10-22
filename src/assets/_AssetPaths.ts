@@ -7,6 +7,7 @@ export const IMGPATH_BLUEMAN: string = './src/assets/blueman.png';
 export const IMGPATH_PURPLEMAN: string = './src/assets/purpleman.png';
 
 export const IMGPATH_MOB_VOLUNTEER: string = './src/assets/volunteer.png';
+export const IMGPATH_MOB_VOLUNTEER2: string = './src/assets/volunteer2.png';
 export const IMGPATH_MOB_AFRAME: string = './src/assets/aframe.png';
 export const IMGPATH_MOB_BBQ: string = './src/assets/bbq.png';
 

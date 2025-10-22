@@ -5,6 +5,7 @@ import Mob from '@game/Mob';
 export enum MISSILETYPE {
 	UNKNOWN = -1,
 	FLYER,
+	CONVINCE,
 	SAUSAGE,
 	DRINK,
 	AFRAME
@@ -53,7 +54,13 @@ export default class Missile {
 				switch (this.missileType) {
 					case MISSILETYPE.FLYER: {
 						if (this.mobTarget) {
-							this.mobTarget.addPartyLoyalty(this.party, 1);
+							this.mobTarget.addPartyLoyalty(this.party, 0.2);
+						}
+						break;
+					}
+					case MISSILETYPE.CONVINCE: {
+						if (this.mobTarget) {
+							this.mobTarget.addPartyLoyalty(this.party, 0.4);
 						}
 						break;
 					}

@@ -75,6 +75,14 @@ export class MobAttack {
 				}
 				break;
 			}
+			case MISSILETYPE.CONVINCE: {
+				for (const enemy of this.nearbyEnemyMobs) {
+					if (!enemy.isMaxLoyalty(this.ownerMob.party)) {
+						return enemy;
+					}
+				}
+				break;
+			}
 			case MISSILETYPE.SAUSAGE: {
 				for (const enemy of this.nearbyEnemyMobs) {
 					if (enemy.hasEnemyLoyalty(this.ownerMob.party)) {
